@@ -1,14 +1,14 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.1**
+**Versão atual · 1.0.0-beta.2**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.1/SuporteTI-Grafico-1.0.0-beta.1-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.1/SuporteTI-Grafico-1.0.0-beta.1-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.1)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.2/SuporteTI-Grafico-1.0.0-beta.2-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.2/SuporteTI-Grafico-1.0.0-beta.2-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.2)
 
-![Tela Falhas do Windows na beta, consultando o código 0xC0000005](docs/imagens/falhas-do-windows.png)
+![Tela Falhas do Windows na primeira beta pública, consultando o código 0xC0000005](docs/imagens/falhas-do-windows.png)
 
 ## Começar
 

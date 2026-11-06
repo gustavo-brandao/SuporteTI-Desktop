@@ -1,5 +1,9 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.2
+
+A consulta de dispositivos usa o identificador PnP quando o Windows não informa um nome. Quando ambos estão ausentes, a interface exibe um rótulo genérico e mantém o código de problema.
+
 ## Prévia 1.0.0-beta.1
 
 A beta reúne as operações da 0.7.0 com identificação de pré-lançamento no título, no executável e no ZIP. A fase de homologação tem roteiro e matriz de ambientes próprios. O pacote local é destinado a testes. A promoção a versão estável depende da assinatura e dos aceites de laboratório.

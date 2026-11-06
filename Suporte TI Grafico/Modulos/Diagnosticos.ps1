@@ -75,7 +75,12 @@ function Get-Diagnostico {
             Get-Lista 'Dispositivos com código de problema' {
                 Get-CimInstance Win32_PnPEntity -Filter 'ConfigManagerErrorCode <> 0' -OperationTimeoutSec 8 |
                     Where-Object { $_.ConfigManagerErrorCode -ne 24 -or $_.Present -ne $false } | Sort-Object Name |
-                    ForEach-Object { @{ nome = $_.Name; valor = 'Código {0} · {1} · {2}' -f $_.ConfigManagerErrorCode, $_.PNPClass, $_.Status } }
+                    ForEach-Object {
+                        $nome = if (-not [string]::IsNullOrWhiteSpace($_.Name)) { $_.Name }
+                            elseif (-not [string]::IsNullOrWhiteSpace($_.DeviceID)) { $_.DeviceID }
+                            else { 'Dispositivo sem identificação' }
+                        @{ nome = $nome; valor = 'Código {0} · {1} · {2}' -f $_.ConfigManagerErrorCode, $_.PNPClass, $_.Status }
+                    }
             } 'O Windows não listou problemas em dispositivos presentes.'
         }
         'servicos' {
