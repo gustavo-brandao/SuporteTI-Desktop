@@ -114,6 +114,18 @@ try
     foreach (var nome in new[] { "Falhas.ps1", "SuporteTI.Windows.dll" })
         File.Copy(Path.Combine(modulosReais, "Coletores", nome), Path.Combine(coletores.FullName, nome));
     var simulado = new ConsultaPowerShell(Path.Combine(modulosSimulados.FullName, "Consultar.ps1"), TimeSpan.FromSeconds(25));
+    var diagnosticosSimulados = Path.Combine(modulosSimulados.FullName, "Diagnosticos.ps1");
+    var diagnosticosOriginais = File.ReadAllBytes(diagnosticosSimulados);
+    File.AppendAllText(diagnosticosSimulados, """
+
+        function Get-CimInstance {
+            param($ClassName, $Filter, $OperationTimeoutSec)
+            [pscustomobject]@{ Name=' '; DeviceID='PCI\TESTE'; ConfigManagerErrorCode=28; PNPClass='System'; Status='Error' }
+        }
+        """);
+    var pnpSemNome = await simulado.ConsultarAsync("dispositivos", default);
+    File.WriteAllBytes(diagnosticosSimulados, diagnosticosOriginais);
+    Igual("PCI\\TESTE", pnpSemNome.Secoes[0].Campos.Single().Nome, "Dispositivo sem nome usa o identificador PnP");
     var semCatalogo = await simulado.ConsultarAsync("codigofalha", default, "5", "Win32");
     Igual("parcial", semCatalogo.Estado, "Catálogo ausente preserva aviso e código");
     File.AppendAllText(Path.Combine(coletores.FullName, "Falhas.ps1"), """
