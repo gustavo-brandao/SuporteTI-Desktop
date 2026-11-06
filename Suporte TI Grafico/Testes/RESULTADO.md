@@ -1,5 +1,12 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.2
+
+- O ZIP público foi gerado no [GitHub Actions](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/42290808313) e tem SHA-256 **7fbc0488648e148072ab7fb2ae5c7520ee2f34f9a57d690a70675c083ada1438**.
+
+- **64 testes gráficos e 13 simulações de intervenção aprovados** na estação Windows 11 x64. O novo teste reproduziu um dispositivo com nome em branco e confirmou o identificador PnP como rótulo.
+- O ZIP local passou na abertura, navegação, consulta CIM, gráficos de discos, consulta de código de erro e exportações. A homologação de intervenções reais e assinatura segue no [roteiro](HOMOLOGACAO.md).
+
 ## Prévia 1.0.0-beta.1
 
 - **63 testes gráficos e 13 simulações de intervenção aprovados** em Windows 11 Enterprise 25H2 x64. A consulta CIM real retornou os mesmos campos de identificação que a referência do terminal. Os dois diálogos sensíveis e os 204 testes do terminal passaram na etapa 0.7.0, cujas rotinas são as mesmas nesta beta.
@@ -97,7 +104,7 @@ Execute a suíte e gere o ZIP conforme o [README](../README.md). Em uma sessão 
 ```powershell
 .\Testes\Testar-Intervencoes.ps1
 .\Testes\Testar-DialogosSensiveis.ps1
-.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\SuporteTI-Grafico-1.0.0-beta.1-win-x64.zip -ExigirCim -Janela -ReferenciaTerminal ..\Modulos\SuporteTI.psd1 -ZipAnterior .\outputs\SuporteTI-Grafico-0.7.0-win-x64.zip
+.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\SuporteTI-Grafico-1.0.0-beta.2-win-x64.zip -ExigirCim -Janela
 ```
 
 O argumento de referência é opcional e aponta para o módulo da edição de terminal. A opção `-Janela` abre o executável extraído, realiza o teste e fecha a janela.
