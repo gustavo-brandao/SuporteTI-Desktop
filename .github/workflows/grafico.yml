@@ -1,0 +1,65 @@
+name: Suporte TI Gráfico
+
+on:
+  pull_request:
+    paths:
+      - 'Suporte TI Grafico/**'
+      - 'Modulos/Discos.ps1'
+      - 'Modulos/Operacoes.ps1'
+      - 'Modulos/Manutencao.ps1'
+      - 'Modulos/Logon.ps1'
+      - 'Modulos/Perfis.ps1'
+      - 'Modulos/Rede.ps1'
+      - 'Modulos/Falhas.ps1'
+      - 'Modulos/CatalogoFalhas.json'
+      - 'Recursos/SuporteTI.Windows.dll'
+      - 'Ferramentas/smartmontools/**'
+      - '.github/workflows/grafico.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Suporte TI Grafico/**'
+      - 'Modulos/Discos.ps1'
+      - 'Modulos/Operacoes.ps1'
+      - 'Modulos/Manutencao.ps1'
+      - 'Modulos/Logon.ps1'
+      - 'Modulos/Perfis.ps1'
+      - 'Modulos/Rede.ps1'
+      - 'Modulos/Falhas.ps1'
+      - 'Modulos/CatalogoFalhas.json'
+      - 'Recursos/SuporteTI.Windows.dll'
+      - 'Ferramentas/smartmontools/**'
+      - '.github/workflows/grafico.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  previa-x64:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Testar contrato e consulta
+        shell: pwsh
+        run: dotnet run --project './Suporte TI Grafico/Testes/SuporteTI.Grafico.Testes.csproj' -c Release -- --exigir-cim
+      - name: Simular intervenções
+        shell: powershell
+        run: '& "./Suporte TI Grafico/Testes/Testar-Intervencoes.ps1"'
+      - name: Publicar ZIP portátil
+        shell: pwsh
+        run: '& "./Suporte TI Grafico/Construcao/Publicar.ps1"'
+      - name: Verificar pacote extraído
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem './Suporte TI Grafico/outputs' -Filter '*.zip'
+          & './Suporte TI Grafico/Testes/Verificar-Pacote.ps1' -Zip $zip.FullName -ExigirCim
+      - uses: actions/upload-artifact@v4
+        with:
+          name: suporte-ti-grafico-win-x64
+          path: 'Suporte TI Grafico/outputs/'
+          if-no-files-found: error

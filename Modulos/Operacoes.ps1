@@ -1,0 +1,381 @@
+# Operacoes restritas. Nao aceita comandos livres, caminhos de sistema ou alvos remotos.
+function Get-SuporteOperacao {
+    param([Parameter(Mandatory)][string]$Acao)
+    $map=@{
+        spooler=@{Titulo='Reiniciar spooler local';Admin=$true;Impacto='Interrompe temporariamente a impressao local. Nao exclui trabalhos.'}
+        cache=@{Titulo='Recriar cache de download do Windows Update';Admin=$true;Impacto='Interrompe BITS/Windows Update temporariamente e renomeia somente SoftwareDistribution\Download. Nao desinstala atualizacoes. O cache anterior permanece no disco.'}
+        gpuser=@{Titulo='Atualizar GPO do usuario atual';Admin=$false;Impacto='Pode aplicar configuracoes institucionais. Nao solicita reinicio nem logoff automatico.'}
+        gpcomputer=@{Titulo='Atualizar GPO do computador';Admin=$true;Impacto='Pode aplicar configuracoes institucionais e iniciar acoes previstas pela GPO. Sem /boot ou /logoff.'}
+        sfcverify=@{Titulo='SFC - verificar sem reparar';Admin=$true;Impacto='Consulta demorada de arquivos protegidos. Produz logs nativos.'}
+        sfcrepair=@{Titulo='SFC /scannow';Admin=$true;Impacto='Pode substituir arquivos do Windows. Pode demorar; nao feche a janela durante o reparo.'}
+        dismcheck=@{Titulo='DISM CheckHealth';Admin=$true;Impacto='Consulta o estado registrado da imagem; nao realiza varredura completa.'}
+        dismscan=@{Titulo='DISM ScanHealth';Admin=$true;Impacto='Verificacao demorada da imagem, sem RestoreHealth.'}
+        dismrestore=@{Titulo='DISM RestoreHealth';Admin=$true;Impacto='Repara a imagem usando as fontes configuradas no Windows/GPO. Pode acessar a rede e demorar.'}
+        diskhealth=@{Titulo='Saude dos discos internos';Admin=$true;Impacto='Somente leitura SMART/NVMe; sem testes extensos ou reparos.'}
+        gpcomputerquery=@{Titulo='Consultar GPO do computador';Admin=$true;Impacto='Consulta somente leitura.'}
+        gpcomputerhtml=@{Titulo='Exportar GPO do computador em HTML';Admin=$true;Impacto='Exporta politicas do computador, sem alterar GPO. O destino e escolhido na janela elevada.'}
+        netdhcp=@{Titulo='Trocar IPv4 fixo por DHCP';Admin=$true;Impacto='Remove IPv4 e gateway fixos do adaptador selecionado e configura DNS IPv4 automatico. Pode interromper a conexao.'}
+        netstatic=@{Titulo='Configurar IPv4 fixo';Admin=$true;Impacto='Substitui enderecos e gateway IPv4 no adaptador escolhido. Use uma atribuicao autorizada pela equipe de rede.'}
+        chromecache=@{Titulo='Limpar cache de paginas do Chrome';Admin=$false;Impacto='Remove arquivos de cache HTTP dos perfis padrao do Chrome da sessao. Feche o navegador antes de usar.'}
+        chkdskread=@{Titulo='CHKDSK - consultar volume';Admin=$true;Impacto='Verifica o sistema de arquivos do volume selecionado sem solicitar reparos.'}
+        chkdskfull=@{Titulo='CHKDSK /f /r';Admin=$true;Impacto='Repara o sistema de arquivos e procura setores defeituosos. Pode exigir agendamento e reinicializacao.'}
+        perfillocal=@{Titulo='Verificar perfil local duplicado';Admin=$true;Impacto='Mostra os perfis candidatos. A exclusao de dados locais exige confirmacao.'}
+        autologonenable=@{Titulo='Configurar login automatico';Admin=$true;Impacto='O Windows tentara entrar com a conta escolhida. Use uma conta dedicada com privilegios limitados. Um administrador local pode recuperar o segredo LSA.'}
+        autologondisable=@{Titulo='Desativar login automatico';Admin=$true;Impacto='Desliga o login automatico e remove a credencial usada por ele.'}
+    }
+    if (-not $map.ContainsKey($Acao)) { throw 'Operacao nao autorizada.' }
+    $map[$Acao]
+}
+
+function Test-SuporteAdmin {
+    ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+# Arquivos executados ou lidos pela janela elevada, alem de todos os arquivos de Modulos.
+$script:SuporteArquivosExtras = @(
+    'Recursos\SuporteTI.Windows.dll'
+    'Ferramentas\smartmontools\integridade.json'
+    'Ferramentas\smartmontools\bin\smartctl.exe'
+    'Ferramentas\smartmontools\bin\drivedb.h'
+)
+
+# Entrada da janela elevada. O texto segue na linha de comando, nao no disco do pacote:
+# copia os arquivos para uma pasta restrita a Administradores e SYSTEM, confere a impressao
+# registrada na abertura e so entao executa Elevado.ps1 a partir da copia.
+# File.Copy preserva a marca de origem do Windows quando presente.
+# Use somente aspas simples; cada linha termina em ; { ou } porque as linhas sao unidas por espaco.
+$script:SuporteInicioElevado = @'
+$ErrorActionPreference='Stop';
+$o=[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('__ORIGEM__'));
+$d=Join-Path $env:SystemRoot ('Temp\SuporteTI_'+[guid]::NewGuid().ToString('N'));
+$c=1;
+$s=[Security.Cryptography.SHA256]::Create();
+try{
+$a=New-Object Security.AccessControl.DirectorySecurity;
+$a.SetAccessRuleProtection($true,$false);
+foreach($i in @(__SIDS__)){$a.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule((New-Object Security.Principal.SecurityIdentifier $i),'FullControl','ContainerInherit,ObjectInherit','None','Allow')))};
+[void][IO.Directory]::CreateDirectory($d,$a);
+$r=@([IO.Directory]::GetFiles((Join-Path $o 'Modulos'))|ForEach-Object{'Modulos\'+[IO.Path]::GetFileName($_)})+@(__EXTRAS__);
+$l=@(foreach($p in $r){
+$f=Join-Path $o $p;
+if([IO.File]::Exists($f)){
+$t=Join-Path $d $p;
+[void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($t));
+[IO.File]::Copy($f,$t);
+$atributos=[IO.File]::GetAttributes($t);
+if($atributos -band [IO.FileAttributes]::ReadOnly){[IO.File]::SetAttributes($t,($atributos -band (-bnot [IO.FileAttributes]::ReadOnly)))};
+$p+':'+[BitConverter]::ToString($s.ComputeHash([IO.File]::ReadAllBytes($t))).Replace('-','');
+}
+});
+[Array]::Sort($l,[StringComparer]::Ordinal);
+if([BitConverter]::ToString($s.ComputeHash([Text.Encoding]::UTF8.GetBytes($l -join '|'))).Replace('-','') -ne '__DIGEST__'){throw 'Os arquivos do Suporte TI mudaram depois da abertura. Operacao bloqueada; feche a ferramenta e confira a procedencia do pacote.'};
+if(__EXIGIR_ASSINATURA__){
+foreach($f in [IO.Directory]::GetFiles((Join-Path $d 'Modulos'))){
+if([IO.Path]::GetExtension($f) -in '.ps1','.psm1','.psd1' -and (Get-AuthenticodeSignature -LiteralPath $f).Status -ne 'Valid'){throw 'A elevacao a partir de rede exige assinatura valida nos scripts do pacote.'};
+}
+};
+& (Join-Path $d 'Modulos\Elevado.ps1') __ARGUMENTOS__;
+$c=$LASTEXITCODE;
+}catch{Write-Host ('Falha: '+$_.Exception.Message);[void](Read-Host '0 ou Enter para voltar ao menu');}
+finally{$s.Dispose();try{if([IO.Directory]::Exists($d)){[IO.Directory]::Delete($d,$true)}}catch{Write-Host ('Aviso: a copia temporaria nao foi removida: '+$d)}};
+exit $c
+'@
+
+function Get-SuporteArquivosPacote {
+    param([Parameter(Mandatory)][string]$Raiz)
+    $relativos = @([IO.Directory]::GetFiles((Join-Path $Raiz 'Modulos')) | ForEach-Object { 'Modulos\' + [IO.Path]::GetFileName($_) }) + $script:SuporteArquivosExtras
+    $relativos | Where-Object { [IO.File]::Exists((Join-Path $Raiz $_)) }
+}
+
+function Get-SuporteDigestPacote {
+    # Mesmo calculo da entrada elevada: SHA256 de cada arquivo, linhas em ordem ordinal, SHA256 do conjunto.
+    param([Parameter(Mandatory)][string]$Raiz)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $linhas = @(foreach ($relativo in (Get-SuporteArquivosPacote $Raiz)) {
+            $relativo + ':' + [BitConverter]::ToString($sha.ComputeHash([IO.File]::ReadAllBytes((Join-Path $Raiz $relativo)))).Replace('-','')
+        })
+        [Array]::Sort($linhas,[StringComparer]::Ordinal)
+        [BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($linhas -join '|'))).Replace('-','')
+    } finally { $sha.Dispose() }
+}
+
+function Get-SuportePoliticaElevacao {
+    # Pacote com todos os scripts assinados e validos: a janela elevada passa a exigir AllSigned.
+    param([Parameter(Mandatory)][string]$Raiz)
+    $scripts = @(Get-SuporteArquivosPacote $Raiz | Where-Object { $_ -match '\.(ps1|psm1|psd1)$' })
+    $semAssinatura = @($scripts | Where-Object { (Get-AuthenticodeSignature -LiteralPath (Join-Path $Raiz $_)).Status -ne 'Valid' })
+    if ($scripts.Count -gt 0 -and $semAssinatura.Count -eq 0) { 'AllSigned' } else { 'RemoteSigned' }
+}
+
+function Test-SuporteOrigemRede {
+    param([Parameter(Mandatory)][string]$Raiz)
+    $caminho = [IO.Path]::GetFullPath($Raiz)
+    if ($caminho.StartsWith('\\')) { return $true }
+    [IO.DriveInfo]::new([IO.Path]::GetPathRoot($caminho)).DriveType -eq [IO.DriveType]::Network
+}
+
+function Get-SuporteComandoElevado {
+    # SidsExtras existe apenas para os testes executarem a entrada sem elevacao.
+    param([Parameter(Mandatory)][string]$Raiz,[Parameter(Mandatory)][string]$Digest,
+        [Parameter(Mandatory)][string]$Argumentos,[switch]$ExigirAssinatura,[string[]]$SidsExtras=@())
+    if ($Digest -notmatch '^[0-9A-F]{64}$') { throw 'Impressao do pacote invalida.' }
+    if ($Argumentos -notmatch '^[A-Za-z0-9 +/=-]+$') { throw 'Argumentos de elevacao invalidos.' }
+    $sids = @(@('S-1-5-32-544','S-1-5-18') + $SidsExtras | ForEach-Object {
+        if ($_ -notmatch '^S-1-[0-9-]+$') { throw 'SID invalido.' }
+        "'" + $_ + "'"
+    }) -join ','
+    $extras = @($script:SuporteArquivosExtras | ForEach-Object { "'" + $_ + "'" }) -join ','
+    $origem = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes([IO.Path]::GetFullPath($Raiz)))
+    $exigirAssinaturaNoComando = if ($ExigirAssinatura) { '$true' } else { '$false' }
+    $texto = $script:SuporteInicioElevado.Replace('__ORIGEM__',$origem).Replace('__SIDS__',$sids).
+        Replace('__EXTRAS__',$extras).Replace('__DIGEST__',$Digest).
+        Replace('__EXIGIR_ASSINATURA__',$exigirAssinaturaNoComando).Replace('__ARGUMENTOS__',$Argumentos)
+    (($texto -split '\r?\n') | ForEach-Object { $_.Trim() } | Where-Object { $_ }) -join ' '
+}
+
+function Get-SuporteArgumentosGpupdate {
+    param([ValidateSet('user','computer')][string]$Escopo,[switch]$Forcar)
+    "/target:$Escopo"
+    '/wait:-1'
+    if ($Forcar) { '/force' }
+}
+
+function Invoke-SuporteNativeAction {
+    param([string]$Programa,[string[]]$Argumentos)
+    $allowed=@('sfc.exe','dism.exe','gpupdate.exe','netsh.exe','chkdsk.exe')
+    if ($Programa -notin $allowed) { throw 'Executavel nao autorizado.' }
+    $exe=Join-Path $env:SystemRoot ('System32\'+$Programa)
+    # Herda o console: progresso visivel, sem arquivos temporarios nem timeout forcado.
+    & $exe @Argumentos | Out-Host
+    $code=$LASTEXITCODE
+    if ($Programa -eq 'chkdsk.exe') {
+        switch ($code) {
+            0 { 'CHKDSK retornou codigo 0. Se houve agendamento, execute a verificacao no proximo reinicio.' }
+            1 { 'CHKDSK encontrou e corrigiu erros.' }
+            2 { 'CHKDSK retornou codigo 2. Consulte a saida para verificar a limpeza realizada ou pendente.' }
+            default { throw ('CHKDSK retornou codigo '+$code+'. Consulte a saida para identificar verificacao ou reparo pendente.') }
+        }
+        return
+    }
+    if ($code -notin @(0,3010)) { throw ('O comando terminou com codigo '+$code+'. Consulte a mensagem e os logs nativos; nao presumir sucesso.') }
+    if ($code -eq 3010) { 'O Windows informou necessidade de reiniciar. Reinicio nao executado.' }
+    'Comando encerrado. Confira a conclusao detalhada exibida acima e os logs nativos.'
+}
+
+function Invoke-SuporteCache {
+    # Recusar operacoes concorrentes com instalacao/reparo. Nunca apaga DataStore/catroot2.
+    if (@(Get-Process -Name TiWorker,TrustedInstaller,MoUsoCoreWorker,dism,sfc -ErrorAction SilentlyContinue).Count -gt 0) { throw 'Ha manutencao/atualizacao ativa. Aguarde a conclusao antes de recriar o cache.' }
+    $pending=@('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired')
+    foreach ($key in $pending) { if (Test-Path -LiteralPath $key) { throw 'Ha reinicializacao pendente. Reavalie apos reiniciar manualmente.' } }
+    $root=[IO.Path]::GetFullPath($env:SystemRoot)
+    $download=Join-Path $root 'SoftwareDistribution\Download'
+    if (-not (Test-Path -LiteralPath $download)) { throw 'Cache de download ausente; nenhuma alteracao necessaria.' }
+    foreach ($path in @($root,(Join-Path $root 'SoftwareDistribution'),$download)) {
+        $entry=Get-Item -LiteralPath $path -Force
+        if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Caminho de cache com redirecionamento; operacao bloqueada.' }
+    }
+    $states=@{}; $restoreErrors=New-Object 'System.Collections.Generic.List[string]'
+    try {
+        foreach ($name in @('bits','wuauserv')) {
+            $svc=Get-Service -Name $name -ErrorAction Stop
+            if ([string]$svc.Status -notin @('Running','Stopped')) { throw ('Servico em transicao: '+$name) }
+            $states[$name]=[string]$svc.Status
+            if ($svc.Status -eq 'Running') { Stop-Service -Name $name -ErrorAction Stop; (Get-Service $name).WaitForStatus('Stopped',[TimeSpan]::FromSeconds(15)) }
+        }
+        foreach ($name in @('bits','wuauserv')) { if ((Get-Service $name).Status -ne 'Stopped') { throw 'Nao foi possivel parar os servicos. Cache preservado.' } }
+        $backup='Download.anterior_'+(Get-Date -Format 'yyyyMMdd_HHmmss')+'_'+[guid]::NewGuid().ToString('N')
+        Rename-Item -LiteralPath $download -NewName $backup -ErrorAction Stop
+        'Cache anterior preservado em: '+(Join-Path (Split-Path $download -Parent) $backup)
+        'O Windows recriara o cache quando a atualizacao for retomada. Novo download nao foi iniciado automaticamente.'
+    } finally {
+        foreach ($name in @('wuauserv','bits')) {
+            if ($states.ContainsKey($name) -and $states[$name] -eq 'Running') {
+                try { Start-Service -Name $name -ErrorAction Stop; (Get-Service $name).WaitForStatus('Running',[TimeSpan]::FromSeconds(15)) }
+                catch { $restoreErrors.Add($name+': '+$_.Exception.Message) }
+            }
+        }
+        if ($restoreErrors.Count -gt 0) { throw ('Nao foi possivel restaurar servicos: '+($restoreErrors -join '; ')) }
+    }
+}
+
+function Invoke-SuporteOperacao {
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
+    param([Parameter(Mandatory)][string]$Acao,[switch]$Forcar)
+    $info=Get-SuporteOperacao $Acao
+    if ($Forcar -and $Acao -notin @('gpuser','gpcomputer')) { throw 'Force so e permitido para GPO.' }
+    if (-not $PSCmdlet.ShouldProcess($env:COMPUTERNAME,$info.Titulo)) { return 'Operacao cancelada; nenhuma alteracao executada.' }
+    if ($info.Admin -and -not (Test-SuporteAdmin)) { throw 'Esta operacao requer elevacao pelo Windows.' }
+    $nomeMutex = if ($Acao -in @('autologonenable','autologondisable')) { 'Global\SuporteTI.LoginAutomatico' } else { 'Local\SuporteTI.Intervencao' }
+    $mutex=New-Object Threading.Mutex($false,$nomeMutex)
+    $locked=$false
+    try {
+    try { $locked=$mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $locked=$true }
+    if(-not $locked){throw 'Outra operacao desta ferramenta esta em andamento nesta sessao.'}
+    switch ($Acao) {
+        'spooler' {
+            $svc=Get-Service -Name Spooler -ErrorAction Stop
+            if ($svc.Status -eq 'Running') { Restart-Service -Name Spooler -ErrorAction Stop } else { Start-Service -Name Spooler -ErrorAction Stop }
+            (Get-Service Spooler).WaitForStatus('Running',[TimeSpan]::FromSeconds(15))
+            if ((Get-Service Spooler).Status -ne 'Running') { throw 'Spooler nao permaneceu em execucao.' }
+            'Spooler em execucao. Nenhum trabalho foi excluido; confirme a impressao.'
+        }
+        'cache' { Invoke-SuporteCache }
+        {$_ -in @('gpuser','gpcomputer')} {
+            $scope=if ($Acao -eq 'gpuser') { 'user' } else { 'computer' }
+            $argsList=@(Get-SuporteArgumentosGpupdate $scope -Forcar:$Forcar)
+            Invoke-SuporteNativeAction 'gpupdate.exe' $argsList
+        }
+        'sfcverify' { Invoke-SuporteNativeAction 'sfc.exe' @('/verifyonly') }
+        'sfcrepair' { Invoke-SuporteNativeAction 'sfc.exe' @('/scannow') }
+        'dismcheck' { Invoke-SuporteNativeAction 'dism.exe' @('/Online','/Cleanup-Image','/CheckHealth','/NoRestart') }
+        'dismscan' { Invoke-SuporteNativeAction 'dism.exe' @('/Online','/Cleanup-Image','/ScanHealth','/NoRestart') }
+        'dismrestore' { Invoke-SuporteNativeAction 'dism.exe' @('/Online','/Cleanup-Image','/RestoreHealth','/NoRestart') }
+        'diskhealth' { Invoke-SuporteConsulta -Id discos -TimeoutSeconds 40 }
+        'gpcomputerquery' { Invoke-SuporteConsulta -Id gpcomputador }
+        'netdhcp' { Invoke-SuporteConfiguracaoIPv4 Dhcp }
+        'netstatic' { Invoke-SuporteConfiguracaoIPv4 Estatico }
+        'chromecache' { Invoke-SuporteCacheChrome }
+        'chkdskread' { Invoke-SuporteVerificacaoDisco }
+        'chkdskfull' { Invoke-SuporteVerificacaoDisco -Completa }
+        'perfillocal' { Invoke-SuporteLimpezaPerfil }
+        'autologonenable' { Invoke-SuporteLogon }
+        'autologondisable' { Invoke-SuporteLogon -Desativar }
+        default { throw 'Operacao requer fluxo de exportacao.' }
+    }
+    } finally { if($locked){$mutex.ReleaseMutex()};$mutex.Dispose() }
+}
+
+function Request-SuporteOperacao {
+    param([string]$Acao,[string]$Documentos,[switch]$Forcar,[switch]$SemCores)
+    $info=Get-SuporteOperacao $Acao
+    Write-SuporteTela -Titulo $info.Titulo -SemCores:$SemCores
+    $corImpacto = if ($Acao -in 'diskhealth','gpcomputerquery','gpcomputerhtml','sfcverify','dismcheck','dismscan','chkdskread') { 'Cyan' } else { 'Yellow' }
+    Write-SuporteLinha ('IMPACTO: '+$info.Impacto) -Cor $corImpacto -SemCores:$SemCores
+    if ($Acao -in 'gpuser','gpcomputer') {
+        $escopo = if ($Acao -eq 'gpuser') { 'user' } else { 'computer' }
+        Write-SuporteLinha ('Comando: gpupdate.exe ' + ((Get-SuporteArgumentosGpupdate $escopo -Forcar:$Forcar) -join ' ')) -Cor Cyan -SemCores:$SemCores
+    }
+    if ($Forcar) { Write-SuporteLinha 'FORCE: reaplica todas as configuracoes do escopo selecionado.' -Cor Yellow -SemCores:$SemCores }
+    Write-Host ''
+    if ($info.Admin -and -not (Test-SuporteAdmin)) {
+        if (-not $script:SuporteDigestPacote) {
+            Write-Host 'Os arquivos do Suporte TI nao foram registrados na abertura. Feche e abra a ferramenta novamente.'
+            return
+        }
+        $raiz=Split-Path $PSScriptRoot -Parent
+        $doc64=[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($Documentos))
+        $parametros='-Acao '+$Acao+' -Documentos64 '+$doc64
+        if ($Forcar) { $parametros+=' -Forcar' }
+        if ($SemCores) { $parametros+=' -SemCores' }
+        try {
+            $origemRede = Test-SuporteOrigemRede $raiz
+            $politica = Get-SuportePoliticaElevacao $raiz
+            if ($origemRede -and $politica -ne 'AllSigned') {
+                Write-Host 'A elevacao a partir de rede exige assinatura valida nos scripts do pacote.'
+                return
+            }
+            $comando = Get-SuporteComandoElevado -Raiz $raiz -Digest $script:SuporteDigestPacote -Argumentos $parametros -ExigirAssinatura:$origemRede
+            $arguments = '-NoLogo -NoProfile -ExecutionPolicy ' + $politica + ' -Command ' + $comando
+            Write-Host 'O Windows solicitara elevacao. Use uma conta com direitos nesta estacao.'
+            Write-Host 'A operacao selecionada sera executada na janela elevada se voce autorizar no Windows.'
+            $p=Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe') -ArgumentList $arguments -Verb RunAs -PassThru -Wait -ErrorAction Stop
+            if ($p.ExitCode -ne 0) { Write-Host 'Operacao cancelada, bloqueada ou falhou. Confira a janela elevada.' }
+            else { Write-Host 'Janela elevada encerrada. O resultado detalhado foi apresentado nela.' }
+        } catch { Write-Host ('Elevacao nao concluida: '+$_.Exception.Message) }
+        return
+    }
+    $start=(Get-Date).ToString('o')
+    try {
+        if($Acao -eq 'gpcomputerhtml'){Request-SuporteExportar -Tipo gphtml -Documentos $Documentos -Escopo Computer -SemCores:$SemCores;return}
+        $output=Invoke-SuporteOperacao -Acao $Acao -Forcar:$Forcar -Confirm:$false
+        if ($Acao -in @('diskhealth','gpcomputerquery')) { Show-SuporteResultado $output -SemCores:$SemCores; Request-SuporteSalvar $output $Documentos }
+        elseif ($Acao -in @('autologonenable','autologondisable')) { Write-SuporteLinha ($output | Out-String) -SemCores }
+        else {
+            $text=($output | Out-String); Write-SuporteLinha $text -SemCores
+            $result=[pscustomobject]@{Computador=$env:COMPUTERNAME;Consulta=$info.Titulo;Inicio=$start;Fim=(Get-Date).ToString('o');Status='Ver conclusao e mensagens nativas';Texto=$text}
+            Request-SuporteSalvar $result $Documentos
+        }
+    } catch { Write-SuporteLinha ('Falha: '+$_.Exception.Message) -Cor Red -SemCores:$SemCores; Write-Host 'Consulte os logs nativos para investigar.' }
+}
+
+function Invoke-SuporteExportNative {
+    param([string]$Programa,[string[]]$Argumentos)
+    if ($Programa -notin @('gpresult.exe','wevtutil.exe')) { throw 'Exportador nao permitido.' }
+    $psi=New-Object Diagnostics.ProcessStartInfo
+    $psi.FileName=Join-Path $env:SystemRoot ('System32\'+$Programa)
+    $quoted=@(foreach($argument in $Argumentos){
+        if($argument.Contains('"')){throw 'Argumento de exportacao invalido.'}
+        '"'+$argument+'"'
+    })
+    $psi.Arguments=$quoted -join ' '; $psi.UseShellExecute=$false; $psi.CreateNoWindow=$true
+    $psi.RedirectStandardOutput=$true; $psi.RedirectStandardError=$true
+    $process=New-Object Diagnostics.Process; $process.StartInfo=$psi
+    try {
+        [void]$process.Start(); $out=$process.StandardOutput.ReadToEndAsync();$err=$process.StandardError.ReadToEndAsync()
+        if(-not $process.WaitForExit(30000)){$process.Kill();throw 'Exportacao excedeu 30 segundos. Pode haver arquivo parcial no destino.'}
+        $process.WaitForExit()
+        if($process.ExitCode -ne 0){throw ('Exportador retornou '+$process.ExitCode+': '+$err.Result+' '+$out.Result)}
+    } finally {$process.Dispose()}
+}
+
+function Test-SuporteEvtx {
+    param([string]$Path)
+    $query=New-Object Diagnostics.Eventing.Reader.EventLogQuery($Path,[Diagnostics.Eventing.Reader.PathType]::FilePath)
+    $reader=New-Object Diagnostics.Eventing.Reader.EventLogReader($query)
+    try {$event=$reader.ReadEvent(); if($null -ne $event){$event.Dispose()}} finally {$reader.Dispose()}
+}
+
+function Export-SuporteArquivo {
+    [CmdletBinding()]
+    param([ValidateSet('gphtml','evtx')][string]$Tipo,[string]$PastaBase,[ValidateSet('User','Computer')][string]$Escopo='User')
+    if (-not [IO.Path]::IsPathRooted($PastaBase)) { throw 'Informe caminho absoluto.' }
+    if($Tipo -eq 'gphtml' -and $Escopo -eq 'Computer' -and -not (Test-SuporteAdmin)){throw 'Exportacao de GPO do computador requer elevacao.'}
+    $folder=Join-Path (Join-Path ([IO.Path]::GetFullPath($PastaBase)) $env:COMPUTERNAME) ((Get-Date -Format 'yyyy-MM-dd_HHmmss')+'_'+[guid]::NewGuid().ToString('N'))
+    [void][IO.Directory]::CreateDirectory($folder)
+    $results=@()
+    if ($Tipo -eq 'gphtml') {
+        $path=Join-Path $folder ('gpresult-'+$Escopo.ToLowerInvariant()+'.html')
+        Invoke-SuporteExportNative 'gpresult.exe' @('/Scope',$Escopo,'/H',$path)
+        if (-not (Test-Path -LiteralPath $path)) { throw 'Falha ao exportar GPO. Nenhum sucesso presumido.' }
+        $results+=Get-Item -LiteralPath $path
+    } else {
+        foreach ($log in @('Application','System','Setup')) {
+            $path=Join-Path $folder ($log+'.evtx')
+            try {
+                $filtro='/q:*[System[TimeCreated[timediff(@SystemTime) <= 86400000]]]'
+                Write-Host ('Comando: wevtutil.exe epl {0} "{1}" "{2}"' -f $log,$path,$filtro)
+                Invoke-SuporteExportNative 'wevtutil.exe' @('epl',$log,$path,$filtro)
+                if (-not (Test-Path -LiteralPath $path)) { throw 'Arquivo nao criado.' }
+                Test-SuporteEvtx $path
+            } catch { throw ('Exportacao parcial: falha no canal '+$log+'. Arquivos ja exportados estao em '+$folder+'. '+$_.Exception.Message) }
+            $results+=Get-Item -LiteralPath $path
+        }
+    }
+    $manifest=@($results | ForEach-Object { [pscustomobject]@{Arquivo=$_.Name;Bytes=$_.Length;SHA256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash} })
+    $manifestPath=Join-Path $folder 'manifesto.json'
+    $payload=[pscustomobject]@{Computador=$env:COMPUTERNAME;Data=(Get-Date).ToString('o');Tipo=$Tipo;Escopo=$(if($Tipo -eq 'gphtml'){$Escopo}else{'Application/System/Setup'});Periodo=$(if($Tipo -eq 'evtx'){'Ultimas 24h'}else{'Estado atual'});Arquivos=$manifest}
+    [IO.File]::WriteAllText($manifestPath,($payload | ConvertTo-Json -Depth 5),(New-Object Text.UTF8Encoding($true)))
+    'Exportado em: '+$folder
+}
+
+function Request-SuporteExportar {
+    param([ValidateSet('gphtml','evtx')][string]$Tipo,[string]$Documentos,[ValidateSet('User','Computer')][string]$Escopo='User',[switch]$SemCores)
+    if($Tipo -eq 'gphtml' -and $Escopo -eq 'Computer' -and -not (Test-SuporteAdmin)){
+        Request-SuporteOperacao gpcomputerhtml $Documentos -SemCores:$SemCores;return
+    }
+    $titulo = if ($Tipo -eq 'evtx') { 'Exportar eventos (EVTX)' }
+        elseif ($Escopo -eq 'Computer') { 'Exportar politicas do computador (HTML)' }
+        else { 'Exportar politicas do usuario atual (HTML)' }
+    Write-SuporteTela -Titulo $titulo -SemCores:$SemCores
+    Write-SuporteLinha 'A exportacao pode conter dados internos. Escolha um destino com acesso adequado.' -Cor Yellow -SemCores:$SemCores
+    Write-Host ''
+    if ((Read-Host 'Salvar exportacao? [s/N]') -ine 's') { return }
+    $suggested=if ($Documentos) { Join-Path $Documentos 'SuporteTI\Resultados' } else { '' }
+    Write-SuporteLinha ('Destino padrao: '+$suggested) -SemCores
+    $path=Read-Host 'Outro destino completo ou Enter para usar o padrao (0 cancela)'
+    if ($path -eq '0') { return }; if (-not $path) { $path=$suggested }
+    $scopeValue=if($Escopo -eq 'Computer'){'Computer'}else{'User'}
+    try { Export-SuporteArquivo -Tipo $Tipo -PastaBase $path -Escopo $scopeValue | ForEach-Object { Write-Host $_ } }
+    catch { Write-SuporteLinha ('Exportacao falhou: '+$_.Exception.Message) -Cor Red -SemCores:$SemCores }
+}

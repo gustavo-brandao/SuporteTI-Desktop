@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Suporte TI Grafico</AssemblyName>
+    <Version>1.0.0-beta.1</Version>
+    <ApplicationIcon>Recursos/SuporteTI.ico</ApplicationIcon>
+    <Product>Suporte TI Gráfico</Product>
+    <Copyright>Gustavo Brandão Gimenez</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Testes/**/*.cs" />
+    <EmbeddedResource Include="Recursos/EntradaElevada.ps1" LogicalName="Elevacao.Entrada" />
+    <EmbeddedResource Include="Modulos/Administrativo.ps1" LogicalName="Elevacao.Administrativo" />
+    <EmbeddedResource Include="Modulos/Diagnosticos.ps1" LogicalName="Elevacao.Diagnosticos" />
+    <EmbeddedResource Include="Modulos/Intervencoes.ps1" LogicalName="Elevacao.Intervencoes" />
+    <EmbeddedResource Include="Modulos/FluxosSensiveis.ps1" LogicalName="Elevacao.FluxosSensiveis" />
+    <EmbeddedResource Include="../Modulos/Manutencao.ps1" LogicalName="Elevacao.Manutencao" />
+    <EmbeddedResource Include="../Modulos/Perfis.ps1" LogicalName="Elevacao.Perfis" />
+    <EmbeddedResource Include="../Modulos/Logon.ps1" LogicalName="Elevacao.Logon" />
+    <EmbeddedResource Include="../Recursos/SuporteTI.Windows.dll" LogicalName="Elevacao.Windows" />
+    <EmbeddedResource Include="../Modulos/Operacoes.ps1" LogicalName="Elevacao.Operacoes" />
+    <EmbeddedResource Include="../Modulos/Rede.ps1" LogicalName="Elevacao.Rede" />
+    <EmbeddedResource Include="../Modulos/Discos.ps1" LogicalName="Elevacao.Discos" />
+    <EmbeddedResource Include="../Ferramentas/smartmontools/integridade.json" LogicalName="Elevacao.Integridade" />
+    <EmbeddedResource Include="../Ferramentas/smartmontools/bin/smartctl.exe" LogicalName="Elevacao.Smartctl" />
+    <EmbeddedResource Include="../Ferramentas/smartmontools/bin/drivedb.h" LogicalName="Elevacao.Drivedb" />
+    <None Update="Modulos/*.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../Modulos/Discos.ps1" Link="Modulos/Coletores/Discos.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../Modulos/Operacoes.ps1;../Modulos/Manutencao.ps1;../Modulos/Perfis.ps1;../Modulos/Logon.ps1" Link="Modulos/Coletores/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="../Modulos/Rede.ps1;../Modulos/Falhas.ps1;../Modulos/CatalogoFalhas.json" Link="Modulos/Coletores/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="../Recursos/SuporteTI.Windows.dll" Link="Modulos/Coletores/SuporteTI.Windows.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="../Ferramentas/smartmontools/bin/smartctl.exe;../Ferramentas/smartmontools/bin/drivedb.h" Link="Modulos/Ferramentas/smartmontools/bin/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="../Ferramentas/smartmontools/integridade.json;../Ferramentas/smartmontools/smartmontools-7.5.tar.gz;../Ferramentas/smartmontools/doc/COPYING.txt" Link="Modulos/Ferramentas/smartmontools/%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+</Project>

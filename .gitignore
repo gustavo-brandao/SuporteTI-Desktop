@@ -1,0 +1,9 @@
+bin/
+!Ferramentas/smartmontools/bin/
+!Ferramentas/smartmontools/bin/**
+obj/
+outputs/
+work/
+.vs/
+Resultados/
+*.user
