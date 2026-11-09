@@ -39,6 +39,16 @@ function Find-Controle {
 function Test-Janela {
     param([string]$Executavel, [switch]$ExigirCim, [string]$Versao, [string]$ExecutavelAnterior, [switch]$EventoSimulado, [switch]$Uac)
     Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
+    Add-Type -AssemblyName System.Windows.Forms
+    Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public static class TesteClipboard {
+    [DllImport("user32.dll")] public static extern bool OpenClipboard(IntPtr janela);
+    [DllImport("user32.dll")] public static extern bool CloseClipboard();
+}
+'@
+    $clipboardAnterior = [Windows.Forms.Clipboard]::GetDataObject()
     $inicio = [Diagnostics.ProcessStartInfo]::new($Executavel)
     $inicio.UseShellExecute = $false
     $inicio.WorkingDirectory = Split-Path -Parent $Executavel
@@ -91,13 +101,77 @@ function Test-Janela {
             $seletor = Wait-Interface { Find-Controle $janela 'Escolher diagnóstico' } 'seletor de ferramenta'
             $opcoes = $seletor.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
             $opcoes.Expand()
-            $itemAlvo = Wait-Interface { Find-Controle $seletor $Rotulo } $Rotulo
+            $itemAlvo = Wait-Interface {
+                if ($opcoes.Current.ExpandCollapseState -eq [Windows.Automation.ExpandCollapseState]::Collapsed) {
+                    $opcoes.Expand()
+                }
+                Find-Controle $seletor $Rotulo
+            } $Rotulo
             $selecao = $itemAlvo.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
             $selecao.Select()
             $opcoes.Collapse()
             if (-not $selecao.Current.IsSelected) {
                 throw "A ferramenta selecionada diverge do destino esperado: $Rotulo."
             }
+        }
+        function Test-Copia {
+            $tabela = Find-Controle $janela 'Resultados da consulta'
+            $grid = $tabela.GetCurrentPattern([Windows.Automation.GridPattern]::Pattern)
+            $valor = [string]$grid.GetItem(0,2).GetCurrentPropertyValue([Windows.Automation.ValuePattern]::ValueProperty)
+            $copiar = $grid.GetItem(0,($grid.Current.ColumnCount - 1)).GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
+            $copiar.Invoke()
+            [void](Wait-Interface { Find-Controle $janela 'Copiado.' } 'feedback de cópia')
+            if ([Windows.Forms.Clipboard]::GetText() -cne $valor) { throw 'O botão não copiou o valor completo.' }
+            $completo = (Find-Controle $janela 'Copiar resultado').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
+            $completo.Invoke()
+            [void](Wait-Interface {
+                [Windows.Forms.Clipboard]::GetText().StartsWith("SUPORTE TI GRÁFICO - v$Versao" + [Environment]::NewLine)
+            } 'relatório completo no clipboard')
+            $textoCompleto = [Windows.Forms.Clipboard]::GetText()
+            if (-not $textoCompleto.StartsWith("SUPORTE TI GRÁFICO - v$Versao" + [Environment]::NewLine) -or
+                -not $textoCompleto.Contains($valor)) {
+                throw 'A cópia do resultado não contém o cabeçalho e os campos.'
+            }
+            $filtro = (Find-Controle $janela 'Filtrar resultados').GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern)
+            $filtro.SetValue('sem-correspondencia-clipboard-zz')
+            [Windows.Forms.Clipboard]::SetText('marcador de teste')
+            $completo.Invoke()
+            [void](Wait-Interface { [Windows.Forms.Clipboard]::GetText() -ceq $textoCompleto } 'cópia completa com filtro')
+            $filtro.SetValue('')
+            [Windows.Forms.Clipboard]::SetText('marcador de teste')
+            $grid.GetItem(0,0).SetFocus()
+            [Windows.Forms.SendKeys]::SendWait('^{HOME}+{DOWN}')
+            if ([Windows.Forms.Clipboard]::GetText() -cne 'marcador de teste') { throw 'Selecionar uma linha alterou o clipboard.' }
+            $esperadas = for ($r = 0; $r -lt 2; $r++) {
+                $celulas = for ($c = 0; $c -lt 3; $c++) {
+                    [string]$grid.GetItem($r,$c).GetCurrentPropertyValue([Windows.Automation.ValuePattern]::ValueProperty)
+                }
+                $celulas -join "`t"
+            }
+            [Windows.Forms.SendKeys]::SendWait('^c')
+            [void](Wait-Interface {
+                [Windows.Forms.Clipboard]::GetText() -ceq ($esperadas -join [Environment]::NewLine)
+            } 'Ctrl+C das linhas selecionadas')
+            $grid.GetItem(0,0).SetFocus()
+            [Windows.Forms.SendKeys]::SendWait('^{HOME}+{F10}')
+            $copiarValorMenu = Wait-Interface {
+                $criterio = [Windows.Automation.AndCondition]::new(
+                    [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, $processo.Id),
+                    [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::NameProperty, 'Copiar valor'))
+                [Windows.Automation.AutomationElement]::RootElement.FindFirst([Windows.Automation.TreeScope]::Descendants, $criterio)
+            } 'menu de contexto dos resultados'
+            $copiarValorMenu.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+            [void](Wait-Interface { [Windows.Forms.Clipboard]::GetText() -ceq $valor } 'valor copiado pelo contexto')
+            $copiar = $grid.GetItem(0,($grid.Current.ColumnCount - 1)).GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
+            if (-not [TesteClipboard]::OpenClipboard([IntPtr]::Zero)) { throw 'Não foi possível bloquear o clipboard para o teste.' }
+            try {
+                $copiar.Invoke()
+                [void](Wait-Interface { Find-Controle $janela 'Área de transferência ocupada. Tente copiar novamente.' } 'clipboard ocupado')
+            } finally { [void][TesteClipboard]::CloseClipboard() }
+            [Windows.Forms.Clipboard]::SetText('marcador de recuperação')
+            $copiar.Invoke()
+            [void](Wait-Interface { [Windows.Forms.Clipboard]::GetText() -ceq $valor } 'cópia após liberar o clipboard')
+            'Cópia por linha, Ctrl+C, contexto, seleção, resultado filtrado e recuperação de clipboard ocupado verificados.'
         }
         if ($Catalogo) {
             $itens = Get-Content -LiteralPath $Catalogo -Raw | ConvertFrom-Json
@@ -122,7 +196,11 @@ function Test-Janela {
         [void](Wait-Interface { Find-Controle $janela 'Sobre o Suporte TI' } 'tela Sobre')
 
         (Find-Controle $janela 'Visão geral').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
-        $consultar = Wait-Interface { Find-Controle $janela 'Consultar computador' } 'botao de consulta'
+        $consultar = Wait-Interface {
+            $botao = Find-Controle $janela 'Consultar computador'
+            if ($botao -and -not $botao.Current.IsOffscreen -and $botao.Current.IsEnabled) { $botao }
+        } 'botao de consulta visível'
+        $consultar.SetFocus()
         $consultar.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         $estados = 'Consulta concluída.', 'Consulta parcial. Confira os avisos na lista.'
         if (-not $ExigirCim) { $estados += 'Dados indisponíveis. Confira os avisos na lista.' }
@@ -130,12 +208,16 @@ function Test-Janela {
             foreach ($texto in $estados) {
                 if (Find-Controle $janela $texto) { return $texto }
             }
+            foreach ($texto in 'Limite de tempo atingido.', 'A consulta falhou.') {
+                if (Find-Controle $janela $texto) { throw "A consulta inicial não concluiu. $texto" }
+            }
         } 'resultado da consulta' 30
         "Abertura, navegacao e consulta pela janela verificadas. $estado"
         [void](Wait-Interface {
             $log = Find-Controle $janela 'Salvar log…'
             if ($log -and $log.Current.IsEnabled) { $log }
         } 'opcao de salvar log')
+        Test-Copia
         (Find-Controle $janela 'Rede').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         [void](Wait-Interface { Find-Controle $janela 'Consulte a configuração ou teste a conectividade.' } 'tela Rede')
         Abrir-Ferramenta 'Windows' 'Eventos e códigos' 'Falhas recentes'
@@ -234,6 +316,8 @@ function Test-Janela {
             }
         }
         $processo.Dispose()
+        if ($clipboardAnterior) { [Windows.Forms.Clipboard]::SetDataObject($clipboardAnterior, $true) }
+        else { [Windows.Forms.Clipboard]::Clear() }
     }
 }
 

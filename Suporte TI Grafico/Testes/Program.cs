@@ -238,6 +238,14 @@ try
     var conteudoLog = File.ReadAllText(caminhoLog);
     Igual(true, caminhoLog != outroLog && conteudoLog.Contains("42 Mbps") && conteudoLog.Contains("Tempo limite simulado."),
         "Logs únicos preservam resultado e aviso");
+    Igual(conteudoLog, LogConsulta.Formatar("Velocidade", velocidade, agora, agora),
+        "Cópia completa e log usam o mesmo resultado com avisos");
+    var valorExtenso = "Diagnóstico çã 漢字 😀\r\nsegunda linha " + new string('x', 12000);
+    var textoParcial = new Resposta(1, "discos", "parcial",
+        [new Secao("Discos", [new Campo("Modelo", valorExtenso)], "SMART indisponível")]);
+    var textoCopiavel = LogConsulta.Formatar("Discos", textoParcial, agora, agora);
+    Igual(true, textoCopiavel.Contains(valorExtenso) && textoCopiavel.Contains("SMART indisponível") &&
+        textoCopiavel.Contains("Resultado: parcial"), "Texto completo conserva Unicode, múltiplas linhas e valores longos");
 
     var pastaMapa = temporaria.CreateSubdirectory("mapa");
     var subpasta = pastaMapa.CreateSubdirectory("maior");

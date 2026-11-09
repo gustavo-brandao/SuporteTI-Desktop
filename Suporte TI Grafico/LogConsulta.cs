@@ -7,12 +7,20 @@ internal static class LogConsulta
 {
     public static string Salvar(string destino, string consulta, Resposta resposta, DateTimeOffset inicio, DateTimeOffset fim)
     {
-        var maquina = Environment.MachineName;
         var pasta = CriarPasta(destino, fim);
         var caminho = Path.Combine(pasta, "resultado.txt");
-        var versao = Assembly.GetExecutingAssembly().GetName().Version!.ToString(3);
         using var arquivo = new FileStream(caminho, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         using var texto = new StreamWriter(arquivo, new UTF8Encoding(true));
+        texto.Write(Formatar(consulta, resposta, inicio, fim));
+        return caminho;
+    }
+
+    public static string Formatar(string consulta, Resposta resposta, DateTimeOffset inicio, DateTimeOffset fim)
+    {
+        var maquina = Environment.MachineName;
+        var versao = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
+            .InformationalVersion.Split('+')[0];
+        using var texto = new StringWriter();
         texto.WriteLine($"SUPORTE TI GRÁFICO - v{versao}");
         texto.WriteLine($"Computador: {maquina}");
         texto.WriteLine($"Consulta: {consulta}");
@@ -28,7 +36,7 @@ internal static class LogConsulta
             if (!string.IsNullOrWhiteSpace(secao.Aviso))
                 texto.WriteLine($"Aviso: {secao.Aviso}");
         }
-        return caminho;
+        return texto.ToString();
     }
 
     public static string SalvarHtmlComputador(string destino, byte[] html, DateTimeOffset fim)

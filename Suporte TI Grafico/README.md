@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.4** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.5** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
 
@@ -20,6 +20,14 @@ A beta.3 normaliza o desgaste dos discos para número ou valor indisponível ant
 12. Use **Sobre** para conferir a versão e os créditos.
 
 A saúde dos discos apresenta barras quando existe uma medição numérica. Uma leitura limitada ou indisponível conserva seu aviso. O formulário principal utiliza as permissões da sessão e solicita o UAC por operação.
+
+## Copiar resultados
+
+A coluna **Copiar** copia o valor completo da linha. O clique em um código de erro continua abrindo sua explicação. Para copiar o código, use o botão da mesma linha.
+
+Selecione uma ou mais linhas e pressione **Ctrl+C**, ou use o menu de contexto com **Copiar valor**, **Copiar linhas selecionadas** e **Copiar resultado completo**. O botão **Copiar resultado** também copia o relatório completo com horários, estado e avisos, inclusive os dados ocultos pelo filtro.
+
+O rodapé mostra **Copiado.** após a gravação. Se a área de transferência estiver ocupada, a janela informa a falha e permite tentar novamente. Selecionar uma linha mantém o conteúdo anterior da área de transferência.
 
 ## Intervenções de suporte
 

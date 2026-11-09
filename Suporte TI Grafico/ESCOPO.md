@@ -1,5 +1,11 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.5
+
+A tabela oferece cópia por valor, seleção múltipla e Ctrl+C. O menu de contexto permite copiar valor, linhas ou resultado completo. O relatório completo usa a mesma formatação do TXT e conserva os dados ocultos pelo filtro, horários, estado e avisos. O clique em códigos permanece dedicado à pesquisa.
+
+A falha ao acessar a área de transferência é apresentada no rodapé e pode ser repetida. A seleção de linhas não executa cópia automática. O cabeçalho do relatório passa a identificar a versão de pré-lançamento.
+
 ## Prévia 1.0.0-beta.4
 
 O catálogo central preserva os 44 identificadores de ferramentas e define sete destinos por assunto. A janela usa abas para as áreas e um seletor de ferramentas. Saúde, volumes, mapa e CHKDSK ficam em Hardware → Discos. Impressão tem uma página própria. GPO, perfis e Autologon ficam em Contas e políticas.

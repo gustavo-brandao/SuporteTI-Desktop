@@ -1,5 +1,13 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.5
+
+- **79 testes automatizados aprovados**. Os novos cenários confirmam que o relatório copiado e o TXT salvo usam a mesma formatação e conservam Unicode, múltiplas linhas, texto extenso e avisos de resultado parcial.
+- No ZIP extraído, a cópia por linha, o Ctrl+C com duas linhas, o menu de contexto e a cópia completa com filtro aplicado passaram na área de transferência real. Selecionar linhas preservou o marcador anterior.
+- O teste bloqueou o clipboard a partir de outro processo, confirmou a mensagem recuperável, liberou o bloqueio e repetiu a cópia com sucesso. O conteúdo anterior foi restaurado no encerramento do verificador.
+- A navegação das 44 ferramentas passou. A pesquisa por clique em código de erro, a consulta de discos pelo UAC, as exportações, os gráficos, o monitor e o mapa também passaram.
+- O cabeçalho do TXT e da cópia completa identifica a versão de pré-lançamento por meio do atributo informativo da aplicação.
+
 ## Prévia 1.0.0-beta.4
 
 - **77 testes automatizados aprovados**. A nova cobertura confere os 44 IDs da beta.3 sem duplicação, os sete destinos, o agrupamento de discos e mapa e a busca com várias palavras e sem acentos.

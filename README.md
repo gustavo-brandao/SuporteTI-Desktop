@@ -1,14 +1,14 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.4**
+**Versão atual · 1.0.0-beta.5**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.4/SuporteTI-Grafico-1.0.0-beta.4-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.4/SuporteTI-Grafico-1.0.0-beta.4-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.4)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.5/SuporteTI-Grafico-1.0.0-beta.5-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.5/SuporteTI-Grafico-1.0.0-beta.5-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.5)
 
-![Hardware e ferramentas de discos na beta.4](docs/imagens/hardware-discos.png)
+![Resultados com a coluna Copiar e o botão Copiar resultado na beta.5](docs/imagens/resultados-copia.png)
 
 ## Começar
 
@@ -28,6 +28,8 @@ A beta está sem assinatura Authenticode. Os testes de laboratório com interven
 - **Relatórios** — exportação TXT, HTML e EVTX.
 
 Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operações por assunto e o indicador **(UAC)** identifica as ferramentas administrativas.
+
+Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou **Copiar resultado** para o relatório completo. O menu de contexto oferece as mesmas ações e o rodapé confirma a cópia. O clique nos códigos de erro abre sua explicação.
 
 ![Tela Impressão na beta.4](docs/imagens/impressao.png)
 

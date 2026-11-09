@@ -287,6 +287,7 @@ internal sealed partial class JanelaPrincipal : Form
             if (telaMapa is not null) telaMapa.Visible = id == "mapaocupacao";
             consultar.Visible = cancelar.Visible = filtro.Visible = !especial;
             salvar.Visible = estado.Visible = !especial;
+            copiarResultado.Visible = feedbackCopia.Visible = !especial;
             if (id == "monitor") telaMonitor?.BringToFront();
             else if (id == "mapaocupacao") telaMapa?.BringToFront();
             else grade.BringToFront();
@@ -360,19 +361,24 @@ internal sealed partial class JanelaPrincipal : Form
         {
             if (evento.RowIndex >= 0 && evento.ColumnIndex == 2)
                 AbrirCodigo(grade.Rows[evento.RowIndex]);
+            if (evento.RowIndex >= 0 && evento.ColumnIndex == 4)
+                CopiarValor(grade.Rows[evento.RowIndex]);
         };
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Seção", FillWeight = 25, MinimumWidth = 70 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Campo", FillWeight = 35, MinimumWidth = 85 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Valor", FillWeight = 55, MinimumWidth = 110 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Gráfico", FillWeight = 25, MinimumWidth = 100, Visible = false });
         grade.CellPainting += DesenharIndicadorDisco;
+        ConfigurarCopia();
         conteudoResultados.Controls.Add(grade);
         pagina.Controls.Add(conteudoResultados, 0, 2);
         estado.Margin = new Padding(3, 8, 3, 0);
         AplicarCorBotao(salvar, false);
         var rodape = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
         rodape.Controls.Add(salvar);
+        rodape.Controls.Add(copiarResultado);
         rodape.Controls.Add(estado);
+        rodape.Controls.Add(feedbackCopia);
         pagina.Controls.Add(rodape, 0, 3);
         return pagina;
     }
@@ -594,6 +600,8 @@ internal sealed partial class JanelaPrincipal : Form
         grade.Rows.Clear();
         grade.Columns[3].Visible = resultado?.Operacao is "discos" or "diskhealth";
         salvar.Enabled = resultado is not null;
+        copiarResultado.Enabled = resultado is not null;
+        feedbackCopia.Text = "";
         if (resultado is null)
             return;
         var termo = filtro.Text.Trim();
@@ -703,6 +711,19 @@ internal sealed partial class JanelaPrincipal : Form
     private sealed class GradeDiagnostico : DataGridView
     {
         private Func<bool>? abrirCodigo;
+        private Action? copiar;
+
+        public void ConfigurarCopia(Action acao) => copiar = acao;
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.C) && copiar is not null)
+            {
+                copiar();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         public void ConfigurarAtalho(Func<bool> acao) => abrirCodigo = acao;
 
