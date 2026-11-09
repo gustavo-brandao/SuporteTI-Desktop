@@ -60,6 +60,8 @@ O smartmontools é distribuído em `Modulos/Ferramentas/smartmontools` com seu c
 
 ## Construir e testar
 
+O [planejamento de evolução](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/REVISAO-UX-2026-11-09.md) prevê uma etapa visual após a beta.8, com temas Escuro, Claro e Sistema, e uma avaliação posterior de PowerShell 7 incluído na distribuição. A beta.4 utiliza Windows PowerShell 5.1 para suas rotinas.
+
 Em Windows x64 com o SDK .NET 10 disponível, execute a partir desta pasta.
 
 ```powershell

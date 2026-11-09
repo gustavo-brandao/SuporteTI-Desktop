@@ -129,8 +129,44 @@ No código de erro, o clique no código continua abrindo a explicação. O botã
 | 4 · beta.6 | Aplicar fonte, cores, espaçamento, abas e resumo de discos | Escalas 100/125/150/200%, alto contraste, teclado, textos longos e redimensionamento sem controles sobrepostos |
 | 5 · beta.7 | Reduzir opções repetidas com formulários de escopo e diagnóstico contextual | GPO, IPv4, eventos e impressão com resultados equivalentes e parâmetros explícitos; falhas parciais legíveis |
 | 6 · beta.8 | Otimizar e homologar o catálogo completo | Medições antes/depois, regressão completa, laboratório de UAC, rede, impressão, perfil e reinício |
+| 7 · beta.9 | Modernização visual inspirada no Windows 11 e na referência enviada, com temas Escuro, Claro e Sistema | Escuro na primeira abertura; preferência persistida; troca de tema durante a sessão; alto contraste; DPI; diálogos e gráficos legíveis em Windows 10 e 11 |
+| 8 · beta.10 | Protótipo e decisão de distribuição do PowerShell 7 dentro do pacote portátil | Windows 10 e 11 sem PS7 instalado, funcionamento offline, paridade das 44 ferramentas, UAC, módulos Windows, integridade dos arquivos e medição de tamanho, memória e abertura |
 
 O critério de término de cada etapa é o aceite registrado e um ZIP próprio. A etapa seguinte começa após resolver regressões da anterior. O histórico de versões e os IDs existentes orientam a migração.
+
+## Etapa visual após a beta.8
+
+A imagem enviada pelo usuário apresenta fundo cinza escuro, cartões com bordas discretas e cantos arredondados, barras finas, ícones pequenos, títulos claros e informação compacta. Adotar essa hierarquia como referência e combinar superfícies neutras com o azul de destaque da identidade do aplicativo. O leiaute deve acomodar as tabelas e os diagnósticos extensos da ferramenta.
+
+Na beta.9, acrescentar **Configurações → Aparência**, com **Escuro**, **Claro** e **Sistema**. A primeira abertura usa Escuro. Sistema acompanha a preferência do Windows e reage a mudanças durante a sessão. Salvar a escolha em local gravável da sessão e testar a abertura por pendrive e pasta somente leitura. O alto contraste do Windows tem prioridade sobre as paletas personalizadas.
+
+Aplicar o tema também a menus, abas, seletores, tabelas, barras, estados de foco, seleção, gráficos e janelas de intervenção. Testar explicitamente os seletores que ainda mostram superfícies claras dentro do tema escuro. Usar ícones coerentes, Segoe UI, separação entre resumo e detalhe e estados indicados por texto e cor.
+
+Prototipar primeiro no WinForms atual. Se a fidelidade visual e a acessibilidade exigirem outra camada de interface, comparar um protótipo WinUI 3 antes de decidir a migração. Avaliar Mica e outros efeitos conforme disponibilidade, com superfície sólida em ambientes sem suporte. Preservar o formato portátil como critério de decisão.
+
+Referências oficiais para os temas e para os materiais do Windows. [Temas Win32](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/apply-windows-themes) · [Materiais e comportamento em Windows 10](https://learn.microsoft.com/en-us/windows/apps/get-started/best-practices)
+
+## PowerShell 7 incluído na distribuição
+
+A revisão do código confirma que a beta.4 chama o Windows PowerShell 5.1 por caminho fixo, tanto nas consultas quanto na elevação. O pacote .NET do aplicativo já inclui seu runtime, mas esse empacotamento não incorpora automaticamente o PowerShell 7.
+
+Há três caminhos para avaliar na beta.10.
+
+| Alternativa | Funcionamento sem PS7 instalado | Consequência para este projeto |
+| --- | --- | --- |
+| PowerShell 7 portátil incluído | Distribuir os arquivos oficiais e executar o pwsh.exe por caminho interno | Aproveita a separação atual de processos; acrescenta runtime, módulos, licenças e arquivos ao pacote |
+| Motor hospedado com Microsoft.PowerShell.SDK | Publicar o SDK e suas dependências com o aplicativo .NET self-contained | Permite runspaces dentro do processo; exige adaptar cancelamento, saída, módulos e isolamento, além de manter um processo separado para elevação |
+| APIs .NET e Windows para operações específicas | Implementar diretamente em C# as operações escolhidas | Pode reduzir uso de scripts aos poucos; cada substituição precisa preservar parâmetros, permissões, resultados e comportamento em falha |
+
+O SDK fornece a implementação do PowerShell, mas não garante que todos os módulos e recursos presentes no executável pwsh estejam disponíveis da mesma forma. Por exemplo, a documentação registra dependência de pwsh para Start-Job. Usar a versão de SDK e de .NET compatíveis entre si. [Hospedagem e pacotes oficiais](https://learn.microsoft.com/en-us/powershell/scripting/dev-cross-plat/choosing-the-right-nuget-package)
+
+O ZIP oficial permite executar pwsh a partir de uma pasta. Para a arquitetura atual, proponho começar a prova de conceito por esse processo incluído e comparar o SDK com as mesmas consultas. [Distribuição ZIP](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
+
+Auditar Storage, NetTCPIP, PrintManagement, CIM, diálogos WinForms, a DLL nativa compartilhada, a criação da cópia com ACL e a limpeza do processo elevado. A importação de módulos legados pode criar uma sessão em Windows PowerShell 5.1 e devolver objetos desserializados, o que precisa ser registrado na matriz. Incluir PS7 não elimina automaticamente essa dependência. [Compatibilidade com Windows PowerShell](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_windows_powershell_compatibility)
+
+O aceite exige uma VM Windows 10 sem PS7 instalado e sem internet, além de Windows 11. Fixar edição e build compatíveis com o runtime escolhido e sua política de suporte. Medir custo de distribuição, atualizar o manifesto de integridade e a cópia protegida para o motor incluído, e repetir os testes de UAC com credenciais distintas. O protótipo deve indicar explicitamente qual motor executou cada ferramenta e quais rotinas dependeram do 5.1.
+
+A adoção do novo motor depende dessa paridade. A investigação e os testes fazem parte da beta.10, e o resultado define se a prévia poderá oferecer o motor incluído para uso geral.
 
 ## Refatoração e desempenho
 

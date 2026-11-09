@@ -37,6 +37,8 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 ## Matriz de testes e rotina de atualização
 
+O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A próxima atualização é a beta.5, com cópia de resultados. Após a beta.8, estão previstas a beta.9, com visual inspirado no Windows 11 e temas Escuro, Claro e Sistema, e a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. O tema padrão planejado é Escuro.
+
 | Camada | Cobertura e evidência |
 | --- | --- |
 | **Testes automatizados no CI** | Compilar o WinForms e testar as rotinas reaproveitadas sob Windows PowerShell 5.1. Cobrir contratos válidos e inválidos, encaminhamento de cada ação entregue, permissões, limites, concorrência, cancelamento e erros de dependência. Usar simuladores para intervenções. Compilar e testar a revisão que será empacotada. Publicar o ZIP e o relatório do CI vinculados ao commit. |
