@@ -18,7 +18,7 @@ internal sealed partial class JanelaPrincipal : Form
     private readonly Button consultar = new() { Text = "&Consultar computador", AutoSize = true };
     private readonly Button cancelar = new() { Text = "Ca&ncelar", AutoSize = true, Enabled = false };
     private readonly Button salvar = new() { Text = "Salvar &log…", AutoSize = true, Enabled = false };
-    private readonly ComboBox diagnosticos = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 210, AccessibleName = "Escolher diagnóstico" };
+    private readonly ComboBox diagnosticos = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 260, DropDownWidth = 440, AccessibleName = "Escolher diagnóstico" };
     private readonly TextBox filtro = new() { PlaceholderText = "Filtrar resultados…", Width = 175, AccessibleName = "Filtrar resultados" };
     private readonly TextBox entrada = new() { Width = 240, MaxLength = 512 };
     private readonly ComboBox volumesAdmin = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 75, AccessibleName = "Volume local para CHKDSK" };
@@ -30,10 +30,9 @@ internal sealed partial class JanelaPrincipal : Form
     private string nomeResultado = "";
     private (Resposta Dados, string Nome, DateTimeOffset Inicio, DateTimeOffset Fim)? ultimoResultado;
     private string grupo = "";
-    private sealed record Diagnostico(string Id, string Nome)
-    {
-        public override string ToString() => Nome;
-    }
+    private readonly TabControl abas = new() { Dock = DockStyle.Fill, AccessibleName = "Áreas de ferramentas" };
+    private readonly Panel conteudoResultados = new() { Dock = DockStyle.Fill };
+    private Control? telaMonitor, telaMapa;
     private readonly Label estado = new() { AutoSize = true, Text = "Pronto para consultar." };
     private readonly GradeDiagnostico grade = new()
     {
@@ -77,58 +76,145 @@ internal sealed partial class JanelaPrincipal : Form
             Padding = new Padding(16, 20, 16, 16),
             BackColor = AltoContraste ? SystemColors.Control : Navegacao
         };
-        var computador = new Button { Text = "C&omputador", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var monitor = new Button { Text = "&Monitor ao vivo", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var mapa = new Button { Text = "Mapa de &disco", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var rede = new Button { Text = "&Rede", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var triagem = new Button { Text = "&Falhas do Windows", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var atendimento = new Button { Text = "&Atendimento", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var relatorios = new Button { Text = "Re&latórios", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var administrativo = new Button { Text = "Ad&ministrativo", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
-        var sobre = new Button { Text = "&Sobre", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
         menu.Controls.Add(CriarRotulo("Suporte TI", 16, true));
         menu.Controls.Add(CriarRotulo("EDIÇÃO GRÁFICA", 9, false));
-        if (!AltoContraste)
-            menu.Controls.Add(new Panel { Width = 34, Height = 3, BackColor = Color.FromArgb(107, 166, 255), Margin = new Padding(3, 0, 3, 12) });
-        menu.Controls.Add(computador);
-        menu.Controls.Add(monitor);
-        menu.Controls.Add(mapa);
-        menu.Controls.Add(rede);
-        menu.Controls.Add(triagem);
-        menu.Controls.Add(atendimento);
-        menu.Controls.Add(relatorios);
-        menu.Controls.Add(administrativo);
+        var busca = new TextBox { Width = 168, PlaceholderText = "Buscar ferramenta…", AccessibleName = "Buscar ferramenta" };
+        var encontrados = new ListBox { Width = 168, Height = 140, HorizontalScrollbar = true, Visible = false, AccessibleName = "Ferramentas encontradas" };
+        var avisoBusca = CriarRotulo("Nenhuma ferramenta encontrada.", 9, false);
+        avisoBusca.MaximumSize = new Size(168, 0);
+        avisoBusca.Visible = false;
+        menu.Controls.Add(busca);
+        menu.Controls.Add(encontrados);
+        menu.Controls.Add(avisoBusca);
+        var botoes = new Dictionary<string, Button>();
+        foreach (var nome in CatalogoFerramentas.Grupos)
+        {
+            var botao = new Button { Text = nome, Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
+            botoes.Add(nome, botao);
+            menu.Controls.Add(botao);
+        }
+        var sobre = new Button { Text = "&Sobre", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
         menu.Controls.Add(sobre);
+        menu.Controls.Add(CriarRotulo(versao, 9, false));
         layout.Controls.Add(menu, 0, 0);
 
         var painel = new Panel { Dock = DockStyle.Fill };
         var telaComputador = CriarTelaComputador();
-        var telaMonitor = CriarTelaMonitor();
-        var telaMapa = CriarTelaMapa();
+        telaMonitor = CriarTelaMonitor();
+        telaMapa = CriarTelaMapa();
+        conteudoResultados.Controls.Add(telaMonitor);
+        conteudoResultados.Controls.Add(telaMapa);
         var telaSobre = CriarTelaSobre(versao);
-        var paginas = new (Button Botao, Control Tela, string? Grupo)[] {
-            (computador, telaComputador, "Computador"), (monitor, telaMonitor, null), (mapa, telaMapa, null),
-            (rede, telaComputador, "Rede"), (triagem, telaComputador, "Falhas do Windows"),
-            (atendimento, telaComputador, "Atendimento"), (relatorios, telaComputador, "Relatórios"),
-            (administrativo, telaComputador, "Administrativo"), (sobre, telaSobre, null)
-        };
-        foreach (var tela in paginas.Select(pagina => pagina.Tela).Distinct())
-            painel.Controls.Add(tela);
-        foreach (var pagina in paginas)
-            pagina.Botao.Click += (_, _) => MostrarPagina(pagina);
-        abrirTriagem = () => MostrarPagina((triagem, telaComputador, "Falhas do Windows"));
-        void MostrarPagina((Button Botao, Control Tela, string? Grupo) ativa)
+        painel.Controls.Add(abas);
+        painel.Controls.Add(telaSobre);
+        abas.Selecting += (_, evento) =>
         {
-            if ((administrativaEmAndamento || preparandoIntervencao || intervencaoEmAndamento) && ativa.Grupo != grupo)
+            if (NavegacaoBloqueada)
+                evento.Cancel = true;
+        };
+        var organizandoAbas = false;
+        foreach (var (nome, botao) in botoes)
+            botao.Click += (_, _) => MostrarPagina(nome);
+        abas.SelectedIndexChanged += (_, _) =>
+        {
+            if (organizandoAbas || abas.SelectedTab is not { } aba)
                 return;
-            if (ativa.Grupo is not null)
-                MostrarGrupo(ativa.Grupo);
-            foreach (Control tela in painel.Controls)
-                tela.Visible = tela == ativa.Tela;
-            foreach (var pagina in paginas)
-                MarcarPagina(pagina.Botao, pagina.Botao == ativa.Botao);
+            aba.Controls.Add(telaComputador);
+            MostrarArea(aba.Text);
+        };
+        sobre.Click += (_, _) =>
+        {
+            if (NavegacaoBloqueada)
+                return;
+            ativa?.Cancel();
+            abas.Visible = false;
+            telaSobre.Visible = true;
+            telaSobre.BringToFront();
+            MarcarPagina(sobre, true);
+            foreach (var botao in botoes.Values)
+                MarcarPagina(botao, false);
+        };
+        void MostrarPagina(string nome)
+        {
+            if (NavegacaoBloqueada)
+                return;
+            telaSobre.Visible = false;
+            abas.Visible = true;
+            MarcarPagina(sobre, false);
+            foreach (var (chave, botao) in botoes)
+                MarcarPagina(botao, chave == nome);
+            if (grupo == nome)
+                return;
+            ativa?.Cancel();
+            grupo = nome;
+            organizandoAbas = true;
+            telaComputador.Parent?.Controls.Remove(telaComputador);
+            foreach (var anterior in abas.TabPages.Cast<TabPage>().ToArray())
+            {
+                abas.TabPages.Remove(anterior);
+                anterior.Dispose();
+            }
+            foreach (var area in CatalogoFerramentas.Itens.Where(item => item.Grupo == nome).Select(item => item.Area).Distinct())
+                abas.TabPages.Add(new TabPage(area) { BackColor = AltoContraste ? SystemColors.Window : Fundo });
+            abas.SelectedIndex = 0;
+            organizandoAbas = false;
+            if (abas.SelectedTab is { } aba)
+            {
+                aba.Controls.Add(telaComputador);
+                MostrarArea(aba.Text);
+            }
         }
-        MostrarPagina(paginas[0]);
+        abrirFerramenta = id =>
+        {
+            if (NavegacaoBloqueada)
+                return;
+            var ferramenta = CatalogoFerramentas.Itens.Single(item => item.Id == id);
+            MostrarPagina(ferramenta.Grupo);
+            abas.SelectedTab = abas.TabPages.Cast<TabPage>().Single(aba => aba.Text == ferramenta.Area);
+            diagnosticos.SelectedItem = diagnosticos.Items.Cast<Ferramenta>().Single(item => item.Id == id);
+        };
+        void AbrirBusca()
+        {
+            if (encontrados.SelectedItem is not Ferramenta ferramenta || NavegacaoBloqueada)
+                return;
+            abrirFerramenta(ferramenta.Id);
+            busca.Clear();
+            diagnosticos.Focus();
+        }
+        busca.TextChanged += (_, _) =>
+        {
+            encontrados.Items.Clear();
+            var procurando = !string.IsNullOrWhiteSpace(busca.Text);
+            if (procurando)
+                encontrados.Items.AddRange(CatalogoFerramentas.Buscar(busca.Text));
+            encontrados.Visible = encontrados.Items.Count > 0;
+            avisoBusca.Visible = procurando && encontrados.Items.Count == 0;
+        };
+        encontrados.DoubleClick += (_, _) => AbrirBusca();
+        encontrados.KeyDown += (_, evento) =>
+        {
+            if (evento.KeyCode == Keys.Enter)
+            {
+                evento.SuppressKeyPress = true;
+                AbrirBusca();
+            }
+        };
+        busca.KeyDown += (_, evento) =>
+        {
+            if (evento.KeyCode == Keys.Down && encontrados.Items.Count > 0)
+            {
+                encontrados.SelectedIndex = 0;
+                encontrados.Focus();
+                evento.SuppressKeyPress = true;
+            }
+            if (evento.KeyCode == Keys.Enter && encontrados.Items.Count == 1)
+            {
+                encontrados.SelectedIndex = 0;
+                AbrirBusca();
+                evento.SuppressKeyPress = true;
+            }
+        };
+        MostrarPagina("Visão geral");
         layout.Controls.Add(painel, 1, 0);
 
         using var identidade = WindowsIdentity.GetCurrent();
@@ -194,7 +280,16 @@ internal sealed partial class JanelaPrincipal : Form
             resultado = null;
             filtro.Clear();
             AtualizarGrade();
-            var id = (diagnosticos.SelectedItem as Diagnostico)?.Id;
+            var id = (diagnosticos.SelectedItem as Ferramenta)?.Id;
+            var especial = id is "monitor" or "mapaocupacao";
+            grade.Visible = !especial;
+            if (telaMonitor is not null) telaMonitor.Visible = id == "monitor";
+            if (telaMapa is not null) telaMapa.Visible = id == "mapaocupacao";
+            consultar.Visible = cancelar.Visible = filtro.Visible = !especial;
+            salvar.Visible = estado.Visible = !especial;
+            if (id == "monitor") telaMonitor?.BringToFront();
+            else if (id == "mapaocupacao") telaMapa?.BringToFront();
+            else grade.BringToFront();
             consultar.Text = id switch
             {
                 "sistema" => "&Consultar computador",
@@ -227,6 +322,7 @@ internal sealed partial class JanelaPrincipal : Form
                 "dismscan" => "Executa uma verificação da imagem do Windows com ScanHealth.",
                 "gpcomputerhtml" => "Gera um HTML das políticas do computador na pasta que você escolher.",
                 "filaimpressao" => "Para agir, escolha Reiniciar spooler ou Limpar fila de impressão na lista acima.",
+                "diskhealth" => "Lê os indicadores dos discos com acesso administrativo. O Windows solicitará UAC ao consultar.",
                 _ when id is not null && Impactos.TryGetValue(id, out var impacto) => impacto,
                 _ => ""
             };
@@ -270,7 +366,8 @@ internal sealed partial class JanelaPrincipal : Form
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Valor", FillWeight = 55, MinimumWidth = 110 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Gráfico", FillWeight = 25, MinimumWidth = 100, Visible = false });
         grade.CellPainting += DesenharIndicadorDisco;
-        pagina.Controls.Add(grade, 0, 2);
+        conteudoResultados.Controls.Add(grade);
+        pagina.Controls.Add(conteudoResultados, 0, 2);
         estado.Margin = new Padding(3, 8, 3, 0);
         AplicarCorBotao(salvar, false);
         var rodape = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
@@ -280,51 +377,26 @@ internal sealed partial class JanelaPrincipal : Form
         return pagina;
     }
 
-    private void MostrarGrupo(string nome)
+    private void MostrarArea(string area)
     {
-        if (grupo == nome)
-            return;
         ativa?.Cancel();
-        grupo = nome;
-        titulo.Text = nome == "Computador" ? "Informações do computador" : nome;
-        descricao.Text = nome switch
+        titulo.Text = grupo == "Visão geral" ? "Informações do computador" : grupo + " · " + area;
+        descricao.Text = grupo switch
         {
+            "Hardware" => "Consulte os componentes e os discos. Ações com UAC pedem autorização ao executar.",
             "Rede" => "Consulte a configuração ou teste a conectividade.",
-            "Falhas do Windows" => "Investigue eventos recentes do Windows ou consulte um código de erro.",
-            "Atendimento" => "Diagnostique atualização, impressão e políticas do usuário.",
+            "Windows" => "Investigue eventos, atualizações e a integridade do Windows.",
+            "Impressão" => "Diagnostique as filas ou revise uma ação de impressão.",
+            "Contas e políticas" => "Consulte políticas, revise perfis ou configure o login automático.",
             "Relatórios" => "Revise resultados e exporte registros do Windows.",
-            "Administrativo" => "O Windows pode pedir UAC para a consulta escolhida.",
-            _ => "Escolha um diagnóstico local e filtre os resultados."
+            _ => "Consulte o computador e use a busca para encontrar uma ferramenta."
         };
         diagnosticos.Items.Clear();
-        Diagnostico[] opcoes = nome switch
-        {
-            "Rede" => [new("rede", "Adaptadores e endereços"), new("dominio", "Domínio e grupo de trabalho"),
-                new("ping", "Ping ICMP"), new("velocidade", "Velocidade da internet"),
-                new("netdhcp", "Ativar IPv4 automático (DHCP)"), new("netstatic", "Configurar IPv4 fixo")],
-            "Falhas do Windows" => [new("falhas", "Falhas recentes"), new("codigofalha", "Consultar código de erro")],
-            "Atendimento" => [new("update", "Windows Update"), new("filaimpressao", "Diagnóstico de impressão"),
-                new("spooler", "Reiniciar spooler"), new("spoolerclear", "Limpar fila de impressão"),
-                new("cache", "Recriar cache do Windows Update"),
-                new("gpusuario", "Políticas do usuário (GPO)"), new("gphtml", "Exportar GPO do usuário em HTML"),
-                new("gpupdateuser", "Atualizar GPO do usuário"), new("gpupdatecomputer", "Atualizar GPO do computador")],
-            "Relatórios" => [new("ultimo", "Último resultado"), new("eventos", "Eventos recentes"), new("evtx", "Exportar eventos em EVTX")],
-            "Administrativo" => [new("diskhealth", "Saúde dos discos"), new("gpcomputador", "Políticas do computador (GPO)"),
-                new("gpcomputerhtml", "Exportar GPO do computador"), new("sfcverify", "SFC · verificar arquivos"),
-                new("dismcheck", "DISM · CheckHealth"), new("dismscan", "DISM · ScanHealth"), new("chkdskread", "CHKDSK · consultar volume"),
-                new("sfcrepair", "SFC · reparar arquivos"), new("dismrestore", "DISM · reparar imagem"),
-                new("chkdskfull", "CHKDSK · reparo completo"), new("perfillocal", "Revisar perfis locais duplicados"),
-                new("autologonenable", "Configurar login automático"), new("autologondisable", "Desativar login automático")],
-            _ => [new("sistema", "Resumo do sistema"), new("desempenho", "CPU, memória e processos"),
-                new("discos", "Volumes e saúde dos discos"), new("bateria", "Saúde da bateria"),
-                new("dispositivos", "Problemas de dispositivos"), new("servicos", "Serviços locais"),
-                new("programas", "Programas instalados"), new("autologon", "Estado do login automático"),
-                new("chromecache", "Limpar cache do Chrome")]
-        };
-        diagnosticos.Items.AddRange(opcoes);
+        diagnosticos.Items.AddRange(CatalogoFerramentas.Itens.Where(item => item.Grupo == grupo && item.Area == area).ToArray());
         diagnosticos.SelectedIndex = 0;
     }
 
+    private bool NavegacaoBloqueada => administrativaEmAndamento || preparandoIntervencao || intervencaoEmAndamento;
     private static void EstilizarGrade(DataGridView grade)
     {
         grade.BackgroundColor = AltoContraste ? SystemColors.Window : Superficie;
@@ -397,7 +469,9 @@ internal sealed partial class JanelaPrincipal : Form
 
     private async Task ExecutarConsultaAsync(string familia = "")
     {
-        if (ativa is not null || preparandoIntervencao || diagnosticos.SelectedItem is not Diagnostico escolhido)
+        if (ativa is not null || preparandoIntervencao || diagnosticos.SelectedItem is not Ferramenta escolhido)
+            return;
+        if (escolhido.Id is "monitor" or "mapaocupacao")
             return;
         if (escolhido.Id == "ultimo")
         {
@@ -612,7 +686,7 @@ internal sealed partial class JanelaPrincipal : Form
         return dialogo.ShowDialog(this) == DialogResult.OK ? dialogo.SelectedPath : null;
     }
 
-    private Action? abrirTriagem;
+    private Action<string>? abrirFerramenta;
 
     private bool AbrirCodigo(DataGridViewRow? linha)
     {
@@ -620,8 +694,7 @@ internal sealed partial class JanelaPrincipal : Form
             return false;
         if (codigo.Familia is not ("Win32" or "HRESULT" or "Excecoes" or "Paradas"))
             return false;
-        abrirTriagem?.Invoke();
-        diagnosticos.SelectedIndex = 1;
+        abrirFerramenta?.Invoke("codigofalha");
         entrada.Text = codigo.Valor;
         _ = ExecutarConsultaAsync(codigo.Familia);
         return true;

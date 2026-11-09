@@ -22,7 +22,7 @@ internal sealed partial class JanelaPrincipal
     private bool preparandoIntervencao;
     private bool intervencaoEmAndamento;
 
-    private async Task<(bool Confirmada, ParametrosIntervencao? Dados)> PrepararIntervencaoAsync(Diagnostico escolhido, string volume)
+    private async Task<(bool Confirmada, ParametrosIntervencao? Dados)> PrepararIntervencaoAsync(Ferramenta escolhido, string volume)
     {
         preparandoIntervencao = true;
         diagnosticos.Enabled = consultar.Enabled = false;
@@ -69,7 +69,7 @@ internal sealed partial class JanelaPrincipal
         }
     }
 
-    private (ParametrosIntervencao? Dados, string? Alvo) EscolherAlvoIntervencao(Diagnostico escolhido, Campo[] opcoes)
+    private (ParametrosIntervencao? Dados, string? Alvo) EscolherAlvoIntervencao(Ferramenta escolhido, Campo[] opcoes)
     {
         var estatico = escolhido.Id == "netstatic";
         var rotuloAlvo = escolhido.Id == "spoolerclear" ? "Fila local" : "Adaptador físico";

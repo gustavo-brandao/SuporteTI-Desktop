@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../CatalogoFerramentas.cs" Link="CatalogoFerramentas.cs" />
     <Compile Include="../ConsultaPowerShell.cs" Link="ConsultaPowerShell.cs" />
     <Compile Include="../ElevacaoConsulta.cs" Link="ElevacaoConsulta.cs" />
     <EmbeddedResource Include="../Modulos/Administrativo.ps1" LogicalName="Elevacao.Administrativo" />

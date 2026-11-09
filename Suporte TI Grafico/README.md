@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.3** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.4** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
 
@@ -8,30 +8,32 @@ A beta.3 normaliza o desgaste dos discos para número ou valor indisponível ant
 
 1. Extraia todo o ZIP em uma pasta local ou no pendrive.
 2. Abra **Suporte TI Grafico.exe**, identificado pelo ícone de um monitor com um prompt de terminal.
-3. Em **Computador**, escolha um diagnóstico e selecione **Consultar**. A lista cobre resumo do sistema, CPU e memória com os cinco processos de maior uso, volumes e saúde dos discos, bateria, problemas de dispositivos, serviços, programas registrados e estado do login automático. Use o filtro para localizar resultados na tabela. O prazo é de 25 segundos para consultas gerais e 45 segundos para discos.
-4. Em **Monitor ao vivo**, escolha **Iniciar monitor** para ver CPU e memória com valores e gráficos separados. A leitura ocorre a cada segundo e guarda os últimos 60 pontos. Pausar conserva a visualização. Iniciar novamente começa um novo histórico. Trocar de tela pausa o monitor.
-5. Em **Mapa de disco**, escolha um volume local e selecione **Analisar volume**. A barra superior mostra a ocupação do volume. Os blocos e a lista mostram os tamanhos lógicos lidos na pasta, com seleção sincronizada. Use duplo clique ou Enter na lista para abrir uma pasta. Use o caminho clicável, **Pasta anterior** ou Backspace na lista para voltar um nível. O mapa agrupa os itens além dos 30 maiores. A lista mostra até 250 itens por pasta.
-6. Em **Rede**, consulte adaptadores com IP ativo e o ingresso em domínio. O ping faz quatro tentativas ICMP para um host, IP ou URL informado. O teste de velocidade estima download e upload com a Cloudflare e só envia tráfego quando acionado.
-7. Em **Falhas do Windows**, consulte falhas das últimas 24 horas ou pesquise códigos em decimal e hexadecimal. Clique em um código destacado para preencher o campo e ver automaticamente o significado e a referência disponível. No teclado, selecione a linha e pressione Enter. Na pesquisa manual, digite apenas o código. Quando o mesmo valor aparecer em mais de uma família, a tabela mostra as interpretações encontradas.
-8. Em **Atendimento**, consulte serviços, políticas, reinício pendente, espaço e eventos do Windows Update. Códigos HRESULT identificados nos eventos de atualização também abrem a pesquisa. A área inclui diagnóstico de impressão e consulta e exportação em HTML das políticas do usuário da sessão.
-9. Em **Relatórios**, reveja o último resultado da sessão ou consulte até 30 avisos e erros de cada canal System e Application nas últimas 24 horas. A exportação EVTX inclui Application, System e Setup no mesmo período e registra em um manifesto SHA-256 os arquivos gerados com sucesso. Falhas por canal aparecem no resultado.
-10. Use **Salvar log…** para exportar o resultado completo com horários e avisos, inclusive se houver um filtro na tela. A pasta escolhida recebe uma subpasta por máquina e execução com `resultado.txt` em UTF-8. O diálogo abre em `Documentos\SuporteTI\Resultados` quando disponível, ou em Documentos.
-11. Em **Administrativo**, escolha saúde dos discos, GPO do computador, SFC `/verifyonly`, DISM `CheckHealth` ou `ScanHealth`, ou CHKDSK de consulta. Para CHKDSK, selecione um volume fixo local. Os resultados aparecem na janela e podem ser salvos em TXT. Para GPO, também é possível exportar o HTML do computador.
+3. Em **Visão geral**, use **Consultar computador** para ler o resumo do sistema.
+4. Em **Hardware**, escolha a aba **Desempenho**, **Discos**, **Bateria**, **Dispositivos**, **Serviços** ou **Programas** e selecione a ferramenta. **Discos** reúne a saúde administrativa, os volumes, o mapa e os modos de CHKDSK. O indicador **(UAC)** identifica as ações que exigem elevação.
+5. Em **Hardware → Desempenho → Monitor ao vivo**, inicie ou pause a amostragem de CPU e RAM. Em **Hardware → Discos → Mapa de disco**, analise um volume e navegue por pastas. Trocar de ferramenta pausa o monitor.
+6. Em **Rede**, use as abas **Conexão**, **Conectividade** e **Configuração IPv4**.
+7. Em **Windows**, use **Eventos e códigos** para ler eventos e consultar significados. Clicar em um código destacado preenche a pesquisa e abre a explicação. As abas **Windows Update** e **Integridade e reparos** reúnem seus respectivos diagnósticos e ações.
+8. Em **Impressão**, o diagnóstico, o reinício do spooler e a limpeza da fila ficam juntos. A limpeza pede a fila local que será afetada.
+9. Em **Contas e políticas**, escolha **Políticas de grupo**, **Perfis locais** ou **Login automático**. As políticas de usuário e computador compartilham a mesma aba, com seus escopos identificados.
+10. Em **Relatórios**, recupere o último resultado ou exporte eventos em EVTX com manifesto SHA-256. **Salvar log…** continua disponível nos resultados das consultas e exporta também os dados ocultos pelo filtro.
+11. Digite parte do nome na **Buscar ferramenta**. A busca aceita palavras sem acento. Use duplo clique no resultado ou seta para baixo e Enter para abrir. Encontrar uma ferramenta apenas abre sua tela. A execução exige a ação do técnico.
+12. Use **Sobre** para conferir a versão e os créditos.
 
-As consultas de discos em **Computador** e **Administrativo** apresentam barras de ocupação por volume e de desgaste estimado quando o disco informa essa métrica. O resultado textual mostra o estado SMART e avisa sobre leituras parciais.
+A saúde dos discos apresenta barras quando existe uma medição numérica. Uma leitura limitada ou indisponível conserva seu aviso. O formulário principal utiliza as permissões da sessão e solicita o UAC por operação.
 
 ## Intervenções de suporte
 
-- Em **Atendimento**, **Reiniciar spooler** preserva os trabalhos. **Limpar fila de impressão** pede uma fila local e cancela os trabalhos encontrados nela. O resultado informa quantos foram cancelados e quantos falharam.
-- Em **Atendimento**, **Recriar cache do Windows Update** renomeia o cache de download, preserva a cópia anterior e tenta restaurar o estado dos serviços. Reinício pendente e manutenção ativa bloqueiam a operação. A atualização de GPO separa usuário da sessão e computador.
-- Em **Computador**, **Limpar cache do Chrome** limpa o cache HTTP de perfis padrão da sessão. Feche o Chrome antes. Preferências e outros dados fora da pasta Cache são preservados.
+- Em **Impressão**, **Reiniciar spooler** preserva os trabalhos. **Limpar fila de impressão** pede uma fila local e cancela os trabalhos encontrados nela. O resultado informa quantos foram cancelados e quantos falharam.
+- Em **Windows → Windows Update**, **Recriar cache do Windows Update** renomeia o cache de download, preserva a cópia anterior e tenta restaurar o estado dos serviços. Reinício pendente e manutenção ativa bloqueiam a operação.
+- Em **Contas e políticas → Políticas de grupo**, escolha a consulta, exportação ou atualização para usuário ou computador.
+- Em **Hardware → Programas**, **Limpar cache do Chrome** limpa o cache HTTP de perfis padrão da sessão. Feche o Chrome antes. Preferências e outros dados fora da pasta Cache são preservados.
 - Em **Rede**, escolha DHCP ou IPv4 fixo e selecione o adaptador físico. O resultado mostra o estado antes e depois. Se uma etapa falhar, confira as alterações já aplicadas. Alterar a conexão pode interromper o suporte remoto.
 
 Cada intervenção exibe seu impacto e pede confirmação. A limpeza do Chrome e a atualização de GPO do usuário executam na sessão atual. As ações de spooler, Windows Update, GPO do computador e IPv4 solicitam UAC por operação.
 
 ## Reparos e alterações de conta
 
-Em **Administrativo**, escolha a operação, use **Revisar ação…** e confira o impacto antes de confirmar o UAC.
+Na página da operação, escolha a ferramenta, use **Revisar ação…** e confira o impacto antes de confirmar o UAC.
 
 - **SFC · reparar arquivos** usa `/scannow`. **DISM · reparar imagem** usa `/RestoreHealth /NoRestart`. O resultado registra a saída e o código retornado pelo Windows. Aguarde o término.
 - **CHKDSK · reparo completo** aplica `/f /r` ao volume fixo selecionado. A janela nativa pode oferecer agendamento para o próximo reinício. Responda nela. A tela gráfica registra o código de saída e indica onde encontrar o log do Windows. Reinicie manualmente se tiver aceitado agendar.
@@ -40,7 +42,7 @@ Em **Administrativo**, escolha a operação, use **Revisar ação…** e confira
 
 ## Acesso administrativo
 
-Abra o executável normalmente. A janela usa as permissões da sessão e as consultas comuns ficam disponíveis sem elevação. Ao executar uma consulta de **Administrativo** ou uma intervenção que exija permissão, o aplicativo inicia um processo separado pelo UAC. Use o próprio diálogo do Windows para autorizar ou cancelar. Uma conta sem direitos administrativos pode precisar informar credenciais de uma conta autorizada. O aplicativo recebe o resultado pelo canal local e salva o HTML no destino escolhido com as permissões da sessão original.
+Abra o executável normalmente. A janela usa as permissões da sessão e as consultas comuns ficam disponíveis sem elevação. Ao executar uma ferramenta identificada com **(UAC)** ou uma intervenção que exija permissão, o aplicativo inicia um processo separado pelo UAC. Use o próprio diálogo do Windows para autorizar ou cancelar. Uma conta sem direitos administrativos pode precisar informar credenciais de uma conta autorizada. O aplicativo recebe o resultado pelo canal local e salva o HTML no destino escolhido com as permissões da sessão original.
 
 As consultas administrativas desta prévia verificam o estado do Windows e dos discos, e os comandos nativos podem registrar informações nos logs do sistema. As verificações podem levar até 30 minutos. Depois de autorizar o UAC, aguarde o resultado na janela.
 

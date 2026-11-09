@@ -5,10 +5,31 @@ using System.IO.Pipes;
 using System.Security.Principal;
 using SuporteTI.Grafico;
 
+if (args.Contains("--catalogo"))
+{
+    Console.OutputEncoding = new UTF8Encoding(false);
+    Console.WriteLine(JsonSerializer.Serialize(CatalogoFerramentas.Itens.Select(item =>
+        new { item.Id, item.Grupo, item.Area, Rotulo = item.ToString() })));
+    return;
+}
+
 var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    var idsAnteriores = ("sistema desempenho discos bateria dispositivos servicos programas autologon chromecache " +
+        "rede dominio ping velocidade netdhcp netstatic falhas codigofalha update filaimpressao spooler spoolerclear cache " +
+        "gpusuario gphtml gpupdateuser gpupdatecomputer ultimo eventos evtx diskhealth gpcomputador gpcomputerhtml " +
+        "sfcverify dismcheck dismscan chkdskread sfcrepair dismrestore chkdskfull perfillocal autologonenable autologondisable monitor mapaocupacao").Split(' ');
+    Igual(true, CatalogoFerramentas.Itens.Select(item => item.Id).Order().SequenceEqual(idsAnteriores.Order()),
+        "Catálogo preserva as 44 ferramentas sem duplicar IDs");
+    Igual(true, CatalogoFerramentas.Grupos.Count == 7 && CatalogoFerramentas.Itens.All(item =>
+        CatalogoFerramentas.Grupos.Contains(item.Grupo)), "Toda ferramenta tem um dos sete destinos");
+    Igual(true, CatalogoFerramentas.Itens.Where(item => item.Id is "diskhealth" or "discos" or "mapaocupacao")
+        .All(item => item.Grupo == "Hardware" && item.Area == "Discos"), "Discos e mapa compartilham a mesma área");
+    Igual(true, CatalogoFerramentas.Buscar("saude discos").Any(item => item.Id == "diskhealth"),
+        "Busca combina palavras e ignora acentos");
+    Igual(0, CatalogoFerramentas.Buscar("ferramenta inexistente zzz").Length, "Busca sem correspondência");
     var nomes = new[] { "Computador", "Windows", "BIOS", "CPU", "Memória em uso" };
     string Json(string estado, bool temDados, bool parcial = false) => JsonSerializer.Serialize(new
     {

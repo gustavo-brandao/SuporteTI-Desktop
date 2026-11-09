@@ -1,5 +1,14 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.4
+
+- **77 testes automatizados aprovados**. A nova cobertura confere os 44 IDs da beta.3 sem duplicação, os sete destinos, o agrupamento de discos e mapa e a busca com várias palavras e sem acentos.
+- O ZIP extraído passou na navegação das **44 ferramentas**, por grupo, aba e seletor. A seleção foi conferida sem executar intervenções. A busca pelo teclado abriu a pesquisa de código no contexto correto.
+- A automação também validou a abertura da Visão geral, a consulta comum, a pesquisa por clique em código de erro, a recuperação do resultado, o monitor, o cancelamento do mapa, as opções de impressão e os gráficos dos discos.
+- A saúde dos discos retornou dados estruturados pelo UAC. As exportações HTML e EVTX passaram, e os três EVTX conferiram com o manifesto.
+- A verificação corrigiu a inicialização da primeira aba, que podia abrir sem conteúdo antes da criação da janela.
+- A biblioteca de navegação utiliza controles WinForms existentes e conserva o transporte de dados, os parâmetros e as confirmações. O aceite com credenciais administrativas distintas, UNC assinado e manutenção real em VM continua pendente.
+
 ## Prévia 1.0.0-beta.3 · 9 de novembro de 2026
 
 - **72 testes gráficos aprovados**, incluindo consulta real de discos com o coletor e os arquivos SMART presentes. Foram acrescentados sete cenários para desgaste representado por objeto vazio, null, número fracionário, número acima de 100%, NaN, infinito e número negativo.

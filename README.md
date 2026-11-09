@@ -1,14 +1,14 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.3**
+**Versão atual · 1.0.0-beta.4**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.3/SuporteTI-Grafico-1.0.0-beta.3-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.3/SuporteTI-Grafico-1.0.0-beta.3-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.3)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.4/SuporteTI-Grafico-1.0.0-beta.4-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.4/SuporteTI-Grafico-1.0.0-beta.4-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.4)
 
-![Tela Falhas do Windows na primeira beta pública, consultando o código 0xC0000005](docs/imagens/falhas-do-windows.png)
+![Hardware e ferramentas de discos na beta.4](docs/imagens/hardware-discos.png)
 
 ## Começar
 
@@ -21,12 +21,15 @@ A beta está sem assinatura Authenticode. Os testes de laboratório com interven
 
 ## O que a ferramenta faz
 
-- **Computador e discos** — inventário, monitor de CPU e memória, saúde SMART, gráficos de ocupação e mapa de pastas.
-- **Rede e falhas** — adaptadores, ping, eventos do Windows e consulta automática de códigos de erro.
-- **Atendimento** — diagnóstico de impressão, reinício do spooler, limpeza de fila selecionada e Windows Update.
-- **Relatórios e administrativo** — exportação TXT, HTML e EVTX, políticas de grupo e operações de manutenção com confirmação.
+- **Visão geral e Hardware** — inventário, monitor de CPU e memória, saúde SMART, gráficos de ocupação e mapa de pastas.
+- **Rede e Windows** — adaptadores, ping, eventos, pesquisa de códigos de erro, Windows Update e integridade.
+- **Impressão** — diagnóstico, reinício do spooler e limpeza de fila selecionada.
+- **Contas e políticas** — GPO do usuário e computador, perfis locais e login automático.
+- **Relatórios** — exportação TXT, HTML e EVTX.
 
-![Tela Atendimento com o diagnóstico de impressão selecionado](docs/imagens/atendimento.png)
+Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operações por assunto e o indicador **(UAC)** identifica as ferramentas administrativas.
+
+![Tela Impressão na beta.4](docs/imagens/impressao.png)
 
 ## Documentação e código
 

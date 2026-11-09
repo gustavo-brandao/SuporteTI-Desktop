@@ -1,5 +1,11 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.4
+
+O catálogo central preserva os 44 identificadores de ferramentas e define sete destinos por assunto. A janela usa abas para as áreas e um seletor de ferramentas. Saúde, volumes, mapa e CHKDSK ficam em Hardware → Discos. Impressão tem uma página própria. GPO, perfis e Autologon ficam em Contas e políticas.
+
+A busca encontra ferramentas por nome, área, grupo ou identificador, combinando palavras sem distinguir acentos. Abrir um resultado seleciona o contexto e conserva as confirmações e o UAC das ações. O clique em códigos de erro usa o identificador da pesquisa, sem depender da posição de um item na lista.
+
 ## Prévia 1.0.0-beta.3
 
 A prévia corrige o campo percentual de desgaste para transportar número finito não negativo ou null. A leitura indisponível conserva o texto do coletor. A regressão passa a executar discos com as dependências SMART presentes. A reorganização de menus, a cópia de resultados e as mudanças visuais seguem as etapas de [revisão de UX](../docs/REVISAO-UX-2026-11-09.md).

@@ -2,6 +2,8 @@
 
 Revisão de 9 de novembro de 2026. Base Desktop 1.0.0-beta.2, revisão 0d51ce7, comparada com o catálogo público CLI disponível neste workspace. As versões abaixo são propostas cumulativas. Cada etapa termina em pacote de teste e registro de evidência.
 
+A beta.3 concluiu a correção de transporte dos discos. A beta.4 implementa os sete menus, as abas por área, o catálogo central e a busca. O ZIP passou no acesso às 44 ferramentas e na consulta de discos pelo UAC. A próxima etapa é a beta.5, dedicada à cópia de resultados e às ações contextuais.
+
 ## Resultado da revisão
 
 O catálogo CLI tem 36 entradas. O Desktop distribui 42 opções em seletores, além do monitor e do mapa. A diferença inclui modos que a CLI apresenta dentro de submenus, como SFC, DISM, CHKDSK e Autologon. Contar botões não demonstra paridade de resultados, parâmetros ou permissões.
