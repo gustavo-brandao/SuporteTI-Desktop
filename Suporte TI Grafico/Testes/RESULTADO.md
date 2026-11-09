@@ -1,5 +1,14 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.3 · 9 de novembro de 2026
+
+- **72 testes gráficos aprovados**, incluindo consulta real de discos com o coletor e os arquivos SMART presentes. Foram acrescentados sete cenários para desgaste representado por objeto vazio, null, número fracionário, número acima de 100%, NaN, infinito e número negativo.
+- **204 testes da CLI e 13 simulações de intervenção aprovados** nesta revisão. As simulações usam alvos e comandos substituídos para verificar parâmetros e falhas sem executar manutenção real na estação.
+- A compilação da aplicação terminou com zero avisos e zero erros.
+- A resposta original da consulta comum do pacote anterior tinha JSON válido, mas três indicadores de desgaste eram objetos vazios. A normalização corrigida produz número finito não negativo ou null antes da desserialização C#.
+- O ZIP extraído passou no teste **-ExigirCim -Janela -Uac**. A consulta administrativa de discos retornou dados estruturados pela elevação. A navegação, pesquisa de códigos, exportações HTML/EVTX, manifesto, gráficos, monitor e cancelamento do mapa também passaram.
+- A [matriz de revisão](../../docs/REVISAO-UX-2026-11-09.md) relaciona as 36 entradas da CLI às opções Desktop e separa evidência atual, simulação e pendências. Testes com outra conta administrativa, UNC assinado e manutenção real em VM continuam como aceites de laboratório.
+
 ## Prévia 1.0.0-beta.2
 
 - O ZIP público foi gerado no [GitHub Actions](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/42290808313) e tem SHA-256 **7fbc0488648e148072ab7fb2ae5c7520ee2f34f9a57d690a70675c083ada1438**.

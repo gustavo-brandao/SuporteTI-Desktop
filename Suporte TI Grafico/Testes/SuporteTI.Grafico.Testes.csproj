@@ -13,6 +13,8 @@
     <Compile Include="../MonitorRecursos.cs" Link="MonitorRecursos.cs" />
     <Compile Include="../VarreduraDisco.cs" Link="VarreduraDisco.cs" />
     <None Include="../Modulos/*.ps1" Link="Modulos/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../Modulos/Rede.ps1;../../Modulos/Falhas.ps1;../../Modulos/CatalogoFalhas.json;../../Recursos/SuporteTI.Windows.dll" Link="Modulos/Coletores/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../Modulos/Rede.ps1;../../Modulos/Falhas.ps1;../../Modulos/Discos.ps1;../../Modulos/CatalogoFalhas.json;../../Recursos/SuporteTI.Windows.dll" Link="Modulos/Coletores/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../Ferramentas/smartmontools/bin/smartctl.exe;../../Ferramentas/smartmontools/bin/drivedb.h" Link="Modulos/Ferramentas/smartmontools/bin/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../Ferramentas/smartmontools/integridade.json" Link="Modulos/Ferramentas/smartmontools/integridade.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

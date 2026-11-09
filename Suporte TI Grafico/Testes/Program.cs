@@ -83,7 +83,7 @@ try
     }
     var htmlComputador = LogConsulta.SalvarHtmlComputador(temporaria.FullName, "<html>GPO</html>"u8.ToArray(), DateTimeOffset.Now);
     Igual("<html>GPO</html>", File.ReadAllText(htmlComputador), "HTML é salvo no destino pela sessão original");
-    foreach (var operacao in new[] { "desempenho", "bateria", "dispositivos", "servicos", "programas", "autologon" })
+    foreach (var operacao in new[] { "desempenho", "discos", "bateria", "dispositivos", "servicos", "programas", "autologon" })
         Igual(operacao, (await new ConsultaPowerShell().ConsultarAsync(operacao, default)).Operacao, $"Contrato de {operacao}");
     var cliente = new ConsultaPowerShell();
     foreach (var operacao in new[] { "rede", "dominio", "falhas" })
@@ -114,6 +114,20 @@ try
     foreach (var nome in new[] { "Falhas.ps1", "SuporteTI.Windows.dll" })
         File.Copy(Path.Combine(modulosReais, "Coletores", nome), Path.Combine(coletores.FullName, nome));
     var simulado = new ConsultaPowerShell(Path.Combine(modulosSimulados.FullName, "Consultar.ps1"), TimeSpan.FromSeconds(25));
+    foreach (var (expressao, esperado) in new (string, double?)[]
+    {
+        ("[pscustomobject]@{}", null), ("$null", null), ("12.5", 12.5),
+        ("125", 125), ("[double]::NaN", null), ("[double]::PositiveInfinity", null), ("-1", null)
+    })
+    {
+        File.WriteAllText(Path.Combine(coletores.FullName, "Discos.ps1"),
+            "function Get-SuporteSmartResumo { param([switch]$Estruturado) " +
+            "[pscustomobject]@{ Nome='Disco simulado'; Texto='Leitura de teste'; Desgaste=" + expressao + " } }",
+            new UTF8Encoding(true));
+        var discosSimulados = await simulado.ConsultarAsync("discos", default);
+        Igual(esperado, discosSimulados.Secoes[1].Campos.Single().Percentual,
+            $"Desgaste transporta número ou null para {expressao}");
+    }
     var diagnosticosSimulados = Path.Combine(modulosSimulados.FullName, "Diagnosticos.ps1");
     var diagnosticosOriginais = File.ReadAllBytes(diagnosticosSimulados);
     File.AppendAllText(diagnosticosSimulados, """

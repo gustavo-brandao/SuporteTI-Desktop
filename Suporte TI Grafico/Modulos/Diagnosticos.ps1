@@ -37,7 +37,16 @@ function Get-Diagnostico {
             $saude = Get-Lista 'Saúde dos discos internos' {
                 Get-SuporteSmartResumo -Estruturado | ForEach-Object {
                     if ($_ -is [string]) { @{ nome = 'Resultado'; valor = ($_ -replace '^\[INDISPONIVEL\] ', '') } }
-                    else { @{ nome = $_.Nome; valor = $_.Texto; percentual = $_.Desgaste } }
+                    else {
+                        $percentual = $null
+                        $medida = 0.0
+                        if ([double]::TryParse([string]$_.Desgaste, [Globalization.NumberStyles]::Float,
+                            [Globalization.CultureInfo]::InvariantCulture, [ref]$medida) -and
+                            -not [double]::IsNaN($medida) -and -not [double]::IsInfinity($medida) -and $medida -ge 0) {
+                            $percentual = $medida
+                        }
+                        @{ nome = $_.Nome; valor = $_.Texto; percentual = $percentual }
+                    }
                 }
             }
             if (@($saude.campos | Where-Object { $_.valor -match 'Inconclusivo|SMART parcial|Consulta limitada' }).Count) {

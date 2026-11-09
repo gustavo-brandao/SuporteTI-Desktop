@@ -5,10 +5,12 @@
     [switch]$Janela,
     [string]$ReferenciaTerminal,
     [string]$ZipAnterior,
-    [switch]$ExigirAssinatura
+    [switch]$ExigirAssinatura,
+    [switch]$Uac
 )
 
 $ErrorActionPreference = 'Stop'
+if ($Uac -and -not $Janela) { throw 'O teste UAC exige a opção Janela e uma sessão interativa.' }
 $arquivo = (Resolve-Path -LiteralPath $Zip).Path
 $digest = (Get-FileHash -Algorithm SHA256 -LiteralPath $arquivo).Hash
 $registro = (Get-Content -LiteralPath ($arquivo + '.sha256') -Raw).Trim()
@@ -34,7 +36,7 @@ function Find-Controle {
 }
 
 function Test-Janela {
-    param([string]$Executavel, [switch]$ExigirCim, [string]$Versao, [string]$ExecutavelAnterior, [switch]$EventoSimulado)
+    param([string]$Executavel, [switch]$ExigirCim, [string]$Versao, [string]$ExecutavelAnterior, [switch]$EventoSimulado, [switch]$Uac)
     Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
     $inicio = [Diagnostics.ProcessStartInfo]::new($Executavel)
     $inicio.UseShellExecute = $false
@@ -148,6 +150,18 @@ function Test-Janela {
         }
         $opcoesAdmin.Collapse()
         'Menu Administrativo aberto sem solicitar elevacao.'
+        if ($Uac) {
+            (Find-Controle $janela 'Consultar (UAC)').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+            [void](Wait-Interface {
+                foreach ($mensagem in 'Consulta concluída.', 'Consulta parcial. Confira os avisos na lista.') {
+                    if (Find-Controle $janela $mensagem) { return $true }
+                }
+                foreach ($mensagem in 'Solicitação de UAC cancelada.', 'A consulta falhou.', 'Dados indisponíveis. Confira os avisos na lista.') {
+                    if (Find-Controle $janela $mensagem) { throw "Consulta de discos pelo UAC não validada. $mensagem" }
+                }
+            } 'resultado dos discos pelo UAC' 120)
+            'Consulta de discos pelo UAC retornou resultado estruturado.'
+        }
         (Find-Controle $janela 'Monitor ao vivo').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         (Wait-Interface { Find-Controle $janela 'Iniciar monitor' } 'iniciar monitor').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         [void](Wait-Interface {
@@ -332,7 +346,7 @@ function Get-WinEvent {
             $anterior = Join-Path $pastaAnterior 'Suporte TI Grafico.exe'
         }
         try {
-            Test-Janela -Executavel $exe.FullName -ExigirCim:$ExigirCim -Versao $versao -ExecutavelAnterior $anterior -EventoSimulado:(-not $ExigirAssinatura)
+            Test-Janela -Executavel $exe.FullName -ExigirCim:$ExigirCim -Versao $versao -ExecutavelAnterior $anterior -EventoSimulado:(-not $ExigirAssinatura) -Uac:$Uac
         }
         catch { throw ($_.Exception.Message + [Environment]::NewLine + $_.ScriptStackTrace) }
     }

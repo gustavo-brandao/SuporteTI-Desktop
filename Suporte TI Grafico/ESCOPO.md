@@ -1,5 +1,9 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.3
+
+A prévia corrige o campo percentual de desgaste para transportar número finito não negativo ou null. A leitura indisponível conserva o texto do coletor. A regressão passa a executar discos com as dependências SMART presentes. A reorganização de menus, a cópia de resultados e as mudanças visuais seguem as etapas de [revisão de UX](../docs/REVISAO-UX-2026-11-09.md).
+
 ## Prévia 1.0.0-beta.2
 
 A consulta de dispositivos usa o identificador PnP quando o Windows não informa um nome. Quando ambos estão ausentes, a interface exibe um rótulo genérico e mantém o código de problema.

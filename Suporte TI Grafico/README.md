@@ -1,8 +1,10 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.2** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.3** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
+
+A beta.3 normaliza o desgaste dos discos para número ou valor indisponível antes de enviar os resultados à interface. O plano de reorganização está em [Revisão de UX e diagnósticos](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/REVISAO-UX-2026-11-09.md).
 
 1. Extraia todo o ZIP em uma pasta local ou no pendrive.
 2. Abra **Suporte TI Grafico.exe**, identificado pelo ícone de um monitor com um prompt de terminal.
