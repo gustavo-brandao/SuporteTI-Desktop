@@ -1,5 +1,13 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.6
+
+- **82 testes automatizados aprovados**, incluindo consulta CIM real. Os três cenários novos distinguem ocupação de saúde física, preservam alertas nativos e resultados parciais e mantêm a saúde indisponível quando não há discos avaliados.
+- O ZIP extraído passou na navegação das **44 ferramentas**, na consulta comum e na consulta de discos pelo UAC, na pesquisa por clique em código de erro e nas exportações HTML/EVTX com manifesto.
+- A cópia por linha, Ctrl+C, menu de contexto, seleção sem copiar, relatório com filtro e recuperação após clipboard ocupado passaram novamente. O conteúdo anterior da área de transferência foi restaurado pelo verificador.
+- A janela exibiu o resumo dos discos e manteve seletor e salvamento acessíveis após redimensionamento para 780 × 600 e retorno a 1100 × 720. Monitor, pausa e cancelamento do mapa também passaram.
+- A captura do README usa dados demonstrativos para mostrar alertas, desgaste e leitura indisponível sem expor dados da estação. Escalas de 100/125/150/200% e alto contraste ainda precisam de homologação dirigida; esta rodada não altera as configurações de exibição do Windows.
+
 ## Prévia 1.0.0-beta.5
 
 - **79 testes automatizados aprovados**. Os novos cenários confirmam que o relatório copiado e o TXT salvo usam a mesma formatação e conservam Unicode, múltiplas linhas, texto extenso e avisos de resultado parcial.

@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.5** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.6** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
 
@@ -20,6 +20,12 @@ A beta.3 normaliza o desgaste dos discos para número ou valor indisponível ant
 12. Use **Sobre** para conferir a versão e os créditos.
 
 A saúde dos discos apresenta barras quando existe uma medição numérica. Uma leitura limitada ou indisponível conserva seu aviso. O formulário principal utiliza as permissões da sessão e solicita o UAC por operação.
+
+## Legibilidade e discos
+
+A beta.6 usa Segoe UI como fonte base de 10 pt, rótulos permanentes nos campos e linhas de tabela mais espaçadas. As instruções acompanham a largura da janela. A ação de cancelar aparece durante consultas que admitem cancelamento, e os botões de relatório aparecem após haver um resultado.
+
+Em **Hardware → Discos**, o resumo separa volumes, discos físicos avaliados, alertas e leituras inconclusivas. Os indicadores mostram **Ocupação** ou **Desgaste** junto do percentual. Uma medição de desgaste zero, por si só, não classifica a saúde do disco. Dados indisponíveis e avisos de leitura parcial continuam visíveis.
 
 ## Copiar resultados
 

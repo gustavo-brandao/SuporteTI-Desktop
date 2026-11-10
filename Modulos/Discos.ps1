@@ -191,7 +191,7 @@ function Get-SuporteSmartResumo {
         }
         if ($parcial -and $classe.Estado -ne 'Inconclusivo') { $resumo += ' Leitura SMART parcial.' }
         if ($Estruturado) {
-            [pscustomobject]@{ Nome = ('Disco {0} ({1})' -f $disco.Number,$disco.FriendlyName); Texto = ($resumo -replace '^\[INDISPONIVEL\] ', ''); Desgaste = $desgaste }
+            [pscustomobject]@{ Nome = ('Disco {0} ({1})' -f $disco.Number,$disco.FriendlyName); Texto = ($resumo -replace '^\[INDISPONIVEL\] ', ''); Desgaste = $desgaste; Estado = $classe.Estado }
         } else { $resumo }
     }
 }

@@ -1,14 +1,16 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.5**
+**Versão atual · 1.0.0-beta.6**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.5/SuporteTI-Grafico-1.0.0-beta.5-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.5/SuporteTI-Grafico-1.0.0-beta.5-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.5)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.6/SuporteTI-Grafico-1.0.0-beta.6-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.6/SuporteTI-Grafico-1.0.0-beta.6-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.6)
 
-![Resultados com a coluna Copiar e o botão Copiar resultado na beta.5](docs/imagens/resultados-copia.png)
+![Resumo e indicadores dos discos na beta.6, com dados demonstrativos](docs/imagens/discos-beta6.png)
+
+Tela da beta.6 com **dados demonstrativos**. Ocupação, desgaste e alertas aparecem separados; leituras indisponíveis são identificadas no resultado.
 
 ## Começar
 
@@ -31,7 +33,7 @@ Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operaç�
 
 Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou **Copiar resultado** para o relatório completo. O menu de contexto oferece as mesmas ações e o rodapé confirma a cópia. O clique nos códigos de erro abre sua explicação.
 
-![Tela Impressão na beta.4](docs/imagens/impressao.png)
+![Tela Impressão na beta.6](docs/imagens/impressao.png)
 
 ## Documentação e código
 

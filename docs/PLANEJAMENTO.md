@@ -37,7 +37,7 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 ## Matriz de testes e rotina de atualização
 
-O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A próxima atualização é a beta.6, com melhorias de legibilidade e apresentação dos discos. Após a beta.8, estão previstas a beta.9, com visual inspirado no Windows 11 e temas Escuro, Claro e Sistema, e a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. O tema padrão planejado é Escuro.
+O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A beta.6 entrega melhorias de legibilidade e apresentação dos discos. A próxima atualização é a beta.7, com simplificação dos formulários e diagnóstico contextual. Após a beta.8, estão previstas a beta.9, com visual inspirado no Windows 11 e temas Escuro, Claro e Sistema, e a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. O tema padrão planejado é Escuro.
 
 | Camada | Cobertura e evidência |
 | --- | --- |

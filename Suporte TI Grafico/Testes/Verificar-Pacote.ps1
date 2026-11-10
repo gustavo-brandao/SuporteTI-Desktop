@@ -31,8 +31,12 @@ function Wait-Interface {
 }
 
 function Find-Controle {
-    param($Raiz, [string]$Nome)
+    param($Raiz, [string]$Nome, $Tipo)
     $condicao = [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::NameProperty, $Nome)
+    if ($Tipo) {
+        $condicao = [Windows.Automation.AndCondition]::new($condicao,
+            [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ControlTypeProperty, $Tipo))
+    }
     $Raiz.FindFirst([Windows.Automation.TreeScope]::Descendants, $condicao)
 }
 
@@ -132,7 +136,7 @@ public static class TesteClipboard {
                 -not $textoCompleto.Contains($valor)) {
                 throw 'A cópia do resultado não contém o cabeçalho e os campos.'
             }
-            $filtro = (Find-Controle $janela 'Filtrar resultados').GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern)
+            $filtro = (Find-Controle $janela 'Filtrar resultados' ([Windows.Automation.ControlType]::Edit)).GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern)
             $filtro.SetValue('sem-correspondencia-clipboard-zz')
             [Windows.Forms.Clipboard]::SetText('marcador de teste')
             $completo.Invoke()
@@ -189,7 +193,7 @@ public static class TesteClipboard {
             $busca.SetFocus()
             Add-Type -AssemblyName System.Windows.Forms
             [Windows.Forms.SendKeys]::SendWait('{ENTER}')
-            [void](Wait-Interface { Find-Controle $janela 'Código de erro' } 'pesquisa aberta pela busca')
+            [void](Wait-Interface { Find-Controle $janela 'Código de erro' ([Windows.Automation.ControlType]::Edit) } 'pesquisa aberta pela busca')
         }
         $sobre = Wait-Interface { Find-Controle $janela 'Sobre' } 'botao Sobre'
         $sobre.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
@@ -237,7 +241,7 @@ public static class TesteClipboard {
                 }
             } 'link do codigo simulado' 30
             $link.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
-            $entrada = Wait-Interface { Find-Controle $janela 'Código de erro' } 'campo de pesquisa'
+            $entrada = Wait-Interface { Find-Controle $janela 'Código de erro' ([Windows.Automation.ControlType]::Edit) } 'campo de pesquisa'
             if ($entrada.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).Current.Value -ne '0x000000EF') {
                 throw 'O clique nao preencheu o codigo da falha.'
             }
@@ -305,8 +309,21 @@ public static class TesteClipboard {
         'Diagnostico, reinicio e limpeza de fila local aparecem como opcoes distintas.'
         Abrir-Ferramenta 'Hardware' 'Discos' 'Volumes e saúde dos discos'
         (Find-Controle $janela 'Consultar').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
-        [void](Wait-Interface { Find-Controle $janela 'Gráfico' } 'coluna de graficos' 50)
-        'Coluna de graficos exibida na consulta de discos.'
+        [void](Wait-Interface { Find-Controle $janela 'Indicador' } 'coluna de graficos' 50)
+        'Indicadores de ocupação e desgaste exibidos na consulta de discos.'
+        [void](Wait-Interface {
+            $resumo = Find-Controle $janela 'Resumo dos discos'
+            if ($resumo -and -not $resumo.Current.IsOffscreen) { $resumo }
+        } 'resumo dos discos')
+        $transformar = $janela.GetCurrentPattern([Windows.Automation.TransformPattern]::Pattern)
+        $transformar.Resize(780, 600)
+        [void](Wait-Interface {
+            $seletor = Find-Controle $janela 'Escolher diagnóstico'
+            $salvar = Find-Controle $janela 'Salvar log…'
+            if ($seletor -and $salvar -and -not $seletor.Current.IsOffscreen -and -not $salvar.Current.IsOffscreen) { $true }
+        } 'controles visíveis na janela compacta')
+        $transformar.Resize(1100, 720)
+        'Resumo de discos e acesso aos controles após redimensionar verificados.'
     } finally {
         if (-not $processo.HasExited) {
             [void]$processo.CloseMainWindow()

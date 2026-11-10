@@ -5,7 +5,8 @@ using System.Text.Json.Serialization;
 
 namespace SuporteTI.Grafico;
 
-internal sealed record Campo(string Nome, string Valor, string? Familia = null, double? Percentual = null);
+internal sealed record Campo(string Nome, string Valor, string? Familia = null, double? Percentual = null,
+    string? Metrica = null, string? EstadoDisco = null);
 internal sealed record Secao(string Nome, Campo[] Campos, string? Aviso);
 internal sealed record Resposta(int Versao, string Operacao, string Estado, Secao[] Secoes);
 

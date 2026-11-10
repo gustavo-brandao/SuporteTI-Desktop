@@ -30,7 +30,7 @@ function Get-Diagnostico {
                         $percentual = 100.0 * (1 - $_.FreeSpace / $_.Size)
                         '{0:P0} ocupado · {1:N1} GiB livres de {2:N1} GiB' -f (1 - $_.FreeSpace / $_.Size), ($_.FreeSpace / 1GB), ($_.Size / 1GB)
                     } else { 'Capacidade indisponível.' }
-                    @{ nome = $_.DeviceID; valor = $resumo; percentual = $percentual }
+                    @{ nome = $_.DeviceID; valor = $resumo; percentual = $percentual; metrica = 'ocupacao' }
                 }
             }
             . (Join-Path $PSScriptRoot 'Coletores/Discos.ps1')
@@ -45,7 +45,8 @@ function Get-Diagnostico {
                             -not [double]::IsNaN($medida) -and -not [double]::IsInfinity($medida) -and $medida -ge 0) {
                             $percentual = $medida
                         }
-                        @{ nome = $_.Nome; valor = $_.Texto; percentual = $percentual }
+                        $estadoDisco = if ($_.PSObject.Properties['Estado']) { [string]$_.Estado } else { 'Inconclusivo' }
+                        @{ nome = $_.Nome; valor = $_.Texto; percentual = $percentual; metrica = 'desgaste'; estadoDisco = $estadoDisco }
                     }
                 }
             }

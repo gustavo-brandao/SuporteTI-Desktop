@@ -30,6 +30,21 @@ try
     Igual(true, CatalogoFerramentas.Buscar("saude discos").Any(item => item.Id == "diskhealth"),
         "Busca combina palavras e ignora acentos");
     Igual(0, CatalogoFerramentas.Buscar("ferramenta inexistente zzz").Length, "Busca sem correspondência");
+    var resumoInconclusivo = ResumoDiscos.Criar(new Resposta(1, "discos", "parcial",
+        [new Secao("Discos", [
+            new Campo("C:", "99% ocupado", Percentual: 99, Metrica: "ocupacao"),
+            new Campo("Disco 0", "Indicadores limitados", Percentual: 0, Metrica: "desgaste", EstadoDisco: "Inconclusivo")], "Leitura limitada")]));
+    Igual(true, resumoInconclusivo.Contains("0 com alerta") && resumoInconclusivo.Contains("1 inconclusivo(s)") &&
+        resumoInconclusivo.Contains("Leitura parcial"), "Ocupação elevada e desgaste zero não inventam saúde positiva");
+    var resumoAlertas = ResumoDiscos.Criar(new Resposta(1, "diskhealth", "parcial",
+        [new Secao("Discos", [
+            new Campo("Disco 0", "Alerta", Metrica: "desgaste", EstadoDisco: "Atencao"),
+            new Campo("Disco 1", "Degradado", Metrica: "desgaste", EstadoDisco: "Critico/degradado")], "Consulta limitada")]));
+    Igual(true, resumoAlertas.Contains("2 com alerta") && resumoAlertas.Contains("Leitura parcial"),
+        "Resumo conserva alertas nativos e leitura parcial");
+    Igual(true, ResumoDiscos.Criar(new Resposta(1, "discos", "indisponivel",
+        [new Secao("Discos", [], "Sem dados")])).Contains("Saúde física indisponível"),
+        "Ausência de discos lidos conserva indisponibilidade");
     var nomes = new[] { "Computador", "Windows", "BIOS", "CPU", "Memória em uso" };
     string Json(string estado, bool temDados, bool parcial = false) => JsonSerializer.Serialize(new
     {

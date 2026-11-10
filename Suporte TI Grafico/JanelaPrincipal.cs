@@ -32,6 +32,8 @@ internal sealed partial class JanelaPrincipal : Form
     private string grupo = "";
     private readonly TabControl abas = new() { Dock = DockStyle.Fill, AccessibleName = "Áreas de ferramentas" };
     private readonly Panel conteudoResultados = new() { Dock = DockStyle.Fill };
+    private readonly TableLayoutPanel painelTabela = new() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
+    private readonly Label resumoDiscos = CriarRotulo("", 10, true);
     private Control? telaMonitor, telaMapa;
     private readonly Label estado = new() { AutoSize = true, Text = "Pronto para consultar." };
     private readonly GradeDiagnostico grade = new()
@@ -55,6 +57,7 @@ internal sealed partial class JanelaPrincipal : Form
     public JanelaPrincipal(ConsultaPowerShell consulta)
     {
         this.consulta = consulta;
+        Font = new Font("Segoe UI", 10f);
         var versao = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
             .InformationalVersion.Split('+')[0];
         Text = $"Suporte TI Gráfico | {versao}";
@@ -271,6 +274,11 @@ internal sealed partial class JanelaPrincipal : Form
         cabecalho.Controls.Add(descricao);
         pagina.Controls.Add(cabecalho, 0, 0);
         var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 8, 0, 8) };
+        var parametros = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 0, 0, 8) };
+        var campoFerramenta = CampoRotulado("Ferramenta", diagnosticos);
+        var campoEntrada = CampoRotulado("Destino ou código", entrada);
+        var campoVolume = CampoRotulado("Volume", volumesAdmin);
+        var campoFiltro = CampoRotulado("Filtrar resultados", filtro);
         volumesAdmin.Items.AddRange(DriveInfo.GetDrives().Where(disco => disco.DriveType == DriveType.Fixed)
             .Select(disco => disco.Name.TrimEnd('\\')).Cast<object>().ToArray());
         if (volumesAdmin.Items.Count > 0)
@@ -282,15 +290,17 @@ internal sealed partial class JanelaPrincipal : Form
             AtualizarGrade();
             var id = (diagnosticos.SelectedItem as Ferramenta)?.Id;
             var especial = id is "monitor" or "mapaocupacao";
-            grade.Visible = !especial;
+            painelTabela.Visible = !especial;
             if (telaMonitor is not null) telaMonitor.Visible = id == "monitor";
             if (telaMapa is not null) telaMapa.Visible = id == "mapaocupacao";
-            consultar.Visible = cancelar.Visible = filtro.Visible = !especial;
-            salvar.Visible = estado.Visible = !especial;
-            copiarResultado.Visible = feedbackCopia.Visible = !especial;
+            consultar.Visible = !especial;
+            cancelar.Visible = !especial && cancelar.Enabled;
+            campoFiltro.Visible = !especial;
+            salvar.Visible = copiarResultado.Visible = !especial && resultado is not null;
+            estado.Visible = feedbackCopia.Visible = !especial;
             if (id == "monitor") telaMonitor?.BringToFront();
             else if (id == "mapaocupacao") telaMapa?.BringToFront();
-            else grade.BringToFront();
+            else painelTabela.BringToFront();
             consultar.Text = id switch
             {
                 "sistema" => "&Consultar computador",
@@ -306,6 +316,9 @@ internal sealed partial class JanelaPrincipal : Form
             entrada.Clear();
             entrada.Visible = id is "ping" or "codigofalha";
             volumesAdmin.Visible = id is "chkdskread" or "chkdskfull";
+            campoEntrada.Visible = id is "ping" or "codigofalha";
+            campoVolume.Visible = id is "chkdskread" or "chkdskfull";
+            ((Label)campoEntrada.Controls[0]).Text = id == "ping" ? "Destino" : "Código de erro";
             entrada.PlaceholderText = id == "ping" ? "Ex.: 127.0.0.1 ou exemplo.com" : "Ex.: 5 ou 0x80070005";
             entrada.AccessibleName = id == "ping" ? "Destino do ping" : "Código de erro";
             instrucoes.Text = id switch
@@ -344,15 +357,24 @@ internal sealed partial class JanelaPrincipal : Form
         }
         AplicarCorBotao(consultar, true);
         AplicarCorBotao(cancelar, false);
-        acoes.Controls.Add(diagnosticos);
-        acoes.Controls.Add(entrada);
-        acoes.Controls.Add(volumesAdmin);
+        acoes.Controls.Add(campoFerramenta);
+        consultar.Margin = cancelar.Margin = new Padding(3, 26, 8, 3);
         acoes.Controls.Add(consultar);
         acoes.Controls.Add(cancelar);
-        acoes.Controls.Add(filtro);
+        cancelar.EnabledChanged += (_, _) => cancelar.Visible = cancelar.Enabled;
+        parametros.Controls.Add(campoEntrada);
+        parametros.Controls.Add(campoVolume);
+        parametros.Controls.Add(campoFiltro);
         var comandos = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, Dock = DockStyle.Fill };
         comandos.Controls.Add(acoes, 0, 0);
-        comandos.Controls.Add(instrucoes, 0, 1);
+        comandos.Controls.Add(parametros, 0, 1);
+        comandos.Controls.Add(instrucoes, 0, 2);
+        pagina.SizeChanged += (_, _) =>
+        {
+            var largura = Math.Max(180, pagina.ClientSize.Width - pagina.Padding.Horizontal - 12);
+            titulo.MaximumSize = descricao.MaximumSize = instrucoes.MaximumSize = new Size(largura, 0);
+            resumoDiscos.MaximumSize = new Size(largura - 8, 0);
+        };
         pagina.Controls.Add(comandos, 0, 1);
 
         EstilizarGrade(grade);
@@ -367,10 +389,19 @@ internal sealed partial class JanelaPrincipal : Form
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Seção", FillWeight = 25, MinimumWidth = 70 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Campo", FillWeight = 35, MinimumWidth = 85 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Valor", FillWeight = 55, MinimumWidth = 110 });
-        grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Gráfico", FillWeight = 25, MinimumWidth = 100, Visible = false });
+        grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Indicador", FillWeight = 30, MinimumWidth = 145, Visible = false });
         grade.CellPainting += DesenharIndicadorDisco;
         ConfigurarCopia();
-        conteudoResultados.Controls.Add(grade);
+        painelTabela.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        painelTabela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        painelTabela.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        resumoDiscos.AccessibleName = "Resumo dos discos";
+        resumoDiscos.Padding = new Padding(8);
+        resumoDiscos.BackColor = AltoContraste ? SystemColors.Window : Superficie;
+        resumoDiscos.Visible = false;
+        painelTabela.Controls.Add(resumoDiscos, 0, 0);
+        painelTabela.Controls.Add(grade, 0, 1);
+        conteudoResultados.Controls.Add(painelTabela);
         pagina.Controls.Add(conteudoResultados, 0, 2);
         estado.Margin = new Padding(3, 8, 3, 0);
         AplicarCorBotao(salvar, false);
@@ -403,11 +434,27 @@ internal sealed partial class JanelaPrincipal : Form
     }
 
     private bool NavegacaoBloqueada => administrativaEmAndamento || preparandoIntervencao || intervencaoEmAndamento;
+
+    private static FlowLayoutPanel CampoRotulado(string nome, Control campo)
+    {
+        var grupo = new FlowLayoutPanel
+        {
+            AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            FlowDirection = FlowDirection.TopDown, WrapContents = false,
+            Margin = new Padding(0, 0, 12, 4)
+        };
+        grupo.Controls.Add(CriarRotulo(nome, 9, false));
+        grupo.Controls.Add(campo);
+        return grupo;
+    }
     private static void EstilizarGrade(DataGridView grade)
     {
         grade.BackgroundColor = AltoContraste ? SystemColors.Window : Superficie;
         grade.BorderStyle = BorderStyle.FixedSingle;
         grade.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+        grade.DefaultCellStyle.Padding = new Padding(6, 5, 6, 5);
+        grade.RowTemplate.MinimumHeight = 44;
+        grade.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         if (!AltoContraste)
         {
             grade.EnableHeadersVisualStyles = false;
@@ -445,7 +492,7 @@ internal sealed partial class JanelaPrincipal : Form
     private static Label CriarRotulo(string texto, int tamanho, bool destaque) => new()
     {
         Text = texto, AutoSize = true, Margin = new Padding(3, 2, 3, 6),
-        Font = new Font(SystemFonts.MessageBoxFont!.FontFamily, tamanho, destaque ? FontStyle.Bold : FontStyle.Regular),
+        Font = new Font("Segoe UI", tamanho, destaque ? FontStyle.Bold : FontStyle.Regular),
         ForeColor = AltoContraste ? SystemColors.WindowText : destaque ? Texto : Secundario
     };
 
@@ -601,6 +648,10 @@ internal sealed partial class JanelaPrincipal : Form
         grade.Columns[3].Visible = resultado?.Operacao is "discos" or "diskhealth";
         salvar.Enabled = resultado is not null;
         copiarResultado.Enabled = resultado is not null;
+        salvar.Visible = copiarResultado.Visible = resultado is not null;
+        var mostrarResumo = resultado?.Operacao is "discos" or "diskhealth";
+        resumoDiscos.Visible = mostrarResumo;
+        resumoDiscos.Text = mostrarResumo ? ResumoDiscos.Criar(resultado!) : "";
         feedbackCopia.Text = "";
         if (resultado is null)
             return;
@@ -612,8 +663,13 @@ internal sealed partial class JanelaPrincipal : Form
                     campo.Nome.Contains(termo, StringComparison.CurrentCultureIgnoreCase) ||
                     campo.Valor.Contains(termo, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    var indicador = campo.Percentual is double percentual ? (object)percentual : "";
+                    var indicador = campo.Percentual is double percentual ? (object)percentual :
+                        campo.Metrica is "ocupacao" or "desgaste" ? "Não informado" : "";
                     var linha = grade.Rows[grade.Rows.Add(secao.Nome, campo.Nome, campo.Valor, indicador)];
+                    linha.Cells[2].ToolTipText = campo.Valor;
+                    linha.Cells[3].Tag = campo.Metrica;
+                    linha.Cells[3].ToolTipText = campo.Metrica == "ocupacao" ? "Percentual de espaço ocupado no volume" :
+                        "Percentual usado da vida útil estimada. A saúde também depende dos demais indicadores.";
                     if (campo.Familia is "Win32" or "HRESULT" or "Excecoes" or "Paradas")
                     {
                         linha.Tag = campo;
@@ -644,21 +700,22 @@ internal sealed partial class JanelaPrincipal : Form
             evento.Graphics is null || evento.CellStyle is not { } estilo)
             return;
         evento.PaintBackground(evento.ClipBounds, true);
-        var area = Rectangle.Inflate(evento.CellBounds, -8, -4);
+        var area = Rectangle.Inflate(evento.CellBounds, -8, -5);
         if (area.Width > 0 && area.Height > 0)
         {
-            var larguraTexto = TextRenderer.MeasureText($"{percentual:N0}%", estilo.Font).Width;
-            var trilha = new Rectangle(area.X, area.Y + (area.Height - 12) / 2, Math.Max(0, area.Width - larguraTexto - 4), 12);
+            var metrica = (remetente as DataGridView)?.Rows[evento.RowIndex].Cells[3].Tag as string;
+            var nome = metrica == "ocupacao" ? "Ocupação" : metrica == "desgaste" ? "Desgaste" : "Indicador";
+            var trilha = new Rectangle(area.X, area.Bottom - 7, area.Width, 7);
             using var fundo = new SolidBrush(AltoContraste ? SystemColors.ControlDark : Borda);
             using var usado = new SolidBrush(AltoContraste ? SystemColors.Highlight :
-                percentual >= 90 ? Color.FromArgb(224, 136, 116) : Color.FromArgb(98, 166, 255));
+                percentual >= (metrica == "desgaste" ? 80 : 90) ? Color.FromArgb(224, 136, 116) : Color.FromArgb(98, 166, 255));
             evento.Graphics.FillRectangle(fundo, trilha);
             evento.Graphics.FillRectangle(usado, trilha.X, trilha.Y, (int)(trilha.Width * Math.Clamp(percentual, 0, 100) / 100), trilha.Height);
-            var rotulo = new Rectangle(trilha.Right + 4, area.Y, larguraTexto, area.Height);
+            var rotulo = new Rectangle(area.X, area.Y, area.Width, Math.Max(0, area.Height - 9));
             var corTexto = (evento.State & DataGridViewElementStates.Selected) != 0
                 ? estilo.SelectionForeColor : estilo.ForeColor;
-            TextRenderer.DrawText(evento.Graphics, $"{percentual:N0}%", estilo.Font, rotulo, corTexto,
-                TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+            TextRenderer.DrawText(evento.Graphics, $"{nome} {percentual:N0}%", estilo.Font, rotulo, corTexto,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
         }
         evento.Handled = true;
     }

@@ -1,5 +1,11 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.6
+
+Os formulários recebem rótulos e a fonte base passa a Segoe UI 10 pt. A tabela ganha espaçamento e as instruções se ajustam à largura. O cancelamento e os comandos de relatório aparecem nos estados em que podem ser usados.
+
+O contrato mantém a versão 1 e acrescenta os campos opcionais metrica e estadoDisco. Eles distinguem ocupação e desgaste e transportam a classificação do coletor. O resumo conta discos com alertas ou leitura inconclusiva pela classificação recebida. O texto completo da evidência permanece na tabela, no TXT e na cópia.
+
 ## Prévia 1.0.0-beta.5
 
 A tabela oferece cópia por valor, seleção múltipla e Ctrl+C. O menu de contexto permite copiar valor, linhas ou resultado completo. O relatório completo usa a mesma formatação do TXT e conserva os dados ocultos pelo filtro, horários, estado e avisos. O clique em códigos permanece dedicado à pesquisa.

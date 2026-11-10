@@ -2,7 +2,7 @@
 
 Revisão de 9 de novembro de 2026. Base Desktop 1.0.0-beta.2, revisão 0d51ce7, comparada com o catálogo público CLI disponível neste workspace. As versões abaixo são propostas cumulativas. Cada etapa termina em pacote de teste e registro de evidência.
 
-A beta.3 concluiu a correção de transporte dos discos. A beta.4 implementa os sete menus, as abas por área, o catálogo central e a busca. A beta.5 acrescenta a cópia de resultados, Ctrl+C e menu de contexto, com recuperação após bloqueio do clipboard. A próxima etapa é a beta.6, dedicada à legibilidade, ao espaçamento e à apresentação dos discos.
+A beta.3 concluiu a correção de transporte dos discos. A beta.4 implementa os sete menus, as abas por área, o catálogo central e a busca. A beta.5 acrescenta a cópia de resultados, Ctrl+C e menu de contexto, com recuperação após bloqueio do clipboard. A beta.6 melhora a legibilidade, o espaçamento e a apresentação dos discos, com 82 testes aprovados e verificação da janela redimensionada. O aceite em outras escalas e alto contraste continua pendente. A próxima etapa é a beta.7, com simplificação dos formulários e diagnóstico contextual.
 
 ## Resultado da revisão
 
