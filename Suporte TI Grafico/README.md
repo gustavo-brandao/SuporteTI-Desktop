@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.6** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.7** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
 
@@ -11,19 +11,25 @@ A beta.3 normaliza o desgaste dos discos para número ou valor indisponível ant
 3. Em **Visão geral**, use **Consultar computador** para ler o resumo do sistema.
 4. Em **Hardware**, escolha a aba **Desempenho**, **Discos**, **Bateria**, **Dispositivos**, **Serviços** ou **Programas** e selecione a ferramenta. **Discos** reúne a saúde administrativa, os volumes, o mapa e os modos de CHKDSK. O indicador **(UAC)** identifica as ações que exigem elevação.
 5. Em **Hardware → Desempenho → Monitor ao vivo**, inicie ou pause a amostragem de CPU e RAM. Em **Hardware → Discos → Mapa de disco**, analise um volume e navegue por pastas. Trocar de ferramenta pausa o monitor.
-6. Em **Rede**, use as abas **Conexão**, **Conectividade** e **Configuração IPv4**.
-7. Em **Windows**, use **Eventos e códigos** para ler eventos e consultar significados. Clicar em um código destacado preenche a pesquisa e abre a explicação. As abas **Windows Update** e **Integridade e reparos** reúnem seus respectivos diagnósticos e ações.
-8. Em **Impressão**, o diagnóstico, o reinício do spooler e a limpeza da fila ficam juntos. A limpeza pede a fila local que será afetada.
-9. Em **Contas e políticas**, escolha **Políticas de grupo**, **Perfis locais** ou **Login automático**. As políticas de usuário e computador compartilham a mesma aba, com seus escopos identificados.
+6. Em **Rede**, use as abas **Conexão**, **Conectividade** e **Configuração IPv4**. Na configuração, escolha o **Modo** automático (DHCP) ou manual. **Ver adaptadores** consulta os endereços atuais; a alteração exige **Revisar ação…** e seleção explícita do adaptador.
+7. Em **Windows → Eventos e códigos**, escolha **Ler eventos do Windows** e a **Leitura** de falhas ou eventos recentes. A pesquisa de código continua separada. Clicar em um código destacado preenche a pesquisa e abre a explicação. As abas **Windows Update** e **Integridade e reparos** reúnem seus respectivos diagnósticos e ações.
+8. Em **Impressão**, escolha a **Ação**: diagnosticar, reiniciar o spooler ou limpar uma fila local. Ao preparar manutenção, **Diagnosticar impressão** permite consultar primeiro. A limpeza pede a fila local que será afetada.
+9. Em **Contas e políticas → Políticas de grupo**, escolha o **Escopo** usuário da sessão ou computador e a **Ação** consultar, exportar HTML ou atualizar. A consulta contextual respeita o escopo escolhido. **Perfis locais** e **Login automático** mantêm suas próprias abas.
 10. Em **Relatórios**, recupere o último resultado ou exporte eventos em EVTX com manifesto SHA-256. **Salvar log…** continua disponível nos resultados das consultas e exporta também os dados ocultos pelo filtro.
 11. Digite parte do nome na **Buscar ferramenta**. A busca aceita palavras sem acento. Use duplo clique no resultado ou seta para baixo e Enter para abrir. Encontrar uma ferramenta apenas abre sua tela. A execução exige a ação do técnico.
 12. Use **Sobre** para conferir a versão e os créditos.
 
 A saúde dos discos apresenta barras quando existe uma medição numérica. Uma leitura limitada ou indisponível conserva seu aviso. O formulário principal utiliza as permissões da sessão e solicita o UAC por operação.
 
+## Formulários por contexto
+
+A beta.7 agrupa as 44 operações em 35 entradas no seletor. GPO, IPv4, eventos e impressão usam campos próprios em vez de repetir todas as combinações na lista. O texto **Selecionado:** confirma a operação efetiva e identifica o UAC. A busca continua encontrando cada operação pelo nome ou ID e preenche os campos automaticamente. Trocar um campo não executa ações.
+
+Os atalhos **Ver adaptadores**, **Diagnosticar impressão** e **Consultar políticas do escopo** executam somente a consulta indicada; esta última pode pedir UAC no escopo computador. **Pesquisar código de erro** abre o campo para preenchimento. Resultados parciais, salvamento de logs, cópia e confirmações das intervenções permanecem disponíveis.
+
 ## Legibilidade e discos
 
-A beta.6 usa Segoe UI como fonte base de 10 pt, rótulos permanentes nos campos e linhas de tabela mais espaçadas. As instruções acompanham a largura da janela. A ação de cancelar aparece durante consultas que admitem cancelamento, e os botões de relatório aparecem após haver um resultado.
+Desde a beta.6, a interface usa Segoe UI como fonte base de 10 pt, rótulos permanentes nos campos e linhas de tabela mais espaçadas. As instruções acompanham a largura da janela. A ação de cancelar aparece durante consultas que admitem cancelamento, e os botões de relatório aparecem após haver um resultado.
 
 Em **Hardware → Discos**, o resumo separa volumes, discos físicos avaliados, alertas e leituras inconclusivas. Os indicadores mostram **Ocupação** ou **Desgaste** junto do percentual. Uma medição de desgaste zero, por si só, não classifica a saúde do disco. Dados indisponíveis e avisos de leitura parcial continuam visíveis.
 

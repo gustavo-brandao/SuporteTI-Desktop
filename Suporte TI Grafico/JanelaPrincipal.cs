@@ -174,7 +174,8 @@ internal sealed partial class JanelaPrincipal : Form
             var ferramenta = CatalogoFerramentas.Itens.Single(item => item.Id == id);
             MostrarPagina(ferramenta.Grupo);
             abas.SelectedTab = abas.TabPages.Cast<TabPage>().Single(aba => aba.Text == ferramenta.Area);
-            diagnosticos.SelectedItem = diagnosticos.Items.Cast<Ferramenta>().Single(item => item.Id == id);
+            diagnosticos.SelectedItem = diagnosticos.Items.Cast<Ferramenta>().Single(item => item.Id == FluxoFerramentas.Principal(id));
+            ConfigurarFluxo(id);
         };
         void AbrirBusca()
         {
@@ -283,12 +284,12 @@ internal sealed partial class JanelaPrincipal : Form
             .Select(disco => disco.Name.TrimEnd('\\')).Cast<object>().ToArray());
         if (volumesAdmin.Items.Count > 0)
             volumesAdmin.SelectedIndex = 0;
-        diagnosticos.SelectedIndexChanged += (_, _) =>
+        atualizarFerramenta = () =>
         {
             resultado = null;
             filtro.Clear();
             AtualizarGrade();
-            var id = (diagnosticos.SelectedItem as Ferramenta)?.Id;
+            var id = ferramentaAtual?.Id;
             var especial = id is "monitor" or "mapaocupacao";
             painelTabela.Visible = !especial;
             if (telaMonitor is not null) telaMonitor.Visible = id == "monitor";
@@ -335,7 +336,7 @@ internal sealed partial class JanelaPrincipal : Form
                 "dismcheck" => "Consulta o estado de integridade registrado para a imagem do Windows.",
                 "dismscan" => "Executa uma verificação da imagem do Windows com ScanHealth.",
                 "gpcomputerhtml" => "Gera um HTML das políticas do computador na pasta que você escolher.",
-                "filaimpressao" => "Para agir, escolha Reiniciar spooler ou Limpar fila de impressão na lista acima.",
+                "filaimpressao" => "Em Ação, escolha diagnosticar, reiniciar o spooler ou limpar uma fila local. Alterações exigem revisão e UAC.",
                 "diskhealth" => "Lê os indicadores dos discos com acesso administrativo. O Windows solicitará UAC ao consultar.",
                 _ when id is not null && Impactos.TryGetValue(id, out var impacto) => impacto,
                 _ => ""
@@ -343,6 +344,7 @@ internal sealed partial class JanelaPrincipal : Form
             instrucoes.Visible = instrucoes.Text.Length > 0;
             estado.Text = "Pronto para consultar.";
         };
+        diagnosticos.SelectedIndexChanged += (_, _) => ConfigurarFluxo();
         filtro.TextChanged += (_, _) => { if (resultado is not null) AtualizarGrade(); };
         if (!AltoContraste)
         {
@@ -362,10 +364,11 @@ internal sealed partial class JanelaPrincipal : Form
         acoes.Controls.Add(consultar);
         acoes.Controls.Add(cancelar);
         cancelar.EnabledChanged += (_, _) => cancelar.Visible = cancelar.Enabled;
+        var comandos = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, Dock = DockStyle.Fill };
+        CriarCamposFluxo(parametros, comandos);
         parametros.Controls.Add(campoEntrada);
         parametros.Controls.Add(campoVolume);
         parametros.Controls.Add(campoFiltro);
-        var comandos = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, Dock = DockStyle.Fill };
         comandos.Controls.Add(acoes, 0, 0);
         comandos.Controls.Add(parametros, 0, 1);
         comandos.Controls.Add(instrucoes, 0, 2);
@@ -374,6 +377,7 @@ internal sealed partial class JanelaPrincipal : Form
             var largura = Math.Max(180, pagina.ClientSize.Width - pagina.Padding.Horizontal - 12);
             titulo.MaximumSize = descricao.MaximumSize = instrucoes.MaximumSize = new Size(largura, 0);
             resumoDiscos.MaximumSize = new Size(largura - 8, 0);
+            selecionadoFluxo.MaximumSize = new Size(largura - 8, 0);
         };
         pagina.Controls.Add(comandos, 0, 1);
 
@@ -429,7 +433,7 @@ internal sealed partial class JanelaPrincipal : Form
             _ => "Consulte o computador e use a busca para encontrar uma ferramenta."
         };
         diagnosticos.Items.Clear();
-        diagnosticos.Items.AddRange(CatalogoFerramentas.Itens.Where(item => item.Grupo == grupo && item.Area == area).ToArray());
+        diagnosticos.Items.AddRange(FluxoFerramentas.Listar(grupo, area));
         diagnosticos.SelectedIndex = 0;
     }
 
@@ -522,7 +526,7 @@ internal sealed partial class JanelaPrincipal : Form
 
     private async Task ExecutarConsultaAsync(string familia = "")
     {
-        if (ativa is not null || preparandoIntervencao || diagnosticos.SelectedItem is not Ferramenta escolhido)
+        if (ativa is not null || preparandoIntervencao || ferramentaAtual is not Ferramenta escolhido)
             return;
         if (escolhido.Id is "monitor" or "mapaocupacao")
             return;
@@ -576,6 +580,7 @@ internal sealed partial class JanelaPrincipal : Form
         resultado = null;
         AtualizarGrade();
         diagnosticos.Enabled = false;
+        HabilitarCamposFluxo(false);
         entrada.Enabled = false;
         consultar.Enabled = false;
         volumesAdmin.Enabled = false;
@@ -635,6 +640,7 @@ internal sealed partial class JanelaPrincipal : Form
             {
                 consultar.Enabled = true;
                 diagnosticos.Enabled = true;
+                HabilitarCamposFluxo(true);
                 entrada.Enabled = true;
                 volumesAdmin.Enabled = true;
                 cancelar.Enabled = false;

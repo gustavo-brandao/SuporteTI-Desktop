@@ -92,8 +92,30 @@ public static class TesteClipboard {
                 $anterior.Dispose()
             }
         }
+        $matrizNavegacao = if ($Catalogo) { @(Get-Content -LiteralPath $Catalogo -Raw | ConvertFrom-Json) } else { @() }
+        function Selecionar-Combo($Nome, $Valor) {
+            $combo=Wait-Interface { Find-Controle $janela $Nome } $Nome
+            $expandir=$combo.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
+            $expandir.Expand()
+            $item=Wait-Interface { Find-Controle $combo $Valor } $Valor
+            $selecao=$item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
+            $selecao.Select()
+            $expandir.Collapse()
+            if (-not $selecao.Current.IsSelected) { throw "Seleção divergente: $Nome / $Valor." }
+        }
         function Abrir-Ferramenta {
             param([string]$Grupo, [string]$Area, [string]$Rotulo)
+            $rota=$matrizNavegacao | Where-Object { $_.Grupo -eq $Grupo -and $_.Area -eq $Area -and $_.Rotulo -eq $Rotulo }
+            if (-not $rota) {
+                $busca=Find-Controle $janela 'Buscar ferramenta'
+                $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue(($Rotulo -replace ' \(UAC\)$',''))
+                $lista=Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'busca da ferramenta'
+                $item=Wait-Interface { Find-Controle $lista $Rotulo } $Rotulo
+                $item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+                $item.SetFocus()
+                [Windows.Forms.SendKeys]::SendWait('{ENTER}')
+                return
+            }
             (Find-Controle $janela $Grupo).GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
             $abas = Wait-Interface { Find-Controle $janela 'Áreas de ferramentas' } 'áreas de navegação'
             (Wait-Interface {
@@ -109,13 +131,18 @@ public static class TesteClipboard {
                 if ($opcoes.Current.ExpandCollapseState -eq [Windows.Automation.ExpandCollapseState]::Collapsed) {
                     $opcoes.Expand()
                 }
-                Find-Controle $seletor $Rotulo
+                Find-Controle $seletor $rota.Principal
             } $Rotulo
             $selecao = $itemAlvo.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
             $selecao.Select()
             $opcoes.Collapse()
             if (-not $selecao.Current.IsSelected) {
                 throw "A ferramenta selecionada diverge do destino esperado: $Rotulo."
+            }
+            if ($rota.Escopo) { Selecionar-Combo 'Escopo da operação' $rota.Escopo }
+            if ($rota.Acao) {
+                Selecionar-Combo 'Opção da operação' $rota.Acao
+                [void](Wait-Interface { Find-Controle $janela ('Selecionado: '+$Rotulo) } 'operação efetiva do formulário')
             }
         }
         function Test-Copia {
@@ -184,7 +211,31 @@ public static class TesteClipboard {
                 try { Abrir-Ferramenta $item.Grupo $item.Area $item.Rotulo }
                 catch { throw "Falha ao abrir $($item.Id) em $($item.Grupo) / $($item.Area). $($_.Exception.Message) $($_.ScriptStackTrace)" }
             }
-            'As 44 ferramentas foram acessadas por grupo, aba e seletor sem executar ações.'
+            'As 44 ferramentas foram acessadas por grupo, aba e campos do formulário sem executar ações.'
+            foreach ($rota in @($itens | Where-Object Acao)) {
+                $busca=Find-Controle $janela 'Buscar ferramenta'
+                $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($rota.Id)
+                $lista=Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'busca de operação agrupada'
+                $item=Wait-Interface { Find-Controle $lista $rota.Rotulo } $rota.Rotulo
+                $item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+                $item.SetFocus()
+                [Windows.Forms.SendKeys]::SendWait('{ENTER}')
+                [void](Wait-Interface { Find-Controle $janela ('Selecionado: '+$rota.Rotulo) } 'campos preenchidos pela busca')
+                $log=Find-Controle $janela 'Salvar log…'
+                if ($log -and -not $log.Current.IsOffscreen) { throw 'Abrir pela busca executou ou reteve um resultado anterior.' }
+            }
+            'Busca preencheu as 13 operações agrupadas, incluindo as intervenções, sem executá-las.'
+            Abrir-Ferramenta 'Contas e políticas' 'Políticas de grupo' 'Exportar GPO do usuário em HTML'
+            Selecionar-Combo 'Escopo da operação' 'Computador'
+            [void](Wait-Interface { Find-Controle $janela 'Selecionado: Exportar GPO do computador (UAC)' } 'HTML preservado ao trocar escopo')
+            Selecionar-Combo 'Escopo da operação' 'Usuário da sessão'
+            (Find-Controle $janela 'Consultar políticas do escopo').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+            [void](Wait-Interface {
+                $log=Find-Controle $janela 'Salvar log…'
+                if ($log -and $log.Current.IsEnabled) { $log }
+            } 'consulta contextual de GPO do usuário' 50)
+            [void](Wait-Interface { Find-Controle $janela 'Selecionado: Políticas do usuário (GPO)' } 'escopo de usuário preservado na consulta')
+            'GPO preservou a ação na troca de escopo e a consulta contextual usou o usuário da sessão.'
             $busca = Find-Controle $janela 'Buscar ferramenta'
             $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('codigofalha')
             $lista = Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'resultado da busca'
@@ -299,14 +350,28 @@ public static class TesteClipboard {
         'Monitor com amostra real, pausa e cancelamento do mapa verificados.'
         Abrir-Ferramenta 'Impressão' 'Filas e spooler' 'Diagnóstico de impressão'
 
-        $seletor = Find-Controle $janela 'Escolher diagnóstico'
-        $opcoes = $seletor.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
-        $opcoes.Expand()
-        foreach ($nome in 'Diagnóstico de impressão', 'Reiniciar spooler (UAC)', 'Limpar fila de impressão (UAC)') {
-            [void](Wait-Interface { Find-Controle $seletor $nome } $nome)
+        $opcao=Find-Controle $janela 'Opção da operação'
+        $expandir=$opcao.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
+        $expandir.Expand()
+        foreach ($nome in 'Diagnosticar impressão', 'Reiniciar spooler (UAC)', 'Limpar fila local (UAC)') {
+            [void](Wait-Interface { Find-Controle $opcao $nome } $nome)
         }
-        $opcoes.Collapse()
-        'Diagnostico, reinicio e limpeza de fila local aparecem como opcoes distintas.'
+        $expandir.Collapse()
+        'Diagnóstico, reinício e limpeza de fila local permanecem explícitos no formulário de impressão.'
+        Abrir-Ferramenta 'Impressão' 'Filas e spooler' 'Limpar fila de impressão (UAC)'
+        (Find-Controle $janela 'Diagnosticar impressão').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+        [void](Wait-Interface {
+            $log=Find-Controle $janela 'Salvar log…'
+            if ($log -and $log.Current.IsEnabled) { $log }
+        } 'resultado do diagnóstico contextual de impressão' 50)
+        [void](Wait-Interface { Find-Controle $janela 'Selecionado: Diagnóstico de impressão' } 'diagnóstico sem intervenção')
+        Abrir-Ferramenta 'Rede' 'Configuração IPv4' 'Configurar IPv4 fixo (UAC)'
+        (Find-Controle $janela 'Ver adaptadores').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+        [void](Wait-Interface {
+            $log=Find-Controle $janela 'Salvar log…'
+            if ($log -and $log.Current.IsEnabled) { $log }
+        } 'consulta contextual de adaptadores' 50)
+        'Atalhos contextuais consultaram impressão e adaptadores sem executar manutenção.'
         Abrir-Ferramenta 'Hardware' 'Discos' 'Volumes e saúde dos discos'
         (Find-Controle $janela 'Consultar').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         [void](Wait-Interface { Find-Controle $janela 'Indicador' } 'coluna de graficos' 50)

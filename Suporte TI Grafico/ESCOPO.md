@@ -1,5 +1,13 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.7
+
+O seletor apresenta 35 entradas para as 44 operações preservadas. GPO usa Escopo e Ação; IPv4 usa Modo; eventos usam Leitura; impressão usa Ação, com diagnóstico, reinício e limpeza de fila separados. A busca continua indexando os 44 IDs e preenche o formulário correspondente, inclusive ações administrativas.
+
+Escolher um campo não executa consultas nem manutenção. A operação efetiva aparece por extenso com a indicação de UAC quando aplicável. Atalhos contextuais oferecem consulta de adaptadores, diagnóstico de impressão, consulta das políticas do escopo ou abertura da pesquisa de códigos. As intervenções mantêm seleção de alvo, revisão e confirmação. Não há mudança nos coletores, parâmetros, transporte JSON ou política de elevação.
+
+O aceite inclui as 44 rotas da janela, todas as combinações de GPO, modos IPv4, leituras de eventos e ações de impressão, busca de intervenções sem executá-las, log e clipboard, além da regressão das consultas. Alterações reais continuam restritas ao laboratório previsto na matriz.
+
 ## Prévia 1.0.0-beta.6
 
 Os formulários recebem rótulos e a fonte base passa a Segoe UI 10 pt. A tabela ganha espaçamento e as instruções se ajustam à largura. O cancelamento e os comandos de relatório aparecem nos estados em que podem ser usados.

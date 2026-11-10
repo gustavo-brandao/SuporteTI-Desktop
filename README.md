@@ -1,16 +1,16 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.6**
+**Versão atual · 1.0.0-beta.7**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.6/SuporteTI-Grafico-1.0.0-beta.6-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.6/SuporteTI-Grafico-1.0.0-beta.6-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.6)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.7/SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.7/SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.7)
 
-![Resumo e indicadores dos discos na beta.6, com dados demonstrativos](docs/imagens/discos-beta6.png)
+![GPO com campos de escopo e ação na beta.7](docs/imagens/gpo-beta7.png)
 
-Tela da beta.6 com **dados demonstrativos**. Ocupação, desgaste e alertas aparecem separados; leituras indisponíveis são identificadas no resultado.
+Na beta.7, GPO usa **Escopo** e **Ação**. A operação selecionada e a necessidade de UAC aparecem antes de executar. IPv4, eventos e impressão também usam formulários por contexto.
 
 ## Começar
 
@@ -31,9 +31,11 @@ A beta está sem assinatura Authenticode. Os testes de laboratório com interven
 
 Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operações por assunto e o indicador **(UAC)** identifica as ferramentas administrativas.
 
+O seletor reúne **35 entradas para as 44 operações**. A busca continua encontrando todas elas e preenche o formulário correspondente. Selecionar um modo ou ação prepara a operação para revisão. Os atalhos de diagnóstico permitem consultar antes de fazer alterações.
+
 Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou **Copiar resultado** para o relatório completo. O menu de contexto oferece as mesmas ações e o rodapé confirma a cópia. O clique nos códigos de erro abre sua explicação.
 
-![Tela Impressão na beta.6](docs/imagens/impressao.png)
+![Formulário de impressão na beta.7, com ação de limpeza preparada para revisão](docs/imagens/impressao-beta7.png)
 
 ## Documentação e código
 

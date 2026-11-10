@@ -1,5 +1,13 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.7 · 10 de novembro de 2026
+
+- **91 testes automatizados aprovados**, incluindo CIM real. A cobertura nova confere as 44 rotas, as 35 entradas de apresentação, os seis destinos de GPO com identidade/UAC, os modos IPv4, as leituras de eventos e as ações distintas de impressão. Escopos e ações desconhecidos são recusados.
+- No ZIP extraído, as **44 operações** foram abertas por grupo, aba e campos do formulário. A busca abriu as **13 operações agrupadas**, preenchendo os campos exatos, inclusive intervenções, sem executá-las.
+- GPO preservou Exportar HTML ao alternar entre usuário e computador. O atalho contextual consultou as políticas do usuário da sessão. Os atalhos de impressão e adaptadores também retornaram resultados sem manutenção.
+- Passaram novamente a consulta de discos pelo UAC, pesquisa por clique em código, clipboard real com bloqueio e recuperação, salvamento disponível, exportações HTML/EVTX e manifesto, monitor, cancelamento do mapa e redimensionamento da janela.
+- As capturas de GPO e impressão mostram escolhas preparadas para execução, sem executar exportação administrativa ou limpeza de fila. Os coletores e as intervenções não foram alterados. Testes de manutenção real, conta administrativa distinta, Windows 10, outras escalas e alto contraste permanecem na matriz de homologação.
+
 ## Prévia 1.0.0-beta.6
 
 - **82 testes automatizados aprovados**, incluindo consulta CIM real. Os três cenários novos distinguem ocupação de saúde física, preservam alertas nativos e resultados parciais e mantêm a saúde indisponível quando não há discos avaliados.

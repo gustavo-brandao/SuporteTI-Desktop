@@ -26,6 +26,7 @@ internal sealed partial class JanelaPrincipal
     {
         preparandoIntervencao = true;
         diagnosticos.Enabled = consultar.Enabled = false;
+        HabilitarCamposFluxo(false);
         var estadoAnterior = estado.Text;
         try
         {
@@ -65,6 +66,7 @@ internal sealed partial class JanelaPrincipal
         {
             preparandoIntervencao = false;
             diagnosticos.Enabled = consultar.Enabled = true;
+            HabilitarCamposFluxo(true);
             estado.Text = estadoAnterior;
         }
     }

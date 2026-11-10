@@ -9,7 +9,13 @@ if (args.Contains("--catalogo"))
 {
     Console.OutputEncoding = new UTF8Encoding(false);
     Console.WriteLine(JsonSerializer.Serialize(CatalogoFerramentas.Itens.Select(item =>
-        new { item.Id, item.Grupo, item.Area, Rotulo = item.ToString() })));
+    {
+        var fluxo = FluxoFerramentas.Obter(item.Id);
+        var opcao = fluxo?.Opcoes.Single(opcao => opcao.Id == item.Id);
+        var principal = FluxoFerramentas.Listar(item.Grupo, item.Area).Single(principal => principal.Id == FluxoFerramentas.Principal(item.Id));
+        return new { item.Id, item.Grupo, item.Area, Rotulo = item.ToString(), Principal = principal.ToString(),
+            Escopo = opcao?.Escopo, Acao = opcao?.Acao };
+    })));
     return;
 }
 
@@ -30,6 +36,30 @@ try
     Igual(true, CatalogoFerramentas.Buscar("saude discos").Any(item => item.Id == "diskhealth"),
         "Busca combina palavras e ignora acentos");
     Igual(0, CatalogoFerramentas.Buscar("ferramenta inexistente zzz").Length, "Busca sem correspondência");
+    Igual(true, CatalogoFerramentas.Itens.All(item =>
+    {
+        var fluxo = FluxoFerramentas.Obter(item.Id);
+        var opcao = fluxo?.Opcoes.Single(opcao => opcao.Id == item.Id);
+        return FluxoFerramentas.Listar(item.Grupo, item.Area).Count(principal => principal.Id == FluxoFerramentas.Principal(item.Id)) == 1 &&
+            (opcao is null || fluxo!.Resolver(opcao.Escopo, opcao.Acao).Id == item.Id);
+    }), "As 44 rotas chegam a uma operação explícita nos formulários");
+    Igual(35, CatalogoFerramentas.Itens.GroupBy(item => (item.Grupo, item.Area))
+        .Sum(area => FluxoFerramentas.Listar(area.Key.Grupo, area.Key.Area).Length), "Agrupamento reduz o seletor de 44 para 35 entradas");
+    var gpo = FluxoFerramentas.Obter("gpusuario")!;
+    Igual(true, gpo.Acoes("Usuário da sessão").Select(opcao => opcao.Id).SequenceEqual(["gpusuario", "gphtml", "gpupdateuser"]) &&
+        gpo.Acoes("Usuário da sessão").All(opcao => !ElevacaoConsulta.EhAdministrativa(opcao.Id)), "GPO do usuário conserva identidade da sessão");
+    Igual(true, gpo.Acoes("Computador").Select(opcao => opcao.Id).SequenceEqual(["gpcomputador", "gpcomputerhtml", "gpupdatecomputer"]) &&
+        gpo.Acoes("Computador").All(opcao => ElevacaoConsulta.EhAdministrativa(opcao.Id)), "GPO do computador mantém UAC nas três ações");
+    Igual(true, FluxoFerramentas.Obter("netstatic")!.Opcoes.Select(opcao => opcao.Id).SequenceEqual(["netdhcp", "netstatic"]),
+        "IPv4 não confunde configuração automática com manual");
+    Igual(true, FluxoFerramentas.Obter("eventos")!.Opcoes.Select(opcao => opcao.Id).SequenceEqual(["falhas", "eventos"]),
+        "Leituras de eventos preservam seus coletores distintos");
+    Igual(true, FluxoFerramentas.Obter("spoolerclear")!.Opcoes.Select(opcao => opcao.Id).SequenceEqual(["filaimpressao", "spooler", "spoolerclear"]),
+        "Impressão começa em diagnóstico e preserva duas intervenções distintas");
+    await Falha<InvalidOperationException>(() => Task.FromResult(gpo.Resolver("Outro usuário", "Consultar políticas")),
+        "Escopo desconhecido não seleciona uma operação por aproximação");
+    await Falha<InvalidOperationException>(() => Task.FromResult(gpo.Resolver("Computador", "Atualizar e reiniciar")),
+        "Ação desconhecida não executa uma manutenção alternativa");
     var resumoInconclusivo = ResumoDiscos.Criar(new Resposta(1, "discos", "parcial",
         [new Secao("Discos", [
             new Campo("C:", "99% ocupado", Percentual: 99, Metrica: "ocupacao"),
