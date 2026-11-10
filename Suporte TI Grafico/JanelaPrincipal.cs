@@ -45,7 +45,7 @@ internal sealed partial class JanelaPrincipal : Form
         AllowUserToResizeRows = false,
         RowHeadersVisible = false,
         MultiSelect = false,
-        AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells,
+        AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells,
         AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
         SelectionMode = DataGridViewSelectionMode.FullRowSelect,
         AccessibleName = "Resultados da consulta"
@@ -345,7 +345,9 @@ internal sealed partial class JanelaPrincipal : Form
             estado.Text = "Pronto para consultar.";
         };
         diagnosticos.SelectedIndexChanged += (_, _) => ConfigurarFluxo();
-        filtro.TextChanged += (_, _) => { if (resultado is not null) AtualizarGrade(); };
+        filtro.TextChanged += (_, _) => AgendarFiltro();
+        atrasoFiltro.Tick += (_, _) => AtualizarGrade();
+        Disposed += (_, _) => atrasoFiltro.Dispose();
         if (!AltoContraste)
         {
             diagnosticos.BackColor = Superficie;
@@ -648,84 +650,6 @@ internal sealed partial class JanelaPrincipal : Form
         }
     }
 
-    private void AtualizarGrade()
-    {
-        grade.Rows.Clear();
-        grade.Columns[3].Visible = resultado?.Operacao is "discos" or "diskhealth";
-        salvar.Enabled = resultado is not null;
-        copiarResultado.Enabled = resultado is not null;
-        salvar.Visible = copiarResultado.Visible = resultado is not null;
-        var mostrarResumo = resultado?.Operacao is "discos" or "diskhealth";
-        resumoDiscos.Visible = mostrarResumo;
-        resumoDiscos.Text = mostrarResumo ? ResumoDiscos.Criar(resultado!) : "";
-        feedbackCopia.Text = "";
-        if (resultado is null)
-            return;
-        var termo = filtro.Text.Trim();
-        foreach (var secao in resultado.Secoes)
-        {
-            foreach (var campo in secao.Campos)
-                if (secao.Nome.Contains(termo, StringComparison.CurrentCultureIgnoreCase) ||
-                    campo.Nome.Contains(termo, StringComparison.CurrentCultureIgnoreCase) ||
-                    campo.Valor.Contains(termo, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    var indicador = campo.Percentual is double percentual ? (object)percentual :
-                        campo.Metrica is "ocupacao" or "desgaste" ? "Não informado" : "";
-                    var linha = grade.Rows[grade.Rows.Add(secao.Nome, campo.Nome, campo.Valor, indicador)];
-                    linha.Cells[2].ToolTipText = campo.Valor;
-                    linha.Cells[3].Tag = campo.Metrica;
-                    linha.Cells[3].ToolTipText = campo.Metrica == "ocupacao" ? "Percentual de espaço ocupado no volume" :
-                        "Percentual usado da vida útil estimada. A saúde também depende dos demais indicadores.";
-                    if (campo.Familia is "Win32" or "HRESULT" or "Excecoes" or "Paradas")
-                    {
-                        linha.Tag = campo;
-                        var cor = AltoContraste ? SystemColors.HotTrack : Color.FromArgb(152, 204, 255);
-                        linha.Cells[2] = new DataGridViewLinkCell
-                        {
-                            Value = campo.Valor, LinkColor = cor, ActiveLinkColor = cor, TrackVisitedState = false,
-                            ToolTipText = "Consultar o significado deste código"
-                        };
-                    }
-                }
-            if (!string.IsNullOrWhiteSpace(secao.Aviso))
-                grade.Rows.Add(secao.Nome, "Aviso", secao.Aviso);
-        }
-        grade.ClearSelection();
-        estado.Text = resultado.Estado switch
-        {
-            "concluido" when grade.Rows.Count == 0 => "Nenhum resultado corresponde ao filtro.",
-            "concluido" => "Consulta concluída.",
-            "parcial" => "Consulta parcial. Confira os avisos na lista.",
-            _ => "Dados indisponíveis. Confira os avisos na lista."
-        };
-    }
-
-    private static void DesenharIndicadorDisco(object? remetente, DataGridViewCellPaintingEventArgs evento)
-    {
-        if (evento.RowIndex < 0 || evento.ColumnIndex != 3 || evento.Value is not double percentual ||
-            evento.Graphics is null || evento.CellStyle is not { } estilo)
-            return;
-        evento.PaintBackground(evento.ClipBounds, true);
-        var area = Rectangle.Inflate(evento.CellBounds, -8, -5);
-        if (area.Width > 0 && area.Height > 0)
-        {
-            var metrica = (remetente as DataGridView)?.Rows[evento.RowIndex].Cells[3].Tag as string;
-            var nome = metrica == "ocupacao" ? "Ocupação" : metrica == "desgaste" ? "Desgaste" : "Indicador";
-            var trilha = new Rectangle(area.X, area.Bottom - 7, area.Width, 7);
-            using var fundo = new SolidBrush(AltoContraste ? SystemColors.ControlDark : Borda);
-            using var usado = new SolidBrush(AltoContraste ? SystemColors.Highlight :
-                percentual >= (metrica == "desgaste" ? 80 : 90) ? Color.FromArgb(224, 136, 116) : Color.FromArgb(98, 166, 255));
-            evento.Graphics.FillRectangle(fundo, trilha);
-            evento.Graphics.FillRectangle(usado, trilha.X, trilha.Y, (int)(trilha.Width * Math.Clamp(percentual, 0, 100) / 100), trilha.Height);
-            var rotulo = new Rectangle(area.X, area.Y, area.Width, Math.Max(0, area.Height - 9));
-            var corTexto = (evento.State & DataGridViewElementStates.Selected) != 0
-                ? estilo.SelectionForeColor : estilo.ForeColor;
-            TextRenderer.DrawText(evento.Graphics, $"{nome} {percentual:N0}%", estilo.Font, rotulo, corTexto,
-                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
-        }
-        evento.Handled = true;
-    }
-
     private void SalvarResultado()
     {
         if (resultado is null)
@@ -773,6 +697,7 @@ internal sealed partial class JanelaPrincipal : Form
 
     private sealed class GradeDiagnostico : DataGridView
     {
+        public GradeDiagnostico() => DoubleBuffered = true;
         private Func<bool>? abrirCodigo;
         private Action? copiar;
 

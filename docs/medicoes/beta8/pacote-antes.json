@@ -1,0 +1,53 @@
+{
+    "pacote":  "SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip",
+    "amostras":  [
+                     {
+                         "milissegundos":  4873.6586000000007,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  1
+                     },
+                     {
+                         "milissegundos":  337.08090000000004,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  1
+                     },
+                     {
+                         "milissegundos":  1729.6781,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  1,
+                         "estado":  "concluido"
+                     },
+                     {
+                         "milissegundos":  311.1804,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  2
+                     },
+                     {
+                         "milissegundos":  317.2944,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  2
+                     },
+                     {
+                         "milissegundos":  1717.722,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  2,
+                         "estado":  "concluido"
+                     },
+                     {
+                         "milissegundos":  323.15590000000003,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  3
+                     },
+                     {
+                         "milissegundos":  395.2645,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  3
+                     },
+                     {
+                         "milissegundos":  1846.49,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  3,
+                         "estado":  "concluido"
+                     }
+                 ]
+}

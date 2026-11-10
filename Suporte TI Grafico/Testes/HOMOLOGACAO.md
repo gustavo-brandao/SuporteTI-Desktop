@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.7 · Windows x64**
+**Versão em testes 1.0.0-beta.8 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -29,7 +29,7 @@ Use um certificado de assinatura de código confiável e o servidor de carimbo a
 
 ```powershell
 .\Construcao\Publicar.ps1 -CertificadoThumbprint $thumbprint -ServidorCarimbo $url -Destino .\outputs\assinado
-.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\assinado\SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip -ExigirAssinatura -ExigirCim -Janela
+.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\assinado\SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip -ExigirAssinatura -ExigirCim -Janela
 ```
 
 Para verificar a origem UNC, extraia o pacote assinado no compartilhamento e abra pelo caminho UNC. Repita uma consulta administrativa com conta distinta. Em uma cópia descartável, altere um script administrativo e confirme a rejeição. O pacote local sem assinatura cobre a regressão desta beta. A assinatura e os aceites em VM continuam como critérios de promoção.

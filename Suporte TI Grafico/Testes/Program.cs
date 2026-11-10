@@ -91,6 +91,22 @@ try
     });
 
     var completo = Json("concluido", true);
+    var evidenciaFiltro = new Campo("Código", "0xC0000005", Familia: "Excecoes");
+    var respostaFiltro = new Resposta(1, "falhas", "parcial", [new Secao("Eventos", [evidenciaFiltro,
+        new Campo("Texto Unicode", "Ação çã 漢字")], "Canal sem permissão")]);
+    Igual(true, LinhasResultado.Filtrar(respostaFiltro, "  0xc0000005  ").Select(linha => linha.Campo.Valor)
+        .SequenceEqual(["0xC0000005", "Canal sem permissão"]), "Filtro ignora caixa e preserva avisos fora da correspondência");
+    Igual(3, LinhasResultado.Filtrar(respostaFiltro, "Eventos").Count(), "Busca pela seção inclui os campos e o aviso uma vez");
+    Igual(true, ReferenceEquals(evidenciaFiltro, LinhasResultado.Filtrar(respostaFiltro, "Código").First().Campo),
+        "Projeção mantém a evidência e família original do código");
+    Igual(true, LinhasResultado.Filtrar(respostaFiltro, "inexistente").Single().Aviso,
+        "Filtro sem correspondência conserva o aviso parcial");
+    using (var unicode = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes("çã漢字"))))
+        Igual("çã漢字", await ConsultaPowerShell.LerLimitadoAsync(unicode, 4, default), "Leitor limitado conserva Unicode no limite exato");
+    using (var excedente = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes("12345"))))
+        await Falha<InvalidDataException>(() => ConsultaPowerShell.LerLimitadoAsync(excedente, 4, default), "Leitor recusa saída acima do limite");
+    using (var vazio = new StreamReader(new MemoryStream()))
+        Igual("", await ConsultaPowerShell.LerLimitadoAsync(vazio, 0, default), "Leitor aceita saída vazia");
     Igual("concluido", ConsultaPowerShell.Interpretar(completo).Estado, "JSON concluído");
     Igual("parcial", ConsultaPowerShell.Interpretar(Json("parcial", true, true)).Estado, "JSON parcial");
     Igual("indisponivel", ConsultaPowerShell.Interpretar(Json("indisponivel", false)).Estado, "JSON sem dados");
@@ -111,6 +127,56 @@ try
     await Falha<TimeoutException>(() => Fixture("tempo.ps1", "Start-Sleep -Seconds 20", TimeSpan.FromSeconds(2)).ConsultarSistemaAsync(default), "Limite de tempo");
     using var cancelar = new CancellationTokenSource(TimeSpan.FromSeconds(2));
     await Falha<OperationCanceledException>(() => Fixture("cancelar.ps1", "Start-Sleep -Seconds 20").ConsultarSistemaAsync(cancelar.Token), "Cancelamento");
+    await Falha<InvalidDataException>(() => Fixture("saida-excessiva.ps1", "[Console]::Error.Write(('x' * 70000)); Start-Sleep -Seconds 30")
+        .ConsultarSistemaAsync(default), "Saída excessiva interrompe o processo sem esperar o prazo", "limite de tamanho");
+    for (var repeticao = 1; repeticao <= 3; repeticao++) await VerificarArvore("cancelar", repeticao);
+    await VerificarArvore("concluir", 1);
+    await VerificarArvore("prazo", 1);
+
+    async Task VerificarArvore(string modo, int repeticao)
+    {
+        var caminhoPai = Path.Combine(temporaria.FullName, $"pai-{modo}-{repeticao}.txt");
+        var caminhoFilho = Path.Combine(temporaria.FullName, $"filho-{modo}-{repeticao}.txt");
+        var programa = $$"""
+            [IO.File]::WriteAllText('{{caminhoPai.Replace("'", "''")}}', [string]$PID)
+            $filho = Start-Process -FilePath (Join-Path $PSHOME 'powershell.exe') -ArgumentList '-NoLogo','-NoProfile','-NonInteractive','-Command','Start-Sleep -Seconds 30' -PassThru -WindowStyle Hidden
+            [IO.File]::WriteAllText('{{caminhoFilho.Replace("'", "''")}}', [string]$filho.Id)
+            {{(modo == "concluir" ? "@'\n" + completo + "\n'@" : "Start-Sleep -Seconds 30")}}
+            """;
+        using var token = new CancellationTokenSource();
+        var tarefa = Fixture($"arvore-{modo}-{repeticao}.ps1", programa, TimeSpan.FromSeconds(5)).ConsultarSistemaAsync(token.Token);
+        var processos = new List<Process>();
+        try
+        {
+            var espera = Stopwatch.StartNew();
+            while (!File.Exists(caminhoFilho) && !tarefa.IsCompleted && espera.Elapsed.TotalSeconds < 10) await Task.Delay(25);
+            foreach (var caminho in new[] { caminhoPai, caminhoFilho })
+            {
+                if (!File.Exists(caminho)) throw new InvalidOperationException("A simulação não criou os processos esperados.");
+                var pid = int.Parse(File.ReadAllText(caminho));
+                try { processos.Add(Process.GetProcessById(pid)); }
+                catch (ArgumentException) { /* Já encerrado pela consulta. */ }
+            }
+            if (modo == "cancelar") token.Cancel();
+            if (modo == "concluir") await tarefa;
+            else if (modo == "prazo") await Falha<TimeoutException>(() => tarefa, "Prazo encerra consulta com filho");
+            else await Falha<OperationCanceledException>(() => tarefa, $"Cancelamento da árvore · repetição {repeticao}");
+            espera.Restart();
+            while (processos.Any(processo => !processo.HasExited) && espera.Elapsed.TotalSeconds < 3) await Task.Delay(25);
+            Igual(true, processos.All(processo => processo.HasExited), $"Zero processos restantes · {modo} · {repeticao}");
+        }
+        finally
+        {
+            token.Cancel();
+            try { await tarefa; } catch { }
+            // A limpeza de segurança alcança somente os PIDs criados por esta simulação.
+            foreach (var processo in processos)
+            {
+                if (!processo.HasExited) { processo.Kill(entireProcessTree: true); await processo.WaitForExitAsync(); }
+                processo.Dispose();
+            }
+        }
+    }
 
     var real = await new ConsultaPowerShell().ConsultarSistemaAsync(default);
     Igual("sistema", real.Operacao, "Contrato da consulta instalada");

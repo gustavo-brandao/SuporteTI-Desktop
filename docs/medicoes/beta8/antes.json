@@ -1,0 +1,39 @@
+{
+  "versao": "1.0.0-beta.7\u002Be7b3300c1ccb9281cfe60f2fa6cb307887a73933",
+  "ambiente": "Windows x64; mesma esta\u00E7\u00E3o e resolu\u00E7\u00E3o; dados sint\u00E9ticos; tr\u00EAs repeti\u00E7\u00F5es no mesmo processo",
+  "amostras": [
+    {
+      "repeticao": 1,
+      "aberturaJanelaMs": 286.6155,
+      "preencher1000Ms": 1258.3783,
+      "seisTeclasMs": 5459.7809,
+      "navegar44Ms": 1565.0593,
+      "memoriaAntesBytes": 53428224,
+      "memoriaDepoisBytes": 51044352,
+      "handlesAntes": 350,
+      "handlesDepois": 377
+    },
+    {
+      "repeticao": 2,
+      "aberturaJanelaMs": 121.3656,
+      "preencher1000Ms": 1388.7809,
+      "seisTeclasMs": 6707.0493,
+      "navegar44Ms": 1437.3391,
+      "memoriaAntesBytes": 37957632,
+      "memoriaDepoisBytes": 49967104,
+      "handlesAntes": 377,
+      "handlesDepois": 377
+    },
+    {
+      "repeticao": 3,
+      "aberturaJanelaMs": 112.3908,
+      "preencher1000Ms": 1386.9482,
+      "seisTeclasMs": 6757.5684,
+      "navegar44Ms": 1421.5537,
+      "memoriaAntesBytes": 42582016,
+      "memoriaDepoisBytes": 44122112,
+      "handlesAntes": 379,
+      "handlesDepois": 379
+    }
+  ]
+}

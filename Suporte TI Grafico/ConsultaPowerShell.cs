@@ -79,11 +79,20 @@ internal sealed class ConsultaPowerShell
             processo.StartInfo.ArgumentList.Add(familia);
         }
 
+        using var arvore = new ArvoreConsulta();
         processo.Start();
+        var associada = false;
+        async Task<string> Ler(StreamReader leitor, int limiteTexto)
+        {
+            try { return await LerLimitadoAsync(leitor, limiteTexto, prazo.Token).ConfigureAwait(false); }
+            catch { prazo.Cancel(); throw; }
+        }
         try
         {
-            var saida = processo.StandardOutput.ReadToEndAsync(prazo.Token);
-            var erros = processo.StandardError.ReadToEndAsync(prazo.Token);
+            arvore.Associar(processo);
+            associada = true;
+            var saida = Ler(processo.StandardOutput, 16 * 1024 * 1024);
+            var erros = Ler(processo.StandardError, 64 * 1024);
             await Task.WhenAll(saida, erros, processo.WaitForExitAsync(prazo.Token)).ConfigureAwait(false);
             if (processo.ExitCode != 0)
                 throw new InvalidOperationException($"O PowerShell encerrou com código {processo.ExitCode}.\n{(await erros).Trim()}".TrimEnd());
@@ -92,19 +101,40 @@ internal sealed class ConsultaPowerShell
         }
         catch (OperationCanceledException)
         {
-            try
-            {
-                if (!processo.HasExited)
-                    processo.Kill(entireProcessTree: true);
-            }
-            catch (InvalidOperationException) when (processo.HasExited)
-            {
-                // O processo encerrou durante o cancelamento.
-            }
             if (cancelamento.IsCancellationRequested)
                 throw;
             throw new TimeoutException("A consulta excedeu o limite de tempo. Tente novamente.");
         }
+        finally
+        {
+            prazo.Cancel();
+            arvore.Dispose();
+            if (!processo.HasExited)
+            {
+                if (!associada)
+                {
+                    try { processo.Kill(entireProcessTree: true); }
+                    catch (InvalidOperationException) when (processo.HasExited) { }
+                }
+                // A janela só libera a próxima consulta depois de recolher o processo encerrado.
+                using var encerramento = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                await processo.WaitForExitAsync(encerramento.Token).ConfigureAwait(false);
+            }
+        }
+    }
+
+    internal static async Task<string> LerLimitadoAsync(StreamReader leitor, int limite, CancellationToken token)
+    {
+        var texto = new StringBuilder();
+        var buffer = new char[4096];
+        int lidos;
+        while ((lidos = await leitor.ReadAsync(buffer.AsMemory(), token).ConfigureAwait(false)) > 0)
+        {
+            if (lidos > limite - texto.Length)
+                throw new InvalidDataException("A saída do PowerShell excedeu o limite de tamanho da consulta.");
+            texto.Append(buffer, 0, lidos);
+        }
+        return texto.ToString();
     }
 
     internal static Resposta Interpretar(string texto, string operacao = "sistema")

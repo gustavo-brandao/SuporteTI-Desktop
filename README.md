@@ -1,16 +1,16 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.7**
+**Versão atual · 1.0.0-beta.8**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.7/SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.7/SuporteTI-Grafico-1.0.0-beta.7-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.7)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.8/SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.8/SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.8)
 
-![GPO com campos de escopo e ação na beta.7](docs/imagens/gpo-beta7.png)
+![GPO com campos de escopo e ação na beta.8](docs/imagens/gpo-beta8.png)
 
-Na beta.7, GPO usa **Escopo** e **Ação**. A operação selecionada e a necessidade de UAC aparecem antes de executar. IPv4, eventos e impressão também usam formulários por contexto.
+A beta.8 otimiza as tabelas e o filtro e controla o encerramento de consultas e seus processos filhos. Os formulários preservam o escopo, a ação e a indicação de UAC antes de executar.
 
 ## Começar
 
@@ -33,9 +33,11 @@ Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operaç�
 
 O seletor reúne **35 entradas para as 44 operações**. A busca continua encontrando todas elas e preenche o formulário correspondente. Selecionar um modo ou ação prepara a operação para revisão. Os atalhos de diagnóstico permitem consultar antes de fazer alterações.
 
+O filtro aguarda 200 ms sem novas teclas antes de atualizar a tabela. Limpar o campo restaura os registros imediatamente. Os avisos de leitura parcial permanecem visíveis. Confira as [medições da beta.8](docs/DESEMPENHO-beta8.md), com três amostras por cenário e as pendências de homologação.
+
 Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou **Copiar resultado** para o relatório completo. O menu de contexto oferece as mesmas ações e o rodapé confirma a cópia. O clique nos códigos de erro abre sua explicação.
 
-![Formulário de impressão na beta.7, com ação de limpeza preparada para revisão](docs/imagens/impressao-beta7.png)
+![Formulário de impressão na beta.8, com ação de limpeza preparada para revisão](docs/imagens/impressao-beta8.png)
 
 ## Documentação e código
 

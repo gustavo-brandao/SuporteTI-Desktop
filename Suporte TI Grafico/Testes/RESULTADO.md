@@ -1,5 +1,14 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.8 · 10 de novembro de 2026
+
+- **108 testes automatizados aprovados**, incluindo CIM real. A nova cobertura verifica projeção e avisos no filtro, evidência dos códigos, Unicode, limites de saída e processos filhos. Três cancelamentos, uma conclusão e um prazo excedido terminaram sem processos restantes nos cenários testados.
+- A medição da janela real repetiu três vezes 1.000 campos sintéticos, seis alterações do filtro e os 44 destinos. As medianas de preenchimento e filtro passaram de 1.386,95/6.707,05 ms para 41,67/251,41 ms. [Método, dados e limites](../../docs/DESEMPENHO-beta8.md).
+- Os ZIPs beta.7 e beta.8 passaram em três aberturas com cache de extração vazio e três com cache reutilizado. As três consultas reais do coletor em cada versão concluíram. A variação de abertura, navegação e memória está registrada, sem atribuir ganho geral ao aplicativo.
+- O ZIP extraído passou nas **44 rotas**, nas 13 seleções agrupadas pela busca, troca de escopo GPO e seus atalhos contextuais, clipboard real com bloqueio e recuperação, pesquisa por clique em código, UAC dos discos, HTML/EVTX e manifesto, monitor, cancelamento do mapa e redimensionamento.
+- A compilação local concluiu; a auditoria NuGet em uma geração do pacote emitiu NU1900 por falta de acesso ao índice, inclusive na repetição fora do ambiente restrito. A compilação limpa e a regressão são repetidas no CI antes da publicação.
+- O Hyper-V recusou acesso por permissão da sessão. Manutenção real em VM, rede/impressão/perfil/reinício de laboratório, conta administrativa distinta, UNC assinado, Windows 10, DPI e alto contraste seguem pendentes. A beta.8 conserva a condição de prévia de testes.
+
 ## Prévia 1.0.0-beta.7 · 10 de novembro de 2026
 
 - **91 testes automatizados aprovados**, incluindo CIM real. A cobertura nova confere as 44 rotas, as 35 entradas de apresentação, os seis destinos de GPO com identidade/UAC, os modos IPv4, as leituras de eventos e as ações distintas de impressão. Escopos e ações desconhecidos são recusados.

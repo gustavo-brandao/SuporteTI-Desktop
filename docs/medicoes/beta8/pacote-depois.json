@@ -1,0 +1,53 @@
+{
+    "pacote":  "SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip",
+    "amostras":  [
+                     {
+                         "milissegundos":  3876.6386,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  1
+                     },
+                     {
+                         "milissegundos":  303.06940000000003,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  1
+                     },
+                     {
+                         "milissegundos":  1727.3799000000001,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  1,
+                         "estado":  "concluido"
+                     },
+                     {
+                         "milissegundos":  307.5174,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  2
+                     },
+                     {
+                         "milissegundos":  311.0434,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  2
+                     },
+                     {
+                         "milissegundos":  1698.0864000000001,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  2,
+                         "estado":  "concluido"
+                     },
+                     {
+                         "milissegundos":  326.87600000000003,
+                         "cenario":  "extracao-vazia",
+                         "repeticao":  3
+                     },
+                     {
+                         "milissegundos":  324.02700000000004,
+                         "cenario":  "extracao-reutilizada",
+                         "repeticao":  3
+                     },
+                     {
+                         "milissegundos":  1684.0631,
+                         "cenario":  "consulta-sistema",
+                         "repeticao":  3,
+                         "estado":  "concluido"
+                     }
+                 ]
+}

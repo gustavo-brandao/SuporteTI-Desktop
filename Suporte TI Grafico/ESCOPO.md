@@ -1,5 +1,13 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.8
+
+Otimizar a apresentação de resultados e isolar sua projeção em LinhasResultado. Inserir linhas em lote, calcular alturas das células visíveis e aplicar o filtro após 200 ms sem novas teclas. Limpar o filtro e receber um resultado continuam atualizando imediatamente. Todos os registros e avisos permanecem acessíveis; a cópia completa e o TXT usam a resposta original.
+
+As consultas não elevadas recebem um Job Object próprio do Windows e encerramento confirmado do processo antes da próxima consulta. A saída padrão tem limite de 16 Mi caracteres e a saída de erro de 64 Ki caracteres. O canal elevado e as intervenções administrativas mantêm seu comportamento anterior. [Job Objects: referência oficial](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)
+
+Comparar três repetições por cenário com a beta.7: janela, tabela com 1.000 campos, sequência de seis teclas, 44 destinos, memória e handles; medir também ZIP com cache de extração vazio/reutilizado e consulta real. Cobrir processos filhos após cancelamento repetido, prazo e conclusão. Acesso a laboratório Hyper-V foi recusado pelas permissões da sessão; manutenção real em VM, conta distinta, Windows 10, UNC assinado, DPI e alto contraste continuam pendentes, sem declarar homologação completa.
+
 ## Prévia 1.0.0-beta.7
 
 O seletor apresenta 35 entradas para as 44 operações preservadas. GPO usa Escopo e Ação; IPv4 usa Modo; eventos usam Leitura; impressão usa Ação, com diagnóstico, reinício e limpeza de fila separados. A busca continua indexando os 44 IDs e preenche o formulário correspondente, inclusive ações administrativas.

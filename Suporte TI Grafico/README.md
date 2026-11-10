@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.7** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.8** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
 
 ## Usar a prévia
 
@@ -23,7 +23,7 @@ A saúde dos discos apresenta barras quando existe uma medição numérica. Uma 
 
 ## Formulários por contexto
 
-A beta.7 agrupa as 44 operações em 35 entradas no seletor. GPO, IPv4, eventos e impressão usam campos próprios em vez de repetir todas as combinações na lista. O texto **Selecionado:** confirma a operação efetiva e identifica o UAC. A busca continua encontrando cada operação pelo nome ou ID e preenche os campos automaticamente. Trocar um campo não executa ações.
+Desde a beta.7, as 44 operações são agrupadas em 35 entradas no seletor. GPO, IPv4, eventos e impressão usam campos próprios em vez de repetir todas as combinações na lista. O texto **Selecionado:** confirma a operação efetiva e identifica o UAC. A busca continua encontrando cada operação pelo nome ou ID e preenche os campos automaticamente. Trocar um campo não executa ações.
 
 Os atalhos **Ver adaptadores**, **Diagnosticar impressão** e **Consultar políticas do escopo** executam somente a consulta indicada; esta última pode pedir UAC no escopo computador. **Pesquisar código de erro** abre o campo para preenchimento. Resultados parciais, salvamento de logs, cópia e confirmações das intervenções permanecem disponíveis.
 
@@ -32,6 +32,14 @@ Os atalhos **Ver adaptadores**, **Diagnosticar impressão** e **Consultar polít
 Desde a beta.6, a interface usa Segoe UI como fonte base de 10 pt, rótulos permanentes nos campos e linhas de tabela mais espaçadas. As instruções acompanham a largura da janela. A ação de cancelar aparece durante consultas que admitem cancelamento, e os botões de relatório aparecem após haver um resultado.
 
 Em **Hardware → Discos**, o resumo separa volumes, discos físicos avaliados, alertas e leituras inconclusivas. Os indicadores mostram **Ocupação** ou **Desgaste** junto do percentual. Uma medição de desgaste zero, por si só, não classifica a saúde do disco. Dados indisponíveis e avisos de leitura parcial continuam visíveis.
+
+## Desempenho e encerramento de consultas
+
+A beta.8 preenche as tabelas em lote e ajusta a altura das linhas conforme entram na área visível. O filtro espera 200 ms sem novas teclas antes de aplicar a pesquisa; limpar o campo restaura o resultado imediatamente. Todos os registros continuam disponíveis ao rolar a tabela. Os avisos permanecem visíveis mesmo quando não correspondem ao filtro. A cópia completa e o log conservam todos os dados recebidos.
+
+As consultas não elevadas usam um grupo de processos próprio do Windows, encerrado ao concluir, cancelar ou atingir o prazo. O processo principal é recolhido antes de liberar outra consulta. Saída acima de 16 Mi caracteres no canal padrão ou 64 Ki caracteres no canal de erro é recusada com mensagem de falha. A elevação e as intervenções administrativas mantêm seus fluxos anteriores.
+
+O [relatório de desempenho](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/DESEMPENHO-beta8.md) registra as três amostras por cenário, seus limites e as pendências de homologação. Leituras de saúde e ocupação continuam sendo consultadas novamente; esta versão não adiciona cache de diagnósticos.
 
 ## Copiar resultados
 
