@@ -2,10 +2,10 @@ namespace SuporteTI.Grafico;
 
 internal sealed partial class JanelaPrincipal
 {
-    private readonly ComboBox escopoFluxo = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 190, AccessibleName = "Escopo da operação" };
-    private readonly ComboBox acaoFluxo = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 260, AccessibleName = "Opção da operação" };
+    private readonly ComboBox escopoFluxo = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 190, AccessibleName = "Escopo da operação" };
+    private readonly ComboBox acaoFluxo = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 260, AccessibleName = "Opção da operação" };
     private readonly Label selecionadoFluxo = CriarRotulo("", 9, false);
-    private readonly Button diagnosticoContextual = new() { AutoSize = true };
+    private readonly Button diagnosticoContextual = new BotaoModerno() { AutoSize = true };
     private FlowLayoutPanel campoEscopo = null!, campoAcao = null!;
     private Ferramenta? ferramentaAtual;
     private Action? atualizarFerramenta;

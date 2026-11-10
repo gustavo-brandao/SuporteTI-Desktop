@@ -13,8 +13,12 @@
     <Compile Include="../ConsultaPowerShell.cs" Link="ConsultaPowerShell.cs" />
     <Compile Include="../ArvoreConsulta.cs" Link="ArvoreConsulta.cs" />
     <Compile Include="../LinhasResultado.cs" Link="LinhasResultado.cs" />
+    <Compile Include="../PreferenciasAparencia.cs" Link="PreferenciasAparencia.cs" />
+    <Compile Include="../PaletaTema.cs" Link="PaletaTema.cs" />
     <Compile Include="../ElevacaoConsulta.cs" Link="ElevacaoConsulta.cs" />
     <EmbeddedResource Include="../Modulos/Administrativo.ps1" LogicalName="Elevacao.Administrativo" />
+    <EmbeddedResource Include="../Recursos/SuporteTI.ico" LogicalName="Elevacao.Icone" />
+    <None Include="../Recursos/SuporteTI.ico" Link="Modulos/SuporteTI.ico" CopyToOutputDirectory="PreserveNewest" />
     <Compile Include="../LogConsulta.cs" Link="LogConsulta.cs" />
     <Compile Include="../MonitorRecursos.cs" Link="MonitorRecursos.cs" />
     <Compile Include="../VarreduraDisco.cs" Link="VarreduraDisco.cs" />

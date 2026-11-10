@@ -90,6 +90,47 @@ try
         })
     });
 
+    var preferencia = Path.Combine(temporaria.FullName, "configuração do usuário", "aparencia.json");
+    Igual(ModoTema.Escuro, PreferenciasAparencia.Ler(preferencia).Tema, "Primeira abertura usa Escuro mesmo em sistema claro");
+    foreach (var tema in Enum.GetValues<ModoTema>())
+    {
+        PreferenciasAparencia.Salvar(preferencia, tema);
+        Igual(tema, PreferenciasAparencia.Ler(preferencia).Tema, "Preferência persistida: " + tema);
+    }
+    foreach (var jsonInvalido in new[] { "{", "null", "{\"versao\":2,\"tema\":\"Claro\"}", "{\"versao\":1,\"tema\":\"Outro\"}",
+        "{\"versao\":1,\"tema\":2}", new string('x', 17000) })
+    {
+        File.WriteAllText(preferencia, jsonInvalido);
+        Igual(true, PreferenciasAparencia.Ler(preferencia) is { Tema: ModoTema.Escuro, Aviso: not null }, "Preferência inválida ou futura usa Escuro com aviso");
+    }
+    PreferenciasAparencia.Salvar(preferencia, ModoTema.Claro);
+    File.SetAttributes(preferencia, FileAttributes.ReadOnly);
+    try
+    {
+        await Falha<UnauthorizedAccessException>(() => Task.Run(() => PreferenciasAparencia.Salvar(preferencia, ModoTema.Escuro)),
+            "Falha de gravação não substitui a preferência anterior");
+        Igual(ModoTema.Claro, PreferenciasAparencia.Ler(preferencia).Tema, "Arquivo anterior permanece íntegro após falha");
+    }
+    finally { File.SetAttributes(preferencia, FileAttributes.Normal); }
+    Igual(0, Directory.GetFiles(Path.GetDirectoryName(preferencia)!, "*.tmp").Length, "Gravação não deixa temporários após falha");
+    Igual(true, PreferenciasAparencia.UsarEscuro(ModoTema.Escuro, false), "Escuro explícito prevalece sobre sistema claro");
+    Igual(false, PreferenciasAparencia.UsarEscuro(ModoTema.Claro, true), "Claro explícito prevalece sobre sistema escuro");
+    Igual(true, PreferenciasAparencia.UsarEscuro(ModoTema.Sistema, true), "Sistema resolve preferência escura");
+    Igual(false, PreferenciasAparencia.UsarEscuro(ModoTema.Sistema, false), "Sistema resolve preferência clara");
+    foreach (var paleta in new[] { PaletaTema.Escuro, PaletaTema.Claro })
+    {
+        double Luma(System.Drawing.Color cor)
+        {
+            double Linear(byte c) { var v=c/255.0; return v<=.04045?v/12.92:Math.Pow((v+.055)/1.055,2.4); }
+            return .2126*Linear(cor.R)+.7152*Linear(cor.G)+.0722*Linear(cor.B);
+        }
+        double Contraste(System.Drawing.Color a,System.Drawing.Color b) => (Math.Max(Luma(a),Luma(b))+.05)/(Math.Min(Luma(a),Luma(b))+.05);
+        Igual(true, Contraste(paleta.Texto,paleta.Superficie)>=4.5 && Contraste(paleta.Secundario,paleta.Superficie)>=4.5 &&
+            Contraste(paleta.Link,paleta.Superficie)>=4.5 && Contraste(paleta.NoDestaque,paleta.Destaque)>=4.5,
+            "Contraste mínimo de texto, descrição, links e seleção na paleta " + (paleta==PaletaTema.Escuro?"Escuro":"Claro"));
+    }
+    await Falha<ArgumentException>(() => ElevacaoConsulta.ConsultarAsync("diskhealth", "", default, tema:"Valor inválido"),
+        "Tema administrativo fora da lista é recusado antes do UAC");
     var completo = Json("concluido", true);
     var evidenciaFiltro = new Campo("Código", "0xC0000005", Familia: "Excecoes");
     var respostaFiltro = new Resposta(1, "falhas", "parcial", [new Secao("Eventos", [evidenciaFiltro,

@@ -40,7 +40,7 @@ internal sealed partial class JanelaPrincipal
                 var opcoes = resposta.Secoes.SelectMany(secao => secao.Campos).ToArray();
                 if (opcoes.Length == 0)
                 {
-                    MessageBox.Show(this, resposta.Secoes.FirstOrDefault()?.Aviso ?? "Nenhuma opção disponível.",
+                    DialogoTema.Mostrar(this, resposta.Secoes.FirstOrDefault()?.Aviso ?? "Nenhuma opção disponível.",
                         escolhido.Nome, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return (false, null);
                 }
@@ -53,13 +53,13 @@ internal sealed partial class JanelaPrincipal
                 mensagem += $"\n\nAlvo: {alvo}";
             if (escolhido.Id == "netstatic" && dados is not null)
                 mensagem += $"\nIPv4: {dados.IPv4} · Máscara/prefixo: {dados.Prefixo}\nGateway: {dados.Gateway}\nDNS: {dados.Dns1} {dados.Dns2}";
-            var confirmada = MessageBox.Show(this, mensagem, escolhido.Nome, MessageBoxButtons.YesNo,
+            var confirmada = DialogoTema.Mostrar(this, mensagem, escolhido.Nome, MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
             return (confirmada, dados);
         }
         catch (Exception erro)
         {
-            MessageBox.Show(this, erro.Message, escolhido.Nome, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            DialogoTema.Mostrar(this, erro.Message, escolhido.Nome, MessageBoxButtons.OK, MessageBoxIcon.Error);
             return (false, null);
         }
         finally
@@ -82,9 +82,10 @@ internal sealed partial class JanelaPrincipal
             AutoScaleMode = AutoScaleMode.Dpi, BackColor = BackColor, ForeColor = ForeColor
         };
         var layout = new TableLayoutPanel { ColumnCount = 2, Dock = DockStyle.Fill, Padding = new Padding(12) };
+        janela.Icon=Icon;
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        var lista = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top, AccessibleName = rotuloAlvo };
+        var lista = new SeletorModerno { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Top, AccessibleName = rotuloAlvo };
         if (!AltoContraste)
         {
             lista.BackColor = Superficie;
@@ -110,8 +111,8 @@ internal sealed partial class JanelaPrincipal
             }
         }
         var acoes = new FlowLayoutPanel { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill };
-        var rever = new Button { Text = "&Revisar", AutoSize = true, DialogResult = DialogResult.OK, Enabled = false };
-        var desistir = new Button { Text = "Cancelar", AutoSize = true, DialogResult = DialogResult.Cancel };
+        var rever = new BotaoModerno { Text = "&Revisar", AutoSize = true, DialogResult = DialogResult.OK, Enabled = false };
+        var desistir = new BotaoModerno { Text = "Cancelar", AutoSize = true, DialogResult = DialogResult.Cancel };
         AplicarCorBotao(rever, true);
         AplicarCorBotao(desistir, false);
         void AtualizarBotao() => rever.Enabled = lista.SelectedIndex >= 0 &&
@@ -126,6 +127,8 @@ internal sealed partial class JanelaPrincipal
         janela.AcceptButton = rever;
         janela.CancelButton = desistir;
         janela.Controls.Add(layout);
+        Estilo.Aplicar(janela);
+        janela.HandleCreated += (_, _) => Estilo.Aplicar(janela);
         if (janela.ShowDialog(this) != DialogResult.OK)
             return (null, null);
         var alvo = opcoes[lista.SelectedIndex];

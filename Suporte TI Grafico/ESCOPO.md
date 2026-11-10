@@ -1,5 +1,15 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9
+
+Modernização no WinForms/.NET 10 atual, com superfícies neutras, azul de destaque, botões e cartões arredondados, ícones na navegação e abas desenhadas com indicador de seleção e foco. Manter controles acessíveis, navegação por teclado, as 44 operações, logs e o fluxo de UAC.
+
+Configurações → Aparência oferece Escuro, Claro e Sistema. A primeira abertura usa Escuro. A preferência é gravada de forma atômica em LocalAppData/SuporteTI-Desktop/aparencia.json, por usuário, sem escrever na pasta do executável. Arquivo ausente, inválido, excessivo ou de versão desconhecida usa Escuro; falha ao salvar conserva o tema aplicado na sessão e informa a limitação. O diretório SUPORTETI_CONFIG_DIR é opcional para testes e cópias isoladas.
+
+Sistema resolve a preferência de aplicativos do Windows e reage a eventos de personalização na interface. Alto contraste tem prioridade sobre as paletas. A troca recolore resultados e gráficos sem executar consultas ou descartar dados. Diálogos administrativos recebem somente o tema efetivo permitido, validado antes do UAC, e o ícone verificado junto aos demais arquivos da cópia protegida. Credenciais e confirmações mantêm suas restrições anteriores.
+
+Conservar a barra de título nativa, versão e ícone do aplicativo. Usar recursos de título e cantos do DWM quando disponíveis, com fundo sólido como alternativa. Diálogos do sistema, UAC e console permanecem sob responsabilidade visual do Windows. Windows 10, transições reais de alto contraste e a matriz completa de DPI continuam como aceites de laboratório; não migrar para WinUI nem incluir PowerShell 7 nesta etapa.
+
 ## Prévia 1.0.0-beta.8
 
 Otimizar a apresentação de resultados e isolar sua projeção em LinhasResultado. Inserir linhas em lote, calcular alturas das células visíveis e aplicar o filtro após 200 ms sem novas teclas. Limpar o filtro e receber um resultado continuam atualizando imediatamente. Todos os registros e avisos permanecem acessíveis; a cópia completa e o TXT usam a resposta original.

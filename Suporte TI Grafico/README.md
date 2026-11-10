@@ -1,6 +1,16 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.8** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa tema azul escuro e respeita a paleta de alto contraste do Windows. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.9** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual.
+
+## Temas, títulos e guias
+
+A primeira abertura usa **Escuro**, independentemente do tema do Windows. **Claro** aplica a paleta clara. **Sistema** acompanha a preferência de aplicativos do Windows e recebe suas alterações durante a sessão. Alto contraste tem prioridade; a escolha permanece guardada para quando ele for desativado.
+
+A preferência fica em `%LOCALAPPDATA%\SuporteTI-Desktop\aparencia.json`. A gravação usa arquivo temporário na mesma pasta e substituição atômica. Se o arquivo estiver inválido ou inacessível, a tela informa o uso de Escuro. Se não puder salvar, o tema escolhido continua aplicado na sessão e a tela informa a limitação. O executável não precisa gravar configurações em sua própria pasta.
+
+Navegação, guias, seletores, tabelas, gráficos, menus e confirmações do aplicativo acompanham a paleta. A troca preserva o resultado e os campos escolhidos. Os títulos mantêm versão e ícone do aplicativo; o Windows desenha a moldura e os botões da janela. Os diálogos administrativos recebem o tema efetivo ao abrir, inclusive quando a elevação usa outra conta. O ícone é validado e incluído na cópia protegida.
+
+Pastas, UAC, console e outros diálogos do Windows podem seguir o visual nativo do sistema. Cantos e barra de título usam os recursos disponíveis do Windows, com fundo sólido como alternativa. Windows 10, mudanças reais de alto contraste e a matriz completa de DPI ainda aguardam homologação.
 
 ## Usar a prévia
 
@@ -35,7 +45,7 @@ Em **Hardware → Discos**, o resumo separa volumes, discos físicos avaliados, 
 
 ## Desempenho e encerramento de consultas
 
-A beta.8 preenche as tabelas em lote e ajusta a altura das linhas conforme entram na área visível. O filtro espera 200 ms sem novas teclas antes de aplicar a pesquisa; limpar o campo restaura o resultado imediatamente. Todos os registros continuam disponíveis ao rolar a tabela. Os avisos permanecem visíveis mesmo quando não correspondem ao filtro. A cópia completa e o log conservam todos os dados recebidos.
+Desde a beta.8, a interface preenche as tabelas em lote e ajusta a altura das linhas conforme entram na área visível. O filtro espera 200 ms sem novas teclas antes de aplicar a pesquisa; limpar o campo restaura o resultado imediatamente. Todos os registros continuam disponíveis ao rolar a tabela. Os avisos permanecem visíveis mesmo quando não correspondem ao filtro. A cópia completa e o log conservam todos os dados recebidos.
 
 As consultas não elevadas usam um grupo de processos próprio do Windows, encerrado ao concluir, cancelar ou atingir o prazo. O processo principal é recolhido antes de liberar outra consulta. Saída acima de 16 Mi caracteres no canal padrão ou 64 Ki caracteres no canal de erro é recusada com mensagem de falha. A elevação e as intervenções administrativas mantêm seus fluxos anteriores.
 
@@ -88,7 +98,7 @@ O smartmontools é distribuído em `Modulos/Ferramentas/smartmontools` com seu c
 
 ## Construir e testar
 
-O [planejamento de evolução](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/REVISAO-UX-2026-11-09.md) prevê uma etapa visual após a beta.8, com temas Escuro, Claro e Sistema, e uma avaliação posterior de PowerShell 7 incluído na distribuição. A beta.4 utiliza Windows PowerShell 5.1 para suas rotinas.
+O [planejamento de evolução](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/REVISAO-UX-2026-11-09.md) prevê uma etapa visual após a beta.9, com temas Escuro, Claro e Sistema, e uma avaliação posterior de PowerShell 7 incluído na distribuição. A beta.4 utiliza Windows PowerShell 5.1 para suas rotinas.
 
 Em Windows x64 com o SDK .NET 10 disponível, execute a partir desta pasta.
 

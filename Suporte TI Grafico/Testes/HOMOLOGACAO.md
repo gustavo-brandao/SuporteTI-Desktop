@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.8 · Windows x64**
+**Versão em testes 1.0.0-beta.9 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -16,6 +16,10 @@ Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fo
 
 ## Cenários que alteram o Windows
 
+Antes das intervenções, revisar a aparência nos modos Escuro, Claro e Sistema. O verificador `Verificar-Aparencia.ps1 -Zip CAMINHO_DO_ZIP -Capturas PASTA_DE_SAIDA` isola as preferências, confere persistência, resultado preservado, título/ícone, janela compacta e cancelamento das confirmações. A opção `-Tema` de `Verificar-Pacote.ps1 -Janela` permite repetir a regressão de navegação e consultas em cada modo.
+
+O aceite manual ainda deve cobrir escalas 100/125/150/200%, transições reais de alto contraste e personalização do Windows com Sistema selecionado, guias por teclado, foco, ícone pequeno no título, janela ativa/inativa, seletores abertos, gráficos e diálogos administrativos em Windows 10 e 11. Usar somente contas e dados de laboratório nas operações sensíveis.
+
 1. Crie um snapshot da VM e uma conta de teste sem dados reais. Use também um volume descartável e um adaptador de teste. Registre o estado inicial.
 2. Em **Impressão**, crie trabalhos em duas filas locais. Reinicie o spooler e confirme que os trabalhos permanecem. Limpe uma fila e confira o resultado e a outra fila. Exercite o cache do Windows Update com reinício pendente e a atualização das GPO por escopo.
 3. Em **Hardware → Programas**, teste o cache do Chrome com o navegador fechado. Confira que as preferências continuam disponíveis. Em **Rede**, mude para IPv4 fixo e volte para DHCP. Compare endereços, gateway e DNS antes e depois.
@@ -29,7 +33,7 @@ Use um certificado de assinatura de código confiável e o servidor de carimbo a
 
 ```powershell
 .\Construcao\Publicar.ps1 -CertificadoThumbprint $thumbprint -ServidorCarimbo $url -Destino .\outputs\assinado
-.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\assinado\SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip -ExigirAssinatura -ExigirCim -Janela
+.\Testes\Verificar-Pacote.ps1 -Zip .\outputs\assinado\SuporteTI-Grafico-1.0.0-beta.9-win-x64.zip -ExigirAssinatura -ExigirCim -Janela
 ```
 
 Para verificar a origem UNC, extraia o pacote assinado no compartilhamento e abra pelo caminho UNC. Repita uma consulta administrativa com conta distinta. Em uma cópia descartável, altere um script administrativo e confirme a rejeição. O pacote local sem assinatura cobre a regressão desta beta. A assinatura e os aceites em VM continuam como critérios de promoção.

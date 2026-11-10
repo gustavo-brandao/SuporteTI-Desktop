@@ -22,6 +22,7 @@ internal static class ElevacaoConsulta
     private static readonly Dictionary<string, string> Arquivos = new()
     {
         [@"Administrativo.ps1"] = "Administrativo",
+        [@"SuporteTI.ico"] = "Icone",
         [@"Diagnosticos.ps1"] = "Diagnosticos",
         [@"Intervencoes.ps1"] = "Intervencoes",
         [@"FluxosSensiveis.ps1"] = "FluxosSensiveis",
@@ -47,8 +48,9 @@ internal static class ElevacaoConsulta
     internal static bool EhAdministrativa(string operacao) => Operacoes.Contains(operacao);
 
     public static async Task<RetornoElevado> ConsultarAsync(string operacao, string volume, CancellationToken token,
-        ParametrosIntervencao? parametros = null)
+        ParametrosIntervencao? parametros = null, string tema = "Escuro")
     {
+        if (tema is not ("Escuro" or "Claro")) throw new ArgumentException("Tema administrativo desconhecido.", nameof(tema));
         if (!EhAdministrativa(operacao))
             throw new ArgumentException("Consulta administrativa desconhecida.", nameof(operacao));
         if (operacao is "chkdskread" or "chkdskfull" && (volume.Length != 2 || volume[0] is < 'A' or > 'Z' || volume[1] != ':'))
@@ -70,7 +72,7 @@ internal static class ElevacaoConsulta
         using var entrada = new StreamReader(AbrirRecurso("Entrada"), Encoding.UTF8);
         var dados = JsonSerializer.SerializeToUtf8Bytes(new
         {
-            Operacao = operacao, Volume = volume, Canal = canal, Rede = unc, Parametros = parametros,
+            Operacao = operacao, Volume = volume, Canal = canal, Rede = unc, Parametros = parametros, Tema = tema,
             Arquivos = esperados.Select(item => new { Nome = item.Key, item.Value.Hash, Tamanho = item.Value.Dados.Length })
         });
         var comando = entrada.ReadToEnd().Replace("__DADOS__", Convert.ToBase64String(dados), StringComparison.Ordinal);

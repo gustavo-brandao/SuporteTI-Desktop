@@ -49,7 +49,7 @@ internal sealed partial class JanelaPrincipal
                 if (campo.Familia is "Win32" or "HRESULT" or "Excecoes" or "Paradas")
                 {
                     linha.Tag = campo;
-                    var cor = AltoContraste ? SystemColors.HotTrack : Color.FromArgb(152, 204, 255);
+                    var cor = Estilo.Paleta.Link;
                     linha.Cells[2] = new DataGridViewLinkCell
                     {
                         Value = campo.Valor, LinkColor = cor, ActiveLinkColor = cor, TrackVisitedState = false,
@@ -89,7 +89,7 @@ internal sealed partial class JanelaPrincipal
             var trilha = new Rectangle(area.X, area.Bottom - 7, area.Width, 7);
             using var fundo = new SolidBrush(AltoContraste ? SystemColors.ControlDark : Borda);
             using var usado = new SolidBrush(AltoContraste ? SystemColors.Highlight :
-                percentual >= (metrica == "desgaste" ? 80 : 90) ? Color.FromArgb(224, 136, 116) : Color.FromArgb(98, 166, 255));
+                percentual >= (metrica == "desgaste" ? 80 : 90) ? Estilo.Paleta.Alerta : Estilo.Paleta.Cpu);
             evento.Graphics.FillRectangle(fundo, trilha);
             evento.Graphics.FillRectangle(usado, trilha.X, trilha.Y, (int)(trilha.Width * Math.Clamp(percentual, 0, 100) / 100), trilha.Height);
             var rotulo = new Rectangle(area.X, area.Y, area.Width, Math.Max(0, area.Height - 9));

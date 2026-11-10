@@ -37,7 +37,7 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 ## Matriz de testes e rotina de atualização
 
-O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A beta.6 entrega melhorias de legibilidade e apresentação dos discos. A beta.7 simplifica os formulários e acrescenta diagnóstico contextual, mantendo as 44 operações em 35 entradas no seletor. A beta.8 otimiza tabelas, filtro e encerramento de consultas, com medições comparativas e homologação local. Os aceites de laboratório sem ambiente autorizado permanecem pendentes. A próxima atualização é a beta.9, com visual inspirado no Windows 11 e temas Escuro, Claro e Sistema, e a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. O tema padrão planejado é Escuro.
+O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A beta.6 entrega melhorias de legibilidade e apresentação dos discos. A beta.7 simplifica os formulários e acrescenta diagnóstico contextual, mantendo as 44 operações em 35 entradas no seletor. A beta.8 otimiza tabelas, filtro e encerramento de consultas, com medições comparativas e homologação local. Os aceites de laboratório sem ambiente autorizado permanecem pendentes. A beta.9 entrega o visual inspirado no Windows 11, com temas Escuro, Claro e Sistema e Escuro como padrão. A próxima atualização é a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. As pendências de laboratório das etapas anteriores permanecem registradas até o aceite.
 
 | Camada | Cobertura e evidência |
 | --- | --- |
@@ -52,7 +52,7 @@ O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência 
 1. Selecionar os fluxos da versão e escrever seus cenários de aceite na matriz antes da implementação.
 2. Entregar cada fluxo da tela ao resultado, incluindo entrada inválida, falha e retorno à navegação. Rodar no CI a regressão acumulada das etapas anteriores.
 3. Gerar o ZIP, registrar commit e SHA-256 e validar o pacote extraído. Nas versões com operações elevadas, aplicar os critérios de assinatura e homologação da etapa.
-4. Atualizar o README do projeto gráfico com o comportamento disponível e registrar em **Testes** os casos executados, ambiente, resultados e pendências. Incluir um roteiro curto para reproduzir a novidade e a referência ao ZIP anterior.
+4. Atualizar o README do projeto gráfico com o comportamento disponível e registrar em **Testes** os casos executados, ambiente, resultados e pendências. Renovar as imagens do README com capturas reais da versão que será enviada ao repositório, revisando abas, guias, títulos e ícones nos temas disponíveis. Incluir um roteiro curto para reproduzir a novidade e a referência ao ZIP anterior.
 5. Liberar a versão para teste quando os fluxos anunciados passarem. Se houver falha de aceite, corrigir antes de promover o pacote ou retirar o fluxo da prévia e registrar a decisão.
 
 ## Decisões a fechar na primeira prévia

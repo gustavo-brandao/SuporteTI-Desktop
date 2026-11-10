@@ -7,7 +7,8 @@
     [string]$ZipAnterior,
     [switch]$ExigirAssinatura,
     [switch]$Uac,
-    [string]$Catalogo
+    [string]$Catalogo,
+    [ValidateSet('Escuro','Claro','Sistema')][string]$Tema = 'Escuro'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,6 +51,8 @@ using System.Runtime.InteropServices;
 public static class TesteClipboard {
     [DllImport("user32.dll")] public static extern bool OpenClipboard(IntPtr janela);
     [DllImport("user32.dll")] public static extern bool CloseClipboard();
+    [DllImport("user32.dll", EntryPoint="SendMessageW", CharSet=CharSet.Unicode)] public static extern IntPtr BuscarItem(IntPtr controle,uint mensagem,IntPtr inicio,string texto);
+    [DllImport("user32.dll", EntryPoint="SendMessageW")] public static extern IntPtr Tecla(IntPtr controle,uint mensagem,IntPtr tecla,IntPtr dados);
 }
 '@
     $clipboardAnterior = [Windows.Forms.Clipboard]::GetDataObject()
@@ -58,6 +61,10 @@ public static class TesteClipboard {
     $inicio.WorkingDirectory = Split-Path -Parent $Executavel
     $cache = Join-Path $inicio.WorkingDirectory 'CacheDeTeste'
     $inicio.EnvironmentVariables['DOTNET_BUNDLE_EXTRACT_BASE_DIR'] = $cache
+    $preferencias=Join-Path $inicio.WorkingDirectory 'PreferenciasTeste'
+    [void][IO.Directory]::CreateDirectory($preferencias)
+    [IO.File]::WriteAllText((Join-Path $preferencias 'aparencia.json'),(@{versao=1;tema=$Tema}|ConvertTo-Json -Compress))
+    $inicio.EnvironmentVariables['SUPORTETI_CONFIG_DIR']=$preferencias
     $processo = [Diagnostics.Process]::Start($inicio)
     try {
         $janela = Wait-Interface {
@@ -94,14 +101,22 @@ public static class TesteClipboard {
         }
         $matrizNavegacao = if ($Catalogo) { @(Get-Content -LiteralPath $Catalogo -Raw | ConvertFrom-Json) } else { @() }
         function Selecionar-Combo($Nome, $Valor) {
-            $combo=Wait-Interface { Find-Controle $janela $Nome } $Nome
-            $expandir=$combo.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
-            $expandir.Expand()
-            $item=Wait-Interface { Find-Controle $combo $Valor } $Valor
-            $selecao=$item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
-            $selecao.Select()
-            $expandir.Collapse()
-            if (-not $selecao.Current.IsSelected) { throw "Seleção divergente: $Nome / $Valor." }
+            $combo=Wait-Interface {
+                $controle=Find-Controle $janela $Nome
+                if($controle -and -not $controle.Current.IsOffscreen){$controle}
+            } $Nome
+            $combo.SetFocus()
+            $indice=[TesteClipboard]::BuscarItem([IntPtr]$combo.Current.NativeWindowHandle,0x0158,[IntPtr](-1),$Valor).ToInt32()
+            if($indice -lt 0){throw "Item ausente no seletor nativo: $Nome / $Valor."}
+            $handle=[IntPtr]$combo.Current.NativeWindowHandle
+            # Enviar ao seletor alvo evita que uma mudança de foco externa receba as teclas.
+            foreach($tecla in @([int]0x24)+@(for($i=0;$i -lt $indice;$i++){[int]0x28})){
+                [void][TesteClipboard]::Tecla($handle,0x0100,[IntPtr]$tecla,[IntPtr]1)
+                [void][TesteClipboard]::Tecla($handle,0x0101,[IntPtr]$tecla,[IntPtr]::Zero)
+            }
+            [void](Wait-Interface {
+                [TesteClipboard]::BuscarItem([IntPtr]$combo.Current.NativeWindowHandle,0x0147,[IntPtr]::Zero,$null).ToInt32() -eq $indice
+            } ("seleção pelo teclado: "+$Nome+" / "+$Valor))
         }
         function Abrir-Ferramenta {
             param([string]$Grupo, [string]$Area, [string]$Rotulo)
@@ -124,21 +139,7 @@ public static class TesteClipboard {
                     [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ControlTypeProperty, [Windows.Automation.ControlType]::TabItem))
                 $abas.FindFirst([Windows.Automation.TreeScope]::Descendants, $crit)
             } $Area).GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
-            $seletor = Wait-Interface { Find-Controle $janela 'Escolher diagnóstico' } 'seletor de ferramenta'
-            $opcoes = $seletor.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern)
-            $opcoes.Expand()
-            $itemAlvo = Wait-Interface {
-                if ($opcoes.Current.ExpandCollapseState -eq [Windows.Automation.ExpandCollapseState]::Collapsed) {
-                    $opcoes.Expand()
-                }
-                Find-Controle $seletor $rota.Principal
-            } $Rotulo
-            $selecao = $itemAlvo.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
-            $selecao.Select()
-            $opcoes.Collapse()
-            if (-not $selecao.Current.IsSelected) {
-                throw "A ferramenta selecionada diverge do destino esperado: $Rotulo."
-            }
+            Selecionar-Combo 'Escolher diagnóstico' $rota.Principal
             if ($rota.Escopo) { Selecionar-Combo 'Escopo da operação' $rota.Escopo }
             if ($rota.Acao) {
                 Selecionar-Combo 'Opção da operação' $rota.Acao

@@ -49,7 +49,7 @@ try {
             throw 'A elevacao por UNC exige assinatura Authenticode valida nos scripts administrativos.'
         }
     } } finally { $leitor.Dispose() }
-    $retorno = & ([IO.Path]::Combine($pasta, 'Administrativo.ps1')) -Operacao $dados.Operacao -Volume $dados.Volume -Dados $dados.Parametros
+    $retorno = & ([IO.Path]::Combine($pasta, 'Administrativo.ps1')) -Operacao $dados.Operacao -Volume $dados.Volume -Dados $dados.Parametros -Tema $dados.Tema
 } catch {
     $retorno = @{ resultado = @{ versao = 1; operacao = $dados.Operacao; estado = 'indisponivel';
         secoes = @(@{ nome = 'Consulta administrativa'; campos = @(); aviso = $_.Exception.Message }) }; html = $null }

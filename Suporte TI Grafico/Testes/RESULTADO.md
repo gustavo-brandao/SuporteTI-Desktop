@@ -1,5 +1,16 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9 · 10 de novembro de 2026
+
+- **128 testes automatizados aprovados**, incluindo CIM real. Os casos novos cobrem tema inicial Escuro, persistência dos três modos, preferências inválidas/excessivas/futuras, gravação sem permissão preservando o arquivo anterior, limpeza de temporários, resolução de Sistema e validação do tema administrativo antes do UAC.
+- As paletas Escuro e Claro passaram no contraste mínimo de 4,5:1 para texto, descrições, links e seleção. Códigos selecionados usam a cor de texto da seleção para manter contraste.
+- O ZIP extraído passou na regressão das **44 operações em Escuro, Claro e Sistema**, incluindo os 13 destinos agrupados da busca, GPO contextual, consultas, clipboard real e recuperação de bloqueio, clique em código, gráficos, monitor, cancelamento do mapa, HTML/EVTX e manifesto, redimensionamento e UAC dos discos.
+- A aparência passou na primeira abertura escura, troca durante a sessão, preservação de escopo/ação GPO e resultado da pesquisa de código, persistência após reabrir e seleção de Sistema. As preferências usadas pelo verificador são isoladas da configuração real do usuário.
+- Título com versão, presença do ícone pequeno e atributo de título escuro/claro foram conferidos nos três modos. Capturas reais incluem janelas ativas e inativas, tela Aparência, GPO e pesquisa de código.
+- O componente de confirmação e o fluxo de revisão da janela principal passaram em teste isolado nos três temas: Não como botão padrão, fechamento com retorno No e nenhuma consulta/intervenção iniciada após cancelar.
+- Os seletores foram mantidos nativos; o verificador usa mensagens de teclado direcionadas e confirma o destino efetivo para evitar dependência da posição da lista ou do foco de outra janela.
+- A prioridade do alto contraste está implementada; transições reais de alto contraste, todas as escalas DPI, Windows 10, elevação com conta distinta, UNC assinado e manutenção real em VM permanecem pendentes na matriz. Esta prévia não declara homologação completa.
+
 ## Prévia 1.0.0-beta.8 · 10 de novembro de 2026
 
 - **108 testes automatizados aprovados**, incluindo CIM real. A nova cobertura verifica projeção e avisos no filtro, evidência dos códigos, Unicode, limites de saída e processos filhos. Três cancelamentos, uma conclusão e um prazo excedido terminaram sem processos restantes nos cenários testados.

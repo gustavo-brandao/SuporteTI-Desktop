@@ -5,8 +5,10 @@ param(
         'perfillocal','autologonenable','autologondisable')]
     [string]$Operacao,
     [string]$Volume,
-    $Dados
+    $Dados,
+    [ValidateSet('Escuro','Claro')][string]$Tema = 'Escuro'
 )
+$script:TemaGrafico = $Tema
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
 $identidade = [Security.Principal.WindowsIdentity]::GetCurrent()

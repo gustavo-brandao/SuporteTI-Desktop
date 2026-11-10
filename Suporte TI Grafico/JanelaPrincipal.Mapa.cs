@@ -15,10 +15,10 @@ internal sealed partial class JanelaPrincipal
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.Controls.Add(CriarRotulo("Mapa de ocupação", 20, true), 0, 0);
         var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
-        var unidades = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 100, AccessibleName = "Volume local" };
-        var analisar = new Button { Text = "&Analisar volume", AutoSize = true };
-        var interromper = new Button { Text = "Ca&ncelar leitura", AutoSize = true, Enabled = false };
-        var subir = new Button { Text = "&Pasta anterior", AutoSize = true, Enabled = false, AccessibleDescription = "Volta um nível no caminho do mapa." };
+        var unidades = new SeletorModerno { DropDownStyle = ComboBoxStyle.DropDownList, Width = 100, AccessibleName = "Volume local" };
+        var analisar = new BotaoModerno { Text = "&Analisar volume", AutoSize = true };
+        var interromper = new BotaoModerno { Text = "Ca&ncelar leitura", AutoSize = true, Enabled = false };
+        var subir = new BotaoModerno { Text = "&Pasta anterior", AutoSize = true, Enabled = false, AccessibleDescription = "Volta um nível no caminho do mapa." };
         AplicarCorBotao(analisar, true);
         AplicarCorBotao(interromper, false);
         AplicarCorBotao(subir, false);
@@ -39,7 +39,7 @@ internal sealed partial class JanelaPrincipal
             if (ocupacao is not double fracao)
                 return;
             using var fundo = new SolidBrush(AltoContraste ? SystemColors.ControlDark : Borda);
-            using var usado = new SolidBrush(AltoContraste ? SystemColors.Highlight : Color.FromArgb(119, 186, 255));
+            using var usado = new SolidBrush(AltoContraste ? SystemColors.Highlight : Estilo.Paleta.Cpu);
             evento.Graphics.FillRectangle(fundo, barra.ClientRectangle);
             evento.Graphics.FillRectangle(usado, 0, 0, (int)(barra.Width * fracao), barra.Height);
         };
@@ -89,7 +89,7 @@ internal sealed partial class JanelaPrincipal
             for (var i = 0; i < navegacao.Count; i++)
             {
                 var indice = i;
-                var botao = new Button { Text = navegacao[i].Nome.Replace("&", "&&"), AutoSize = true, AccessibleName = $"Ir para {navegacao[i].Nome}" };
+                var botao = new BotaoModerno { Text = navegacao[i].Nome.Replace("&", "&&"), AutoSize = true, AccessibleName = $"Ir para {navegacao[i].Nome}" };
                 AplicarCorBotao(botao, i == navegacao.Count - 1);
                 botao.Click += (_, _) => Navegar(indice);
                 caminho.Controls.Add(botao);
@@ -158,7 +158,7 @@ internal sealed partial class JanelaPrincipal
                 evento.Graphics.DrawRectangle(borda, bloco.Area.X, bloco.Area.Y, bloco.Area.Width - 1, bloco.Area.Height - 1);
                 if (bloco.Area.Width >= 62 && bloco.Area.Height >= 24)
                 {
-                    var tinta = AltoContraste ? (ativo ? SystemColors.HighlightText : SystemColors.WindowText) : Texto;
+                    var tinta = AltoContraste ? (ativo ? SystemColors.HighlightText : SystemColors.WindowText) : ativo ? Estilo.Paleta.NoDestaque : Texto;
                     var rotulo = Rectangle.Inflate(bloco.Area, -5, -4);
                     TextRenderer.DrawText(evento.Graphics, bloco.Item?.Nome ?? "Outros", Font, rotulo, tinta,
                         TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine);
@@ -287,9 +287,9 @@ internal sealed partial class JanelaPrincipal
         return pagina;
     }
 
-    private static readonly Color[] CoresMapa = [
+    private static Color[] CoresMapa => Estilo.Escuro ? [
         Color.FromArgb(38, 74, 136), Color.FromArgb(32, 96, 111), Color.FromArgb(73, 63, 133), Color.FromArgb(36, 81, 110)
-    ];
+    ] : [Color.FromArgb(194,220,248), Color.FromArgb(186,233,223), Color.FromArgb(220,210,245), Color.FromArgb(201,225,239)];
 
     private sealed class ListaMapa : DataGridView
     {

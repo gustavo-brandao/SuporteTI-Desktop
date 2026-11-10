@@ -14,7 +14,7 @@ internal sealed partial class JanelaPrincipal
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.Controls.Add(CriarRotulo("Monitor ao vivo", 20, true), 0, 0);
         var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
-        var iniciar = new Button { Text = "&Iniciar monitor", AutoSize = true };
+        var iniciar = new BotaoModerno { Text = "&Iniciar monitor", AutoSize = true };
         AplicarCorBotao(iniciar, true);
         acoes.Controls.Add(iniciar);
         acoes.Controls.Add(CriarRotulo("Amostra por segundo · até 60 pontos por gráfico", 10, false));
@@ -62,18 +62,18 @@ internal sealed partial class JanelaPrincipal
 
     private static string EmGiB(ulong bytes) => $"{bytes / 1073741824.0:N1} GiB";
 
-    private sealed class GraficoUso : Panel
+    private sealed class GraficoUso : Cartao
     {
         private readonly Queue<double?> pontos = new();
         private readonly Label leitura;
         private readonly Panel trama;
-        private readonly Color cor;
+        private Color cor => nome == "CPU" ? Estilo.Paleta.Cpu : Estilo.Paleta.Ram;
         private readonly string nome;
 
         public GraficoUso(string nome, Color cor)
         {
             this.nome = nome;
-            this.cor = AltoContraste ? SystemColors.WindowText : cor;
+            Estilo.Marcar(this, PapelVisual.Superficie);
             Dock = DockStyle.Fill;
             Margin = new Padding(3, 6, 3, 3);
             Padding = new Padding(12, 4, 12, 6);

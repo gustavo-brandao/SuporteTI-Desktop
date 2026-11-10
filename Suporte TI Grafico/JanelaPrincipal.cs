@@ -5,23 +5,23 @@ namespace SuporteTI.Grafico;
 
 internal sealed partial class JanelaPrincipal : Form
 {
-    private static readonly bool AltoContraste = SystemInformation.HighContrast;
-    private static readonly Color Fundo = Color.FromArgb(12, 21, 44);
-    private static readonly Color Navegacao = Color.FromArgb(20, 34, 71);
-    private static readonly Color Superficie = Color.FromArgb(23, 38, 73);
-    private static readonly Color Alternada = Color.FromArgb(29, 47, 86);
-    private static readonly Color Borda = Color.FromArgb(57, 81, 131);
-    private static readonly Color Destaque = Color.FromArgb(47, 88, 174);
-    private static readonly Color Texto = Color.FromArgb(242, 246, 255);
-    private static readonly Color Secundario = Color.FromArgb(182, 203, 241);
+    private static bool AltoContraste => Estilo.AltoContraste;
+    private static Color Fundo => Estilo.Paleta.Fundo;
+    private static Color Navegacao => Estilo.Paleta.Navegacao;
+    private static Color Superficie => Estilo.Paleta.Superficie;
+    private static Color Alternada => Estilo.Paleta.Alternada;
+    private static Color Borda => Estilo.Paleta.Borda;
+    private static Color Destaque => Estilo.Paleta.Destaque;
+    private static Color Texto => Estilo.Paleta.Texto;
+    private static Color Secundario => Estilo.Paleta.Secundario;
     private readonly ConsultaPowerShell consulta;
-    private readonly Button consultar = new() { Text = "&Consultar computador", AutoSize = true };
-    private readonly Button cancelar = new() { Text = "Ca&ncelar", AutoSize = true, Enabled = false };
-    private readonly Button salvar = new() { Text = "Salvar &log…", AutoSize = true, Enabled = false };
-    private readonly ComboBox diagnosticos = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 260, DropDownWidth = 440, AccessibleName = "Escolher diagnóstico" };
+    private readonly Button consultar = new BotaoModerno() { Text = "&Consultar computador", AutoSize = true };
+    private readonly Button cancelar = new BotaoModerno() { Text = "Ca&ncelar", AutoSize = true, Enabled = false };
+    private readonly Button salvar = new BotaoModerno() { Text = "Salvar &log…", AutoSize = true, Enabled = false };
+    private readonly ComboBox diagnosticos = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 260, DropDownWidth = 440, AccessibleName = "Escolher diagnóstico" };
     private readonly TextBox filtro = new() { PlaceholderText = "Filtrar resultados…", Width = 175, AccessibleName = "Filtrar resultados" };
     private readonly TextBox entrada = new() { Width = 240, MaxLength = 512 };
-    private readonly ComboBox volumesAdmin = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 75, AccessibleName = "Volume local para CHKDSK" };
+    private readonly ComboBox volumesAdmin = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 75, AccessibleName = "Volume local para CHKDSK" };
     private readonly Label titulo = CriarRotulo("Informações do computador", 20, true);
     private readonly Label descricao = CriarRotulo("", 10, false);
     private readonly Label instrucoes = CriarRotulo("", 10, false);
@@ -30,7 +30,7 @@ internal sealed partial class JanelaPrincipal : Form
     private string nomeResultado = "";
     private (Resposta Dados, string Nome, DateTimeOffset Inicio, DateTimeOffset Fim)? ultimoResultado;
     private string grupo = "";
-    private readonly TabControl abas = new() { Dock = DockStyle.Fill, AccessibleName = "Áreas de ferramentas" };
+    private readonly TabControl abas = new AbasModernas() { Dock = DockStyle.Fill, AccessibleName = "Áreas de ferramentas" };
     private readonly Panel conteudoResultados = new() { Dock = DockStyle.Fill };
     private readonly TableLayoutPanel painelTabela = new() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
     private readonly Label resumoDiscos = CriarRotulo("", 10, true);
@@ -61,15 +61,15 @@ internal sealed partial class JanelaPrincipal : Form
         var versao = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
             .InformationalVersion.Split('+')[0];
         Text = $"Suporte TI Gráfico | {versao}";
-        ClientSize = new Size(1000, 650);
-        MinimumSize = new Size(720, 480);
+        ClientSize = new Size(1120, 740);
+        MinimumSize = new Size(780, 560);
         StartPosition = FormStartPosition.CenterScreen;
         AutoScaleMode = AutoScaleMode.Dpi;
         BackColor = AltoContraste ? SystemColors.Window : Fundo;
         ForeColor = AltoContraste ? SystemColors.WindowText : Texto;
 
         var layout = new TableLayoutPanel { ColumnCount = 2, RowCount = 2, Dock = DockStyle.Fill };
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 206));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 226));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -81,10 +81,10 @@ internal sealed partial class JanelaPrincipal : Form
         };
         menu.Controls.Add(CriarRotulo("Suporte TI", 16, true));
         menu.Controls.Add(CriarRotulo("EDIÇÃO GRÁFICA", 9, false));
-        var busca = new TextBox { Width = 168, PlaceholderText = "Buscar ferramenta…", AccessibleName = "Buscar ferramenta" };
-        var encontrados = new ListBox { Width = 168, Height = 140, HorizontalScrollbar = true, Visible = false, AccessibleName = "Ferramentas encontradas" };
+        var busca = new TextBox { Width = 186, PlaceholderText = "Buscar ferramenta…", AccessibleName = "Buscar ferramenta" };
+        var encontrados = new ListBox { Width = 186, Height = 140, HorizontalScrollbar = true, Visible = false, AccessibleName = "Ferramentas encontradas" };
         var avisoBusca = CriarRotulo("Nenhuma ferramenta encontrada.", 9, false);
-        avisoBusca.MaximumSize = new Size(168, 0);
+        avisoBusca.MaximumSize = new Size(186, 0);
         avisoBusca.Visible = false;
         menu.Controls.Add(busca);
         menu.Controls.Add(encontrados);
@@ -92,12 +92,15 @@ internal sealed partial class JanelaPrincipal : Form
         var botoes = new Dictionary<string, Button>();
         foreach (var nome in CatalogoFerramentas.Grupos)
         {
-            var botao = new Button { Text = nome, Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
+            var botao = new BotaoModerno { Text = nome, Simbolo = IconeMenu(nome), Width = 186, Height = 42, TextAlign = ContentAlignment.MiddleLeft };
             botoes.Add(nome, botao);
             menu.Controls.Add(botao);
         }
-        var sobre = new Button { Text = "&Sobre", Width = 168, Height = 38, TextAlign = ContentAlignment.MiddleLeft };
+        var sobre = new BotaoModerno { Text = "&Sobre", Simbolo = "\uE946", Width = 186, Height = 40, TextAlign = ContentAlignment.MiddleLeft };
         menu.Controls.Add(sobre);
+        var configuracoes = new BotaoModerno { Text = "Configurações", Simbolo = "\uE713", Width = 186, Height = 40, TextAlign = ContentAlignment.MiddleLeft };
+        menu.Controls.Add(configuracoes);
+        Estilo.Marcar(menu, PapelVisual.Navegacao);
         menu.Controls.Add(CriarRotulo(versao, 9, false));
         layout.Controls.Add(menu, 0, 0);
 
@@ -108,6 +111,16 @@ internal sealed partial class JanelaPrincipal : Form
         conteudoResultados.Controls.Add(telaMonitor);
         conteudoResultados.Controls.Add(telaMapa);
         var telaSobre = CriarTelaSobre(versao);
+        var telaAparencia = CriarTelaAparencia();
+        telaAparencia.Visible = false;
+        painel.Controls.Add(telaAparencia);
+        configuracoes.Click += (_, _) =>
+        {
+            if (NavegacaoBloqueada) return;
+            abas.Visible = telaSobre.Visible = false; telaAparencia.Visible = true; telaAparencia.BringToFront();
+            foreach (var item in botoes.Values) MarcarPagina(item, false);
+            MarcarPagina(sobre, false); MarcarPagina(configuracoes, true);
+        };
         painel.Controls.Add(abas);
         painel.Controls.Add(telaSobre);
         abas.Selecting += (_, evento) =>
@@ -130,6 +143,7 @@ internal sealed partial class JanelaPrincipal : Form
             if (NavegacaoBloqueada)
                 return;
             ativa?.Cancel();
+            telaAparencia.Visible = false; MarcarPagina(configuracoes, false);
             abas.Visible = false;
             telaSobre.Visible = true;
             telaSobre.BringToFront();
@@ -141,7 +155,8 @@ internal sealed partial class JanelaPrincipal : Form
         {
             if (NavegacaoBloqueada)
                 return;
-            telaSobre.Visible = false;
+            telaSobre.Visible = telaAparencia.Visible = false;
+            MarcarPagina(configuracoes, false);
             abas.Visible = true;
             MarcarPagina(sobre, false);
             foreach (var (chave, botao) in botoes)
@@ -234,6 +249,7 @@ internal sealed partial class JanelaPrincipal : Form
         layout.Controls.Add(rodape, 0, 1);
         layout.SetColumnSpan(rodape, 2);
         Controls.Add(layout);
+        IniciarAparencia();
         consultar.Click += async (_, _) => await ExecutarConsultaAsync();
         entrada.KeyDown += async (_, evento) =>
         {
@@ -250,7 +266,7 @@ internal sealed partial class JanelaPrincipal : Form
             if (administrativaEmAndamento || preparandoIntervencao || intervencaoEmAndamento)
             {
                 evento.Cancel = true;
-                MessageBox.Show(this, "Aguarde a operação em andamento terminar.", "Operação em andamento",
+                DialogoTema.Mostrar(this, "Aguarde a operação em andamento terminar.", "Operação em andamento",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -397,13 +413,19 @@ internal sealed partial class JanelaPrincipal : Form
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Valor", FillWeight = 55, MinimumWidth = 110 });
         grade.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Indicador", FillWeight = 30, MinimumWidth = 145, Visible = false });
         grade.CellPainting += DesenharIndicadorDisco;
+        grade.RowStateChanged += (_, evento) =>
+        {
+            if ((evento.StateChanged & DataGridViewElementStates.Selected) == 0) return;
+            foreach (var link in evento.Row.Cells.OfType<DataGridViewLinkCell>())
+                link.LinkColor = link.ActiveLinkColor = link.VisitedLinkColor = evento.Row.Selected ? Estilo.Paleta.NoDestaque : Estilo.Paleta.Link;
+        };
         ConfigurarCopia();
         painelTabela.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         painelTabela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         painelTabela.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         resumoDiscos.AccessibleName = "Resumo dos discos";
         resumoDiscos.Padding = new Padding(8);
-        resumoDiscos.BackColor = AltoContraste ? SystemColors.Window : Superficie;
+        Estilo.Marcar(resumoDiscos, PapelVisual.Superficie);
         resumoDiscos.Visible = false;
         painelTabela.Controls.Add(resumoDiscos, 0, 0);
         painelTabela.Controls.Add(grade, 0, 1);
@@ -456,25 +478,12 @@ internal sealed partial class JanelaPrincipal : Form
     private static void EstilizarGrade(DataGridView grade)
     {
         grade.BackgroundColor = AltoContraste ? SystemColors.Window : Superficie;
-        grade.BorderStyle = BorderStyle.FixedSingle;
+        grade.BorderStyle = BorderStyle.None;
         grade.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
         grade.DefaultCellStyle.Padding = new Padding(6, 5, 6, 5);
         grade.RowTemplate.MinimumHeight = 44;
         grade.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        if (!AltoContraste)
-        {
-            grade.EnableHeadersVisualStyles = false;
-            grade.GridColor = Borda;
-            grade.DefaultCellStyle.BackColor = Superficie;
-            grade.DefaultCellStyle.ForeColor = Texto;
-            grade.DefaultCellStyle.SelectionBackColor = Destaque;
-            grade.DefaultCellStyle.SelectionForeColor = Texto;
-            grade.AlternatingRowsDefaultCellStyle.BackColor = Alternada;
-            grade.ColumnHeadersDefaultCellStyle.BackColor = Navegacao;
-            grade.ColumnHeadersDefaultCellStyle.ForeColor = Secundario;
-            grade.ColumnHeadersDefaultCellStyle.SelectionBackColor = Navegacao;
-            grade.ColumnHeadersDefaultCellStyle.SelectionForeColor = Secundario;
-        }
+        Estilo.Aplicar(grade);
     }
 
     private TableLayoutPanel CriarTelaSobre(string versao)
@@ -495,37 +504,20 @@ internal sealed partial class JanelaPrincipal : Form
         return pagina;
     }
 
-    private static Label CriarRotulo(string texto, int tamanho, bool destaque) => new()
+    private static Label CriarRotulo(string texto, int tamanho, bool destaque)
     {
-        Text = texto, AutoSize = true, Margin = new Padding(3, 2, 3, 6),
-        Font = new Font("Segoe UI", tamanho, destaque ? FontStyle.Bold : FontStyle.Regular),
-        ForeColor = AltoContraste ? SystemColors.WindowText : destaque ? Texto : Secundario
+        var rotulo=new Label {Text=texto, AutoSize=true, Margin=new Padding(3,2,3,6),
+            Font=new Font("Segoe UI",tamanho,destaque?FontStyle.Bold:FontStyle.Regular)};
+        Estilo.Marcar(rotulo,destaque?PapelVisual.Normal:PapelVisual.Secundario);
+        return rotulo;
+    }
+    private static void MarcarPagina(Button botao, bool ativo) => Estilo.Marcar(botao, ativo ? PapelVisual.Ativo : PapelVisual.Navegacao);
+    private static void AplicarCorBotao(Button botao, bool destaque) => Estilo.Marcar(botao, destaque ? PapelVisual.Primario : PapelVisual.Normal);
+    private static string IconeMenu(string nome) => nome switch
+    {
+        "Visão geral" => "\uE80F", "Hardware" => "\uE770", "Rede" => "\uE839", "Windows" => "win",
+        "Impressão" => "\uE749", "Contas e políticas" => "\uE77B", _ => "\uE9F9"
     };
-
-    private static void MarcarPagina(Button botao, bool ativo)
-    {
-        if (AltoContraste)
-        {
-            botao.BackColor = ativo ? SystemColors.Highlight : SystemColors.Control;
-            botao.ForeColor = ativo ? SystemColors.HighlightText : SystemColors.ControlText;
-        }
-        else
-            AplicarCorBotao(botao, ativo);
-    }
-
-    private static void AplicarCorBotao(Button botao, bool destaque)
-    {
-        if (AltoContraste)
-            return;
-        botao.UseVisualStyleBackColor = false;
-        botao.FlatStyle = FlatStyle.Flat;
-        botao.FlatAppearance.BorderColor = Borda;
-        botao.FlatAppearance.MouseOverBackColor = Color.FromArgb(53, 94, 178);
-        botao.FlatAppearance.MouseDownBackColor = Color.FromArgb(37, 72, 147);
-        botao.BackColor = destaque ? Destaque : Superficie;
-        botao.ForeColor = Texto;
-    }
-
     private async Task ExecutarConsultaAsync(string familia = "")
     {
         if (ativa is not null || preparandoIntervencao || ferramentaAtual is not Ferramenta escolhido)
@@ -593,7 +585,7 @@ internal sealed partial class JanelaPrincipal : Form
             Resposta resposta;
             if (administrativaEmAndamento)
             {
-                var retorno = await ElevacaoConsulta.ConsultarAsync(escolhido.Id, volume, cancelamento.Token, dados);
+                var retorno = await ElevacaoConsulta.ConsultarAsync(escolhido.Id, volume, cancelamento.Token, dados, Estilo.Escuro ? "Escuro" : "Claro");
                 resposta = retorno.Resultado;
                 if (retorno.Html is { } html)
                 {
@@ -660,11 +652,11 @@ internal sealed partial class JanelaPrincipal : Form
         try
         {
             var salvo = LogConsulta.Salvar(pasta, nomeResultado, resultado, inicioResultado, fimResultado);
-            MessageBox.Show(this, salvo, "Log salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DialogoTema.Mostrar(this, salvo, "Log salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception erro) when (erro is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            MessageBox.Show(this, erro.Message, "Não foi possível salvar o log", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            DialogoTema.Mostrar(this, erro.Message, "Não foi possível salvar o log", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 

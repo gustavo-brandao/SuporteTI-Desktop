@@ -1,16 +1,16 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.8**
+**Versão atual · 1.0.0-beta.9**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.8/SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.8/SuporteTI-Grafico-1.0.0-beta.8-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.8)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9/SuporteTI-Grafico-1.0.0-beta.9-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9/SuporteTI-Grafico-1.0.0-beta.9-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9)
 
-![GPO com campos de escopo e ação na beta.8](docs/imagens/gpo-beta8.png)
+![Tema escuro da beta.9, com pesquisa de códigos e nova navegação](docs/imagens/resultados-escuro-beta9.png)
 
-A beta.8 otimiza as tabelas e o filtro e controla o encerramento de consultas e seus processos filhos. Os formulários preservam o escopo, a ação e a indicação de UAC antes de executar.
+A beta.9 traz um visual inspirado no Windows 11: superfícies neutras, azul de destaque, navegação com ícones, botões arredondados e abas com seleção e foco visíveis. Os formulários preservam o escopo, a ação e a indicação de UAC antes de executar.
 
 ## Começar
 
@@ -37,7 +37,15 @@ O filtro aguarda 200 ms sem novas teclas antes de atualizar a tabela. Limpar o c
 
 Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou **Copiar resultado** para o relatório completo. O menu de contexto oferece as mesmas ações e o rodapé confirma a cópia. O clique nos códigos de erro abre sua explicação.
 
-![Formulário de impressão na beta.8, com ação de limpeza preparada para revisão](docs/imagens/impressao-beta8.png)
+## Aparência
+
+Em **Configurações → Aparência**, escolha **Escuro**, **Claro** ou **Sistema**. A primeira abertura usa Escuro. A preferência é salva por usuário e a troca é aplicada durante o uso, preservando resultados. Alto contraste do Windows tem prioridade. O pacote continua portátil, com configuração fora da pasta do executável.
+
+![Tema claro da beta.9, com os mesmos formulários e operações](docs/imagens/gpo-claro-beta9.png)
+
+![Escolha de temas em Configurações → Aparência na beta.9](docs/imagens/aparencia-beta9.png)
+
+As capturas mostram a versão atual em execução. Título, ícone e abas foram revisados nos três modos; janelas e materiais nativos podem variar conforme a versão e as configurações do Windows.
 
 ## Documentação e código
 

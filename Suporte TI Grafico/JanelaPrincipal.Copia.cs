@@ -4,7 +4,7 @@ namespace SuporteTI.Grafico;
 
 internal sealed partial class JanelaPrincipal
 {
-    private readonly Button copiarResultado = new() { Text = "Copiar &resultado", AutoSize = true, Enabled = false };
+    private readonly Button copiarResultado = new BotaoModerno() { Text = "Copiar &resultado", AutoSize = true, Enabled = false };
     private readonly Label feedbackCopia = new() { AutoSize = true };
 
     private void ConfigurarCopia()
