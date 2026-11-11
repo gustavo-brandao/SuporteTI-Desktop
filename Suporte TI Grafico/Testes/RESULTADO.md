@@ -1,5 +1,36 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.2 · estrutura adaptável
+
+- **153 testes automatizados aprovados**, incluindo CIM real e os 23 cenários isolados de velocidade. Os dois novos cenários verificam contraste de texto, indicador da navegação ativa e abas nas paletas Escuro/Claro. As 44 rotas e os formulários por contexto continuam cobertos pela suíte de catálogo/contrato.
+- **13 simulações de intervenção aprovadas**; não foram feitas alterações reais de rede, spooler, perfis ou login nesta estação.
+- O ZIP de validação extraído passou na estrutura de três itens, conferência SHA-256, pesquisa automática de códigos, consulta real de sistema e leitura de discos. Sistema concluiu; discos retornaram leitura parcial estruturada, preservando as limitações, sem falha de JSON.
+- A janela foi conferida em Escuro, Claro e Sistema, com consulta real de `0xC0000005`, resultado preservado na troca de tema e preferência Sistema persistida após fechar/reabrir. A janela mínima de 780 × 560 usa lateral compacta e rolagem da página; os comandos de log e cópia continuam acessíveis após rolar. Sobre/Configurações permanecem na base. O retorno à janela ampla expande a navegação.
+- A alternância manual preservou Hardware/Desempenho e suas seis guias em uma linha. Ctrl+K expandiu o menu e levou o foco à busca. Título com versão e ícone estão presentes nas capturas reais. Este aceite local não equivale à regressão interativa completa das 44 operações; a cobertura dessa regressão na beta.9.1 permanece registrada abaixo.
+- As capturas do README são da beta.9.2, com recorte apenas do rodapé que identifica a estação. Os mockups permanecem separados. Não se declara implementação de barras horizontais ou velocímetro nesta primeira etapa estrutural.
+- Elementos nativos podem apresentar diferenças conforme o Windows. Na alternância para Claro desta estação, trilhos de rolagem conservaram fundo escuro e os rádios mantiveram contraste distinto do tema; a seleção e a leitura continuaram funcionais. Reavaliar o acabamento nativo e a matriz de DPI/alto contraste na homologação visual.
+- Windows 10, VM limpa/offline, pendrive físico, conta administrativa distinta, UNC assinado, manutenção real e repetição completa do clipboard permanecem pendentes. A versão continua beta e sem assinatura Authenticode.
+- A entrega usa duas capturas reais desta revisão. A validação interativa local ficou limitada aos cenários registrados acima; os demais aceites continuam na matriz. Os testes de contrato e de pacote são executados separadamente, sem controlar a janela.
+
+## Revisão dos conceitos de dashboard · 10 de novembro de 2026
+
+- Matriz da [galeria consolidada](../../docs/propostas-visuais/2026-11-10/conjunto-monitoramento/README.md) comparada ao `CatalogoFerramentas.cs`: **44 IDs cobertos, sem omissões ou duplicatas**.
+- **Cinco PNGs conferidos visualmente**, cada um com janela ampla e compacta. As variantes de Hardware e Rede correspondem às barras horizontais e ao velocímetro aprovados. Integridade PNG, identidade dos arquivos de origem e oito referências locais da galeria verificadas por script.
+- Registrados ajustes de texto e escopo dos mockups: monitor atual de CPU/RAM, último resultado da sessão, possíveis abas de impressão e efeito global do reinício do spooler. Dados das imagens são ilustrativos.
+- Esta é uma avaliação documental e visual, sem nova versão executável. Não constitui teste funcional de layout responsivo, DPI, acessibilidade ou desempenho. Os aceites da implementação estão enumerados na galeria; os resultados de execução anteriores permanecem registrados abaixo.
+
+## Prévia 1.0.0-beta.9.1 · 10 de novembro de 2026
+
+- **151 testes automatizados aprovados**, incluindo CIM real e **23 cenários do motor nativo de velocidade**, sem tráfego externo nessa suíte. Cobertura de concorrência, orçamento compartilhado, janela de tempo, Mbps, cancelamento, servidor indisponível, resposta incompleta, HTTP 403/503, upload lento, blocos sem confirmação, contrato e log parcial.
+- **13 simulações de intervenção aprovadas**. Não foram feitas alterações reais de rede, impressão, perfis ou login na estação.
+- O verificador de aparência passou nos temas Escuro, Claro e Sistema: seis abas de Hardware acessíveis em 780 × 600, monitor com amostra real e pausa ao trocar de aba, painel de velocidade e janela compacta, persistência, resultado preservado e confirmações com Não como padrão. Título e ícone permanecem presentes.
+- O teste HTTPS real concluiu download e upload após o ajuste dos blocos, em cerca de 20–22 segundos, com 15 linhas de resultado e opção de salvar log. A solicitação experimental de 16 MiB recebeu HTTP 403; pedidos de 1 e 8 MiB receberam HTTP 200. A configuração publicada usa blocos de até 8 MiB, com início menor e adaptação no upload. Não se infere limite universal do serviço nem capacidade contratada do link.
+- Uma regressão da janela em Escuro passou nas 44 rotas, nos 13 destinos agrupados de busca, consultas contextuais, clipboard, explicação de código, monitor, mapa, impressão e discos. Repetições posteriores falharam no preparo/leitura do marcador do próprio verificador, inclusive em GetDataObject antes de abrir o aplicativo. O diagnóstico identificou marcador vazio pertencente ao verificador, sem evidência de cópia automática pelo app. O código de cópia do produto foi preservado. A opção explícita `-SemClipboard` isola o restante da interface e não conta como aceite de cópia; a repetição do clipboard nos três temas continua pendente em sessão adequada.
+- O pacote revisado passou nas **44 rotas nos três temas**, com `-SemClipboard`, incluindo busca, consulta contextual, explicação de código, amostragem e pausa, mapa cancelável, apresentação dos discos e redimensionamento. A exclusão do clipboard consta da saída de cada execução. Os cartões do monitor mantêm altura mínima e rolagem na janela estreita.
+- As capturas reais da versão são renovadas no README. O filtro e os relatórios continuam preservando todos os campos e avisos, inclusive quando a medição de uma direção está indisponível.
+- A compilação passou. A restauração local registrou NU1900 por indisponibilidade do índice de auditoria NuGet, inclusive fora da sandbox; não foi suprimido. Windows 10, DPI/alto contraste reais, conta administrativa distinta, UNC assinado e manutenção real em VM permanecem pendentes. A versão continua beta.
+- ZIP local final: **50.094.056 bytes**, SHA-256 `7e3802d65756619e2e13d1aba35d55b155e81cabd9aea4988435ad6c4912ac5f`. Os 24 arquivos de programa foram comparados por SHA-256 e são idênticos aos do pacote usado na validação revisada; a documentação de homologação foi atualizada na geração final. As imagens do README vêm da execução real da beta.9.1.
+
 ## Prévia 1.0.0-beta.9 · 10 de novembro de 2026
 
 - **128 testes automatizados aprovados**, incluindo CIM real. Os casos novos cobrem tema inicial Escuro, persistência dos três modos, preferências inválidas/excessivas/futuras, gravação sem permissão preservando o arquivo anterior, limpeza de temporários, resolução de Sistema e validação do tema administrativo antes do UAC.

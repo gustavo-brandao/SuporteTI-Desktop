@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9 · Windows x64**
+**Versão em testes 1.0.0-beta.9.2 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -13,6 +13,16 @@ Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fo
 | Windows 11 x64, UAC e conta distinta | Simulações, validação do canal e verificação dos arquivos | Consentir e cancelar, elevar com credenciais distintas, inspecionar a cópia protegida e conferir a limpeza |
 | Domínio, UNC e impressoras | Consultas locais e intervenções simuladas | GPO do usuário e do computador, pacote assinado por UNC, bloqueio de adulteração, fila de teste e spooler |
 | Notebook, discos e acessibilidade | Ocupação real, SMART parcial e navegação automatizada | Bateria real, SATA/NVMe, DPI de 100%, 125% e 150%, alto contraste, teclado e foco |
+
+## Navegação, gráficos e conexão
+
+1. Em Escuro, Claro e Sistema, navegar pelas áreas e abas com mouse e teclado; conferir seleção, foco e títulos. Redimensionar para 780 × 560 e confirmar menu recolhido, acesso aos sete grupos por rolagem e Sobre/Configurações na base. Expandir manualmente, usar Ctrl+K e mudar entre as faixas de largura; a consulta e seus parâmetros não devem mudar ao recolher. Conferir as seis abas de Hardware e, quando houver excedentes, o acesso pela rolagem nativa e Ctrl+Tab. Rolar a página até resultados, Salvar log e Copiar resultado. Na tela de velocidade, conferir também o painel e o cancelamento.
+2. Iniciar o monitor, observar amostras reais de CPU/RAM e pausar. Trocar de aba deve pausar o monitor e conservar os valores; nenhum movimento decorativo deve continuar nas telas ocultas.
+3. Com a preferência de animações do Windows desativada, repetir a navegação e o monitor: as leituras continuam sendo atualizadas, sem transições. Repetir em alto contraste e escalas de 100%, 125%, 150% e 200% no laboratório; não considerar a implementação como substituta desse aceite real.
+4. Executar o teste de internet manualmente, observando fase, tempo, bytes e taxa. Ele pode consumir até **1 GiB**. Conferir resultado de ambas as direções, cancelamento, falta de internet e falha em somente uma direção. Salvar/copiar resultado e confirmar avisos e método. Não comparar a estimativa diretamente com a velocidade contratada como critério único de aceite.
+5. `Verificar-Aparencia.ps1` cobre temas, abas compactas, monitor e cancelamento; o roteiro de navegação adaptável acima complementa o verificador da beta.9.1. `-TestarVelocidadeInternet` habilita uma coleta real opcional, com o consumo acima. O teste automático do motor pode ser executado sem tráfego externo com `dotnet run --project Testes/SuporteTI.Grafico.Testes.csproj -c Release -- --testar-velocidade` a partir da pasta do projeto gráfico.
+
+Se a sessão bloquear o próprio preparo do clipboard no verificador, `Verificar-Pacote.ps1 -Janela -SemClipboard` permite testar as demais rotas sem ler nem escrever nessa área. A saída identifica a exclusão; essa execução não conta como aceite de cópia. Repetir sem a opção em uma sessão com clipboard disponível. Não remover os testes de cópia nem alterar o aplicativo para contornar uma falha no preparo do ambiente.
 
 ## Cenários que alteram o Windows
 

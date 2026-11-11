@@ -19,8 +19,8 @@ internal sealed partial class JanelaPrincipal
         acoes.Controls.Add(iniciar);
         acoes.Controls.Add(CriarRotulo("Amostra por segundo · até 60 pontos por gráfico", 10, false));
         pagina.Controls.Add(acoes, 0, 1);
-        var cpu = new GraficoUso("CPU", Color.FromArgb(119, 186, 255));
-        var ram = new GraficoUso("Memória RAM", Color.FromArgb(101, 219, 195));
+        var cpu = new GraficoUso("CPU");
+        var ram = new GraficoUso("Memória RAM");
         pagina.Controls.Add(cpu, 0, 2);
         pagina.Controls.Add(ram, 0, 3);
         var status = CriarRotulo("Monitor pronto. Inicie para medir o uso.", 10, false);
@@ -31,6 +31,7 @@ internal sealed partial class JanelaPrincipal
         void Parar()
         {
             timer.Stop();
+            cpu.PausarAnimacao(); ram.PausarAnimacao();
             iniciar.Text = "&Iniciar monitor";
             status.Text = "Monitor pausado. O histórico permanece visível.";
         }
@@ -69,12 +70,16 @@ internal sealed partial class JanelaPrincipal
         private readonly Panel trama;
         private Color cor => nome == "CPU" ? Estilo.Paleta.Cpu : Estilo.Paleta.Ram;
         private readonly string nome;
+        private readonly System.Windows.Forms.Timer animacao = new() { Interval = 16 };
+        private readonly System.Diagnostics.Stopwatch relogio = new();
+        private double? anteriorValor;
 
-        public GraficoUso(string nome, Color cor)
+        public GraficoUso(string nome)
         {
             this.nome = nome;
             Estilo.Marcar(this, PapelVisual.Superficie);
             Dock = DockStyle.Fill;
+            MinimumSize = new Size(0, 128);
             Margin = new Padding(3, 6, 3, 3);
             Padding = new Padding(12, 4, 12, 6);
             BackColor = AltoContraste ? SystemColors.Window : Superficie;
@@ -88,11 +93,20 @@ internal sealed partial class JanelaPrincipal
             trama.Resize += (_, _) => trama.Invalidate();
             Controls.Add(trama);
             Controls.Add(cabecalho);
+            animacao.Tick += (_, _) =>
+            {
+                if (!Visible || !Movimento.Permitido || relogio.ElapsedMilliseconds >= 240) animacao.Stop();
+                trama.Invalidate();
+            };
+            VisibleChanged += (_, _) => { if (!Visible) PausarAnimacao(); };
         }
+
+        public void PausarAnimacao() { animacao.Stop(); trama.Invalidate(); }
 
         public void Limpar()
         {
             pontos.Clear();
+            PausarAnimacao(); anteriorValor = null;
             leitura.Text = "Aguardando amostra";
             leitura.AccessibleName = nome + ": aguardando amostra";
             trama.Invalidate();
@@ -100,11 +114,13 @@ internal sealed partial class JanelaPrincipal
 
         public void Adicionar(double? valor, string resumo)
         {
+            anteriorValor = pontos.LastOrDefault();
             if (pontos.Count == 60)
                 pontos.Dequeue();
             pontos.Enqueue(valor);
             leitura.Text = resumo;
             leitura.AccessibleName = $"{nome}: {resumo}";
+            if (Visible && Movimento.Permitido) { relogio.Restart(); animacao.Start(); }
             trama.Invalidate();
         }
 
@@ -125,24 +141,36 @@ internal sealed partial class JanelaPrincipal
                     AltoContraste ? SystemColors.WindowText : Secundario);
             }
             desenho.SmoothingMode = SmoothingMode.AntiAlias;
+            desenho.SetClip(area);
             PointF? anterior = null;
             var indice = 60 - pontos.Count;
+            var f = animacao.Enabled ? Movimento.Suavizar(relogio.Elapsed.TotalMilliseconds / 240) : 1;
             foreach (var valor in pontos)
             {
                 if (valor is double percentual)
                 {
-                    var ponto = new PointF(area.Left + area.Width * indice / 59f, area.Bottom - (float)(area.Height * percentual / 100));
-                    if (anterior is PointF ultimo)
-                        desenho.DrawLine(linha, ultimo, ponto);
+                    var ultimo = indice == 59;
+                    var visual = ultimo && anteriorValor is double de ? de + (percentual - de) * f : percentual;
+                    var x = indice + (ultimo ? 0 : 1-f);
+                    var ponto = new PointF(area.Left + (float)(area.Width * x / 59), area.Bottom - (float)(area.Height * visual / 100));
+                    if (anterior is PointF precedente)
+                    {
+                        using var sombra = new SolidBrush(Color.FromArgb(AltoContraste ? 0 : 30, cor));
+                        desenho.FillPolygon(sombra, [precedente, ponto, new(ponto.X, area.Bottom), new(precedente.X, area.Bottom)]);
+                        desenho.DrawLine(linha, precedente, ponto);
+                    }
                     else
                         desenho.DrawEllipse(linha, ponto.X - 1, ponto.Y - 1, 2, 2);
+                    if (ultimo) { using var ponta = new SolidBrush(cor); desenho.FillEllipse(ponta, ponto.X-3, ponto.Y-3, 6, 6); }
                     anterior = ponto;
                 }
                 else
                     anterior = null;
                 indice++;
             }
+            desenho.ResetClip();
         }
+        protected override void Dispose(bool disposing) { if (disposing) animacao.Dispose(); base.Dispose(disposing); }
     }
 
     private sealed class AreaDesenho : Panel

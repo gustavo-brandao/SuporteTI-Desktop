@@ -1,6 +1,22 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual.
+**1.0.0-beta.9.2** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa a paleta azul escura do dashboard de monitoramento, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.2).
+
+## Navegação, monitor e velocidade
+
+As abas ficam em uma linha, com seleção destacada e foco de teclado. Se não couberem, o TabControl oferece rolagem nativa; Ctrl+Tab/Ctrl+Shift+Tab também navegam entre as guias. A lateral alterna entre nomes e ícones abaixo de 1.000 pixels efetivos da largura cliente, com botão manual, nomes acessíveis e dicas. Ctrl+K expande o menu e leva à busca. A escolha manual dura até mudar a faixa de largura e não altera a consulta ou seus parâmetros. Sobre e Configurações ficam na base; os grupos usam rolagem quando a altura é insuficiente.
+
+Os títulos mostram a área atual sem repetir o menu principal. O tamanho mínimo continua 780 × 560. A página calcula uma altura mínima conforme o cabeçalho, os parâmetros, os comandos e uma área legível de resultados; quando necessário, rola verticalmente. Salvar log e copiar permanecem acessíveis, inclusive após rolar a página.
+
+A navegação recebe realce gradual, e a entrada do conteúdo usa um deslocamento curto de 180 ms. O monitor mantém as amostras nativas de CPU e memória a cada segundo; o movimento entre pontos é apenas apresentação, sem alterar as leituras. Trocar de ferramenta pausa o monitor e interrompe suas animações. A preferência de animações do Windows é respeitada; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
+
+Esta é a primeira etapa estrutural do dashboard aprovado. Barras horizontais de CPU/RAM, velocímetro e a redistribuição completa dos menus são entregas seguintes; as imagens conceituais não representam componentes já implementados.
+
+Em **Rede → Conectividade → Velocidade da internet**, o motor C# mede três amostras de latência HTTPS e executa quatro transferências paralelas por direção, por até dez segundos cada. O limite é **512 MiB de download e 512 MiB de upload**; ao alcançá-lo, a coleta termina antes. Em condições normais, espere cerca de 20–35 segundos. A fase, a taxa em Mbps, o tempo e os bytes são atualizados durante o teste. A curva mostra a vazão média acumulada da fase, com escala adaptada aos valores observados.
+
+A taxa de upload considera blocos confirmados pelo servidor, evitando confundir a escrita no buffer com velocidade da internet. O resultado informa duração, dados válidos, encerramento e método; **Salvar log…** e **Copiar resultado** preservam os avisos. Cancelar interrompe as transferências; a navegação permanece disponível. O resultado é uma estimativa da vazão útil até a Cloudflare, sujeita a Wi-Fi, VPN, proxy, servidor e tráfego concorrente. Não equivale à garantia da velocidade contratada. O teste usa HTTPS sem enviar arquivos pessoais e só inicia mediante clique.
+
+Este motor é específico da interface gráfica. Os coletores PowerShell de referência permanecem preservados; PowerShell 7 não foi incluído nesta versão.
 
 ## Temas, títulos e guias
 
@@ -98,7 +114,7 @@ O smartmontools é distribuído em `Modulos/Ferramentas/smartmontools` com seu c
 
 ## Construir e testar
 
-O [planejamento de evolução](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/REVISAO-UX-2026-11-09.md) prevê uma etapa visual após a beta.9, com temas Escuro, Claro e Sistema, e uma avaliação posterior de PowerShell 7 incluído na distribuição. A beta.4 utiliza Windows PowerShell 5.1 para suas rotinas.
+O [planejamento de evolução](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/docs/PLANEJAMENTO.md) registra as etapas do dashboard após a base adaptável da beta.9.2 e a avaliação de PowerShell 7 na beta.10. Esta versão continua usando Windows PowerShell 5.1 para suas rotinas. A documentação distingue testes aprovados, simulações e pendências de laboratório.
 
 Em Windows x64 com o SDK .NET 10 disponível, execute a partir desta pasta.
 
@@ -109,7 +125,7 @@ dotnet run --project .\Testes\SuporteTI.Grafico.Testes.csproj -c Release
 
 O publicador gera o ZIP e o SHA-256 em `outputs`. Use `-Dotnet` para indicar um SDK portátil ou `-Destino` para escolher uma pasta nova. Acrescente `-- --exigir-cim` ao comando de testes em uma estação com acesso a CIM para conferir nome e build reais.
 
-O roteiro **HOMOLOGACAO.md**, incluído em **Documentacao**, descreve os ambientes, os cenários em VM e a geração de um pacote assinado. [Roteiro de homologação](Testes/HOMOLOGACAO.md)
+O roteiro **HOMOLOGACAO.md**, incluído em **Documentacao**, descreve os ambientes, os cenários em VM e a geração de um pacote assinado. [Roteiro versionado no repositório](https://github.com/gustavo-brandao/SuporteTI-Desktop/blob/main/Suporte%20TI%20Grafico/Testes/HOMOLOGACAO.md)
 
 ## Origem
 
