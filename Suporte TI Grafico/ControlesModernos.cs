@@ -130,7 +130,7 @@ internal sealed class AbasModernas : TabControl
     }
     protected override void OnPaint(PaintEventArgs e)
     {
-        e.Graphics.Clear(Estilo.Paleta.Fundo);
+        e.Graphics.Clear(Estilo.Paleta.Superficie);
         for(var i=0;i<TabCount;i++) OnDrawItem(new DrawItemEventArgs(e.Graphics,Font,GetTabRect(i),i,
             i==SelectedIndex?DrawItemState.Selected:DrawItemState.None));
         if (SelectedIndex < 0) return;
@@ -145,10 +145,10 @@ internal sealed class AbasModernas : TabControl
     protected override void OnDrawItem(DrawItemEventArgs e)
     {
         var p=Estilo.Paleta; var ativo=e.Index==SelectedIndex;
-        using var fundo=new SolidBrush(p.Fundo); e.Graphics.FillRectangle(fundo,e.Bounds);
+        using var fundo=new SolidBrush(p.Superficie); e.Graphics.FillRectangle(fundo,e.Bounds);
         var area=Rectangle.Inflate(e.Bounds,-3,-3);
         using var forma=FormaModerna.Caminho(area,7*DeviceDpi/96);
-        using var tinta=new SolidBrush(ativo?(Estilo.AltoContraste?p.Destaque:p.NavegacaoAtiva):e.Index==hover?p.Alternada:p.Fundo); e.Graphics.FillPath(tinta,forma);
+        using var tinta=new SolidBrush(ativo?(Estilo.AltoContraste?p.Destaque:p.NavegacaoAtiva):e.Index==hover?p.Alternada:p.Superficie); e.Graphics.FillPath(tinta,forma);
         // O TabControl mede as guias com Font. A seleção mantém a mesma fonte e
         // largura; o fundo e o indicador identificam a guia ativa sem cortar o texto.
         TextRenderer.DrawText(e.Graphics,TabPages[e.Index].Text,Font,Rectangle.Inflate(area,-2,-4),ativo&&Estilo.AltoContraste?p.NoDestaque:ativo?p.Texto:p.Secundario,

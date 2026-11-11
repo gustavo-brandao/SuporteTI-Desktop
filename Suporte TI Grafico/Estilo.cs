@@ -1,6 +1,5 @@
 using Microsoft.Win32;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace SuporteTI.Grafico;
 
@@ -74,7 +73,8 @@ internal static class Estilo
         var papel = PapelDe(controle);
         var fundo = papel is PapelVisual.Navegacao or PapelVisual.Ativo ? p.Navegacao :
             papel == PapelVisual.Superficie || controle is Cartao ? p.Superficie : controle.Parent?.BackColor ?? p.Fundo;
-        if (controle is Form or TabPage) fundo = p.Fundo;
+        if (controle is Form) fundo = p.Fundo;
+        if (controle is TabPage) fundo = p.Superficie;
         if (controle is TextBoxBase or ComboBox or ListBox or DataGridView) fundo=p.Superficie;
         if (controle is ToolStrip) fundo=p.Navegacao;
         if (controle is Button) fundo=papel == PapelVisual.Primario?p.Destaque:papel == PapelVisual.Ativo ? (AltoContraste?p.Destaque:p.NavegacaoAtiva):
@@ -122,13 +122,7 @@ internal static class Estilo
         }
         if (controle.ContextMenuStrip is { } contexto) Aplicar(contexto);
         foreach (Control filho in controle.Controls) Aplicar(filho);
-        if (controle is Form formulario && formulario.IsHandleCreated)
-        {
-            var escuro = !AltoContraste && Escuro ? 1 : 0;
-            _ = DwmSetWindowAttribute(formulario.Handle, 20, ref escuro, 4);
-            var cantos = 2;
-            _ = DwmSetWindowAttribute(formulario.Handle, 33, ref cantos, 4);
-        }
+        if (controle is Form formulario) MolduraJanela.Aplicar(formulario);
         controle.Invalidate();
     }
 
@@ -143,6 +137,4 @@ internal static class Estilo
         public override Color MenuBorder => Paleta.Borda;
     }
 
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr janela, int atributo, ref int valor, int tamanho);
 }

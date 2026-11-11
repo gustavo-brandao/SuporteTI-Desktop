@@ -1,5 +1,25 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.6 · etapa 2.2
+
+- ZIP final: **50.102.667 bytes**, SHA-256 `96b7327b969f739582a21981c0d39794b327ffefb70cfbe4e81ea3c48cc226c3`. Os 24 arquivos de programa são idênticos por SHA-256 aos do pacote inspecionado na janela; manual beta.9.6 e 47 links locais conferidos. Minimizar e reativar a janela também foram conferidos na retomada.
+- **159 testes automatizados com CIM real e 13 simulações de intervenção aprovados**. Compilação e geração do pacote de validação concluídas; a restauração desta revisão passou sem o NU1900 anteriormente registrado. Não foram executadas intervenções reais.
+- Inspeção do pacote extraído: título/ícone e acabamento integrado em Sistema resolvido como Escuro e em Claro; maximizar/restaurar pelos controles nativos, duplo clique, arraste, menu de sistema, redução da largura com recolhimento automático e fechar/reabrir aprovados. Integridade e reparos manteve o texto completo. A preferência original Sistema foi restaurada.
+- Três capturas reais atualizam o README, com recorte somente do rodapé que identifica a estação. A automação inicial foi interrompida pelo usuário; o aceite acima corresponde à retomada autorizada. O atalho Alt+Espaço estava atribuído ao PowerToys nesta estação; o menu nativo foi acessado pelo ícone da janela.
+- O arraste para a divisa entre monitores não confirmou encaixe; a tentativa de atingir o topo fora da janela foi recusada pelo controlador. Não se declara aceite dirigido de Snap. DPI entre monitores, alto contraste, Windows 10 e a matriz de Snap continuam no laboratório da etapa 6. A implementação preserva os comportamentos nativos, sem interceptar mensagens de hit testing ou alterar limites de maximização.
+- A regressão interativa completa das 44 rotas e clipboard não foi repetida nesta alteração de moldura. VM limpa/offline, pendrive, conta administrativa distinta, UNC assinado e manutenção real permanecem na matriz; a prévia segue sem Authenticode.
+
+
+## Prévia 1.0.0-beta.9.5 · etapa 2.1
+
+- ZIP final: **50.101.053 bytes**, SHA-256 `d024e1d2c083dd1391708f500fa94986074effe69e588a176cca47cda9069b00`. Integridade e estrutura de três itens aprovadas; consultas reais do pacote extraído concluíram sistema e leitura parcial válida de discos. Os 24 arquivos de programa conferem por SHA-256 com o pacote inspecionado na janela; manual beta.9.5 e 47 links locais conferidos.
+- **159 testes automatizados aprovados**, incluindo CIM real e contraste das paletas, e **13 simulações de intervenção aprovadas**. As 44 operações permanecem cobertas pelo catálogo/contrato. Nenhuma intervenção real foi feita nesta etapa visual.
+- O pacote de validação abriu e a consulta real de sistema concluiu com Salvar log e Copiar resultado disponíveis. O cabeçalho acompanhou a troca para Windows/Integridade e reparos e o retorno de Sobre ao mesmo grupo. A lateral foi recolhida e expandida sem perder a área selecionada.
+- A inspeção conferiu o texto completo da guia selecionada, o cabeçalho e a hierarquia em Sistema resolvido como Escuro e no tema Claro. A preferência original Sistema foi restaurada. Três capturas reais desta versão atualizam o README, com recorte somente do rodapé que identifica a estação.
+- A compilação/publicação local registrou NU1900 por indisponibilidade da auditoria NuGet, inclusive fora da sandbox; o aviso não foi suprimido. A suíte local passou. O CI da revisão deve ser conferido antes da publicação.
+- Esta inspeção não repete a regressão interativa das 44 rotas nem os aceites de clipboard, janela mínima exata, teclado completo, DPI e alto contraste. Windows 10, VM limpa/offline, pendrive, conta administrativa distinta, UNC assinado e manutenção real continuam na matriz. A barra de título e moldura pertencem à etapa 2.2. A prévia permanece sem Authenticode.
+
+
 ## Prévia 1.0.0-beta.9.4 · legibilidade e identidade Desktop
 
 - ZIP final: **50.100.177 bytes**, SHA-256 `ac6755e01b4c8d225eb60c7ee75b307ccbacbb59fecef7bab42c4eee79ca523d`. Os 24 arquivos de programa são idênticos por SHA-256 ao pacote inspecionado. Estrutura e coletor extraídos passaram; sistema concluído e discos parciais dentro do contrato. Manual da beta.9.4 e 45 links locais da documentação revisada conferidos.

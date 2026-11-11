@@ -1,12 +1,20 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9.4** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa a paleta azul escura do dashboard de monitoramento, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4).
+**1.0.0-beta.9.6** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6).
+
+## Estrutura da área de trabalho · etapa 2.1
+
+O cabeçalho superior mostra o grupo e a área atuais, acompanhando guias, busca, Sobre e Configurações. Em larguras menores, a contagem de ferramentas cede espaço ao contexto. A navegação separa **Ferramentas** e **Aplicativo**, com nomes e dicas preservados quando recolhida.
+
+A área de conteúdo fica em uma superfície própria, com guias de fundo contínuo, títulos menores, linhas de resultado mais compactas e bordas neutras. As paletas Escuro/Claro usam tons neutros com azul de destaque; Sistema continua acompanhando o Windows, e alto contraste mantém prioridade. O catálogo continua com 44 operações.
+
+A etapa 2.2 integra as cores do título e da borda à paleta no Windows 11, com texto e borda próprios para janela ativa/inativa. Arraste, tamanho, menu de sistema, Snap e botões permanecem sob controle nativo. No alto contraste, as cores explícitas são removidas; no Windows 10, usa os recursos disponíveis. O acabamento é reaplicado ao recriar o identificador da janela, ativar/desativar, mudar tema ou DPI. Monitoramento iStat, busca Raycast e novos movimentos continuam em etapas posteriores.
 
 ## Legibilidade e identidade Desktop
 
 A identificação lateral mostra **VERSÃO DESKTOP**. As guias mantêm a mesma fonte ao selecionar; o fundo e a linha inferior identificam a guia ativa. Isso mantém a medição e o desenho do texto coerentes, corrigindo o recorte em **Windows → Integridade e reparos**. Nomes, atalhos, rolagem nativa e operações permanecem disponíveis.
 
-A direção aprovada para as próximas entregas combina estrutura inspirada no Linear, monitoramento no iStat e busca em camadas no Raycast. Esta prévia entrega a correção de legibilidade e identidade; a nova composição e os movimentos serão implantados um de cada vez.
+A direção aprovada para as próximas entregas combina estrutura inspirada no Linear, monitoramento no iStat e busca em camadas no Raycast. A correção de legibilidade e identidade foi entregue na beta.9.4; esta prévia acrescenta a estrutura da área de trabalho, e as demais partes serão implantadas uma de cada vez.
 
 ## Navegação, monitor e velocidade
 

@@ -1,20 +1,18 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.9.4**
+**Versão atual · 1.0.0-beta.9.6**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.4/SuporteTI-Grafico-1.0.0-beta.9.4-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.4/SuporteTI-Grafico-1.0.0-beta.9.4-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.6/SuporteTI-Grafico-1.0.0-beta.9.6-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.6/SuporteTI-Grafico-1.0.0-beta.9.6-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6)
 
-![Beta.9.4: Integridade e reparos selecionada com texto completo e identificação VERSÃO DESKTOP](docs/imagens/integridade-desktop-escuro-beta94.png)
+![Beta.9.6: cabeçalho contextual, navegação por grupos e conteúdo em superfície própria](docs/imagens/moldura-escuro-beta96.png)
 
-A beta.9.4 corrige o recorte do texto nas guias selecionadas, incluindo Windows → Integridade e reparos, e identifica a navegação como VERSÃO DESKTOP. Preserva as barras de CPU/RAM, o velocímetro e a estrutura adaptável da beta.9.3. Em janelas baixas, o conteúdo usa rolagem para preservar uma área legível de resultados. As 44 operações, os formulários por contexto e a elevação por operação permanecem disponíveis.
+A beta.9.6 conclui a **etapa 2.2 — barra de título e moldura** e inclui a estrutura da etapa 2.1: cabeçalho contextual, navegação por seções e superfície própria para conteúdo. No Windows 11, o título acompanha o fundo do aplicativo e a borda usa um acabamento discreto; texto e borda distinguem a janela ativa da inativa.
 
-Os componentes da **segunda etapa visual**, entregues na beta.9.3, continuam disponíveis: barras em escala fixa de 0–100%, com memória usada, disponível e total; **Mostrar histórico de 60 amostras** expande as curvas sem interromper a coleta. O velocímetro exibe a vazão média acumulada da fase, com escala em Mbps que só cresce durante o teste. Leituras ausentes permanecem indisponíveis. A próxima etapa segue a direção aprovada: estrutura inspirada no Linear, monitoramento no iStat e busca em camadas no Raycast, com uma implantação por vez.
-
-A captura no [tema Claro](docs/imagens/integridade-desktop-claro-beta94.png) também mostra o texto completo. [Notas desta entrega](docs/RELEASE-beta9.4.md).
+Arraste, redimensionamento, menu de sistema e botões continuam nativos. No alto contraste, as cores explícitas da moldura são removidas; no Windows 10, o acabamento segue os recursos disponíveis do sistema. A matriz completa de Snap, DPI e alto contraste permanece na homologação. As 44 operações continuam disponíveis. [Notas desta entrega](docs/RELEASE-beta9.6.md).
 
 ## Começar
 
@@ -53,17 +51,17 @@ Em **Rede → Conectividade → Velocidade da internet**, acompanhe latência HT
 
 O monitor mantém amostras reais de CPU e memória a cada segundo, com barras horizontais e histórico opcional. Pausar conserva a leitura; iniciar novamente limpa as 60 amostras anteriores. Trocar de ferramenta pausa o monitor. As transições respeitam a preferência de animações do Windows; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
 
-![Velocímetro da beta.9.3 durante uma medição real de download](docs/imagens/velocimetro-medicao-beta93.png)
+![Beta.9.6 com navegação recolhida e cabeçalho contextual](docs/imagens/moldura-compacta-beta96.png)
 
-O histórico opcional e as duas direções medidas podem ser vistos nas [capturas e notas desta entrega](docs/RELEASE-beta9.3.md).
+O funcionamento do monitor e do teste de internet permanece documentado nas [notas da etapa de componentes](docs/RELEASE-beta9.3.md). As imagens atuais mostram a estrutura da beta.9.6.
 
 ## Aparência
 
 Em **Configurações → Aparência**, escolha **Escuro**, **Claro** ou **Sistema**. A primeira abertura usa Escuro. A preferência é salva por usuário e a troca é aplicada durante o uso, preservando resultados. Alto contraste do Windows tem prioridade. O pacote continua portátil, com configuração fora da pasta do executável.
 
-![Monitor da beta.9.3 em janela estreita no tema Claro, com histórico expandido e leitura pausada](docs/imagens/monitor-compacto-claro-beta93.png)
+![Beta.9.6 no tema Claro com cabeçalho e guias integrados à área de trabalho](docs/imagens/moldura-claro-beta96.png)
 
-A captura das guias é da beta.9.4; as capturas de monitoramento preservadas são da beta.9.3, cuja apresentação não mudou nesta entrega; o rodapé com a identificação da estação foi recortado. Os mockups ficam na documentação de propostas. Esta etapa conferiu os componentes no tema Claro e em Sistema resolvido como Escuro. Os testes automatizados preservam a cobertura dos três modos. Controles e diálogos nativos podem variar conforme o Windows; o roteiro de homologação registra os limites da validação.
+As capturas acima são da beta.9.6 executada a partir do pacote, com recorte somente do rodapé que identifica a estação. Os mockups permanecem na documentação de propostas. A inspeção desta etapa conferiu aparência escura via Sistema e tema Claro; DPI, alto contraste e a matriz completa de ambientes continuam em homologação.
 
 ## Requisitos e arquitetura
 
