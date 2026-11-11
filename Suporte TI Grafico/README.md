@@ -1,6 +1,12 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9.3** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa a paleta azul escura do dashboard de monitoramento, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.3).
+**1.0.0-beta.9.4** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa a paleta azul escura do dashboard de monitoramento, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4).
+
+## Legibilidade e identidade Desktop
+
+A identificação lateral mostra **VERSÃO DESKTOP**. As guias mantêm a mesma fonte ao selecionar; o fundo e a linha inferior identificam a guia ativa. Isso mantém a medição e o desenho do texto coerentes, corrigindo o recorte em **Windows → Integridade e reparos**. Nomes, atalhos, rolagem nativa e operações permanecem disponíveis.
+
+A direção aprovada para as próximas entregas combina estrutura inspirada no Linear, monitoramento no iStat e busca em camadas no Raycast. Esta prévia entrega a correção de legibilidade e identidade; a nova composição e os movimentos serão implantados um de cada vez.
 
 ## Navegação, monitor e velocidade
 

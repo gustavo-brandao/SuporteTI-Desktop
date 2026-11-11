@@ -1,18 +1,20 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.9.3**
+**Versão atual · 1.0.0-beta.9.4**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.3/SuporteTI-Grafico-1.0.0-beta.9.3-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.3/SuporteTI-Grafico-1.0.0-beta.9.3-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.3)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.4/SuporteTI-Grafico-1.0.0-beta.9.4-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.4/SuporteTI-Grafico-1.0.0-beta.9.4-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4)
 
-![Beta.9.3 em execução: barras de CPU e RAM com leituras reais](docs/imagens/monitor-barras-escuro-beta93.png)
+![Beta.9.4: Integridade e reparos selecionada com texto completo e identificação VERSÃO DESKTOP](docs/imagens/integridade-desktop-escuro-beta94.png)
 
-A beta.9.3 entrega barras horizontais de CPU/RAM em tempo real e velocímetro de internet, sobre a estrutura adaptável da beta.9.2: paleta azul escura, navegação lateral adaptável e abas em uma linha. Em janelas baixas, o conteúdo usa rolagem para preservar uma área legível de resultados. As 44 operações, os formulários por contexto e a elevação por operação permanecem disponíveis.
+A beta.9.4 corrige o recorte do texto nas guias selecionadas, incluindo Windows → Integridade e reparos, e identifica a navegação como VERSÃO DESKTOP. Preserva as barras de CPU/RAM, o velocímetro e a estrutura adaptável da beta.9.3. Em janelas baixas, o conteúdo usa rolagem para preservar uma área legível de resultados. As 44 operações, os formulários por contexto e a elevação por operação permanecem disponíveis.
 
-Esta entrega corresponde à **segunda etapa visual**. As barras usam escala fixa de 0–100%, com memória usada, disponível e total. **Mostrar histórico de 60 amostras** expande as curvas sem interromper a coleta. O velocímetro exibe a vazão média acumulada da fase, com escala em Mbps que só cresce durante o teste. Leituras ausentes permanecem indisponíveis. A reorganização completa dos menus é a próxima etapa.
+Os componentes da **segunda etapa visual**, entregues na beta.9.3, continuam disponíveis: barras em escala fixa de 0–100%, com memória usada, disponível e total; **Mostrar histórico de 60 amostras** expande as curvas sem interromper a coleta. O velocímetro exibe a vazão média acumulada da fase, com escala em Mbps que só cresce durante o teste. Leituras ausentes permanecem indisponíveis. A próxima etapa segue a direção aprovada: estrutura inspirada no Linear, monitoramento no iStat e busca em camadas no Raycast, com uma implantação por vez.
+
+A captura no [tema Claro](docs/imagens/integridade-desktop-claro-beta94.png) também mostra o texto completo. [Notas desta entrega](docs/RELEASE-beta9.4.md).
 
 ## Começar
 
@@ -61,7 +63,7 @@ Em **Configurações → Aparência**, escolha **Escuro**, **Claro** ou **Sistem
 
 ![Monitor da beta.9.3 em janela estreita no tema Claro, com histórico expandido e leitura pausada](docs/imagens/monitor-compacto-claro-beta93.png)
 
-As capturas são da beta.9.3 em execução; o rodapé com a identificação da estação foi recortado. Os mockups ficam na documentação de propostas. Esta etapa conferiu os componentes no tema Claro e em Sistema resolvido como Escuro. Os testes automatizados preservam a cobertura dos três modos. Controles e diálogos nativos podem variar conforme o Windows; o roteiro de homologação registra os limites da validação.
+A captura das guias é da beta.9.4; as capturas de monitoramento preservadas são da beta.9.3, cuja apresentação não mudou nesta entrega; o rodapé com a identificação da estação foi recortado. Os mockups ficam na documentação de propostas. Esta etapa conferiu os componentes no tema Claro e em Sistema resolvido como Escuro. Os testes automatizados preservam a cobertura dos três modos. Controles e diálogos nativos podem variar conforme o Windows; o roteiro de homologação registra os limites da validação.
 
 ## Requisitos e arquitetura
 
@@ -91,6 +93,8 @@ O publicador gera ZIP e SHA-256 em `Suporte TI Grafico/outputs`; uma versão exi
 
 ## Documentação e código
 
+- [Pesquisa visual moderna: Linear, Raycast, Warp e painéis de monitoramento](docs/PESQUISA-VISUAL-MODERNA-2026-11-11.md) — exploração de identidade própria, composição e movimento além do padrão Windows.
+- [Próxima revisão: legibilidade, Versão Desktop, busca, bordas e movimento](docs/REVISAO-ACABAMENTO-2026-11-11.md) — planejamento após a avaliação da beta.9.3; exemplos para escolha antes da implementação.
 - [Manual, requisitos e compilação](Suporte%20TI%20Grafico/README.md)
 - [Escopo e paridade com a edição CLI](Suporte%20TI%20Grafico/ESCOPO.md)
 - [Resultados dos testes](Suporte%20TI%20Grafico/Testes/RESULTADO.md)

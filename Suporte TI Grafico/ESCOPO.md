@@ -1,5 +1,13 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9.4 · legibilidade e identidade
+
+As guias usam a mesma fonte na medição nativa e no desenho, inclusive quando selecionadas. O fundo e o indicador continuam identificando a seleção. A área interna de texto evita o recorte observado em Windows → Integridade e reparos. A identificação lateral passa a VERSÃO DESKTOP. Esta é a primeira implantação pequena da direção aprovada: estrutura Linear, monitoramento iStat e busca em camadas Raycast. A nova composição e as animações serão entregas posteriores, uma de cada vez.
+
+## Revisão planejada após a beta.9.3
+
+Corrigir o recorte da guia Windows → Integridade e reparos e trocar EDIÇÃO GRÁFICA por VERSÃO DESKTOP. Avaliar em protótipos a modernização de título, bordas, busca, transições e gráficos, preservando a direção estática aprovada. Implementar uma entrega por vez após avaliar os exemplos. Não assumir migração de framework para reproduzir referências de WinUI. Os [itens e critérios de aceite](../docs/REVISAO-ACABAMENTO-2026-11-11.md) registram o escopo solicitado e as pendências; o comportamento publicado continua sendo o da beta.9.3.
+
 ## Prévia 1.0.0-beta.9.3 · componentes de monitoramento
 
 Entregar a segunda etapa visual em WinForms: barras horizontais reais de CPU/RAM a cada segundo, escala fixa 0–100%, memória usada/disponível/total e histórico opcional das últimas 60 amostras. Pausar e trocar de ferramenta conservam a leitura; iniciar novamente reinicia o histórico. A interpolação é apenas visual, respeita animações do Windows e não preenche amostras ausentes.

@@ -5,7 +5,7 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
 {
     private readonly Panel cabecalho = new() { Dock = DockStyle.Fill };
     private readonly Label marca = new() { Text = "Suporte TI", AutoSize = true, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
-    private readonly Label edicao = new() { Text = "EDIÇÃO GRÁFICA", AutoSize = true, Font = new Font("Segoe UI", 8) };
+    private readonly Label edicao = new() { Text = "VERSÃO DESKTOP", AutoSize = true, Font = new Font("Segoe UI", 8) };
     private readonly BotaoModerno alternar = new() { Text = "Alternar navegação", AccessibleName = "Alternar navegação", Simbolo = "\uE700", SomenteIcone = true };
     private readonly BotaoModerno abrirBusca = new() { Text = "Buscar ferramenta", AccessibleName = "Abrir busca de ferramentas", Simbolo = "\uE721", SomenteIcone = true };
     private readonly FlowLayoutPanel pesquisa = new() { AutoSize = true, Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false };
