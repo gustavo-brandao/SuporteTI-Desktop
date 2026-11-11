@@ -23,6 +23,7 @@
     <Compile Include="../LogConsulta.cs" Link="LogConsulta.cs" />
     <Compile Include="../MonitorRecursos.cs" Link="MonitorRecursos.cs" />
     <Compile Include="../MedidasVisuais.cs" Link="MedidasVisuais.cs" />
+    <Compile Include="../SerieMonitor.cs" Link="SerieMonitor.cs" />
     <Compile Include="../VarreduraDisco.cs" Link="VarreduraDisco.cs" />
     <None Include="../Modulos/*.ps1" Link="Modulos/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../Modulos/Rede.ps1;../../Modulos/Falhas.ps1;../../Modulos/Discos.ps1;../../Modulos/CatalogoFalhas.json;../../Recursos/SuporteTI.Windows.dll" Link="Modulos/Coletores/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

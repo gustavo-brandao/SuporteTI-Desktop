@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9.6 · Windows x64**
+**Versão em testes 1.0.0-beta.9.7 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -17,6 +17,10 @@ Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fo
 ## Estrutura da área de trabalho · beta.9.5
 
 Conferir grupo e área no cabeçalho ao trocar guias, abrir Sobre/Configurações e retornar ao mesmo grupo. Recolher/expandir a lateral sem alterar a seleção. Em largura reduzida, conferir ocultação da contagem secundária e ausência de sobreposição. Comparar as superfícies e seleção de guias em Claro, Escuro e Sistema, com teclado e DPI. A moldura da etapa 2.2 usa cores DWM no Windows 11: conferir janela ativa/inativa, tema durante o uso, menu pelo ícone, minimizar/restaurar, maximizar, duplo clique, arraste e tamanho. Em laboratório, validar Snap por borda e layouts, monitores com escalas diferentes, DPI 100/125/150/200%, alto contraste entrando/saindo e Windows 10 com alternativa nativa. O sistema deve controlar os botões e os limites de maximização.
+
+## Monitor CPU/RAM · etapa 3.1
+
+Conferir cartões lado a lado em largura suficiente e empilhados na janela estreita. Iniciar a coleta real; verificar número principal, memória usada/disponível/total, escala fixa, média/pico e contagem de leituras válidas. Recolher/exibir histórico durante a coleta; pausar preserva os dados, trocar de ferramenta pausa e iniciar novamente limpa série e resumos. Repetir Claro/Sistema/Escuro, teclado, DPI e alto contraste. Comparar amostras da janela com os resumos, incluindo zero real, ausência e descarte após 60 posições; casos de contrato estão na suíte automatizada. Não interpretar a média como valor desde a abertura do programa.
 
 ## Navegação, gráficos e conexão
 

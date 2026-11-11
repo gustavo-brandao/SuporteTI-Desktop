@@ -1,6 +1,14 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9.6** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6).
+**1.0.0-beta.9.7** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6).
+
+## Monitor de CPU/RAM · etapa 3.1
+
+Hardware → Desempenho → Monitor ao vivo apresenta porcentagens em destaque e resumos de média/pico das leituras válidas da janela de até 60 amostras. Histórico aberto por padrão; recolher as curvas preserva as estatísticas e a coleta. Os cartões ficam lado a lado a partir de 720 pixels efetivos disponíveis e empilhados abaixo disso, com rolagem. A RAM conserva memória usada, disponível e total.
+
+Zero real entra nas estatísticas. Amostras ausentes, inválidas ou não finitas ficam como lacunas, sem entrar na média ou no pico. Pausar ou trocar de ferramenta conserva o último estado; iniciar novamente limpa série e resumos. A coleta segue a cada segundo, sem estimar valores entre amostras. O movimento existente continua apenas visual e respeita as preferências do Windows. O velocímetro permanece para a etapa 3.2.
+
+Esta prévia aguarda aceite visual e publicação; o link da introdução aponta para a versão pública anterior.
 
 ## Estrutura da área de trabalho · etapa 2.1
 

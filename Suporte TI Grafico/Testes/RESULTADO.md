@@ -1,5 +1,13 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.7 · etapa 3.1
+
+- ZIP da prévia: **50.104.204 bytes**, SHA-256 `2a7d460d10c0cdf1866cb93f06ab2535ef09d260722dc943bc9816a0f778fee7`. Estrutura e integridade aprovadas; os 24 arquivos de programa são idênticos aos do pacote de validação aberto. Manual beta.9.7 e 44 links locais conferidos. Essa equivalência não constitui aceite visual da nova tela.
+- **163 testes automatizados com CIM real aprovados**, incluindo quatro novos casos de série: estado vazio, zero/lacunas/valor inválido, descarte do pico antigo na janela de 60 posições e limpeza da sessão. **13 simulações de intervenção aprovadas**; nenhuma intervenção real.
+- Compilação e geração do pacote de validação sem avisos. A janela da beta.9.7 abriu; ao navegar para Hardware o controlador perdeu acesso. A recuperação também falhou com `GetCursorPos failed: Acesso negado (0x80070005)`. O layout novo ainda não foi inspecionado e não se declara aceite visual ou funcional interativo da 3.1.
+- Aguardar sessão de área de trabalho disponível para conferir cartões, coleta, histórico, pausa/reinício, largura reduzida e temas e renovar as capturas reais. As imagens existentes são da beta.9.6. Snap, DPI, alto contraste, Windows 10, clipboard completo e laboratório administrativo permanecem na matriz. A prévia continua sem Authenticode.
+
+
 ## Prévia 1.0.0-beta.9.6 · etapa 2.2
 
 - ZIP final: **50.102.667 bytes**, SHA-256 `96b7327b969f739582a21981c0d39794b327ffefb70cfbe4e81ea3c48cc226c3`. Os 24 arquivos de programa são idênticos por SHA-256 aos do pacote inspecionado na janela; manual beta.9.6 e 47 links locais conferidos. Minimizar e reativar a janela também foram conferidos na retomada.

@@ -1,6 +1,8 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.9.6**
+**Prévia em validação · 1.0.0-beta.9.7**
+
+Versão pública anterior: **1.0.0-beta.9.6**. Os links de download abaixo permanecem nessa versão até o aceite da nova prévia.
 
 **Windows x64 · edição portátil · prévia de homologação**
 
@@ -10,9 +12,11 @@ Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de 
 
 ![Beta.9.6: cabeçalho contextual, navegação por grupos e conteúdo em superfície própria](docs/imagens/moldura-escuro-beta96.png)
 
-A beta.9.6 conclui a **etapa 2.2 — barra de título e moldura** e inclui a estrutura da etapa 2.1: cabeçalho contextual, navegação por seções e superfície própria para conteúdo. No Windows 11, o título acompanha o fundo do aplicativo e a borda usa um acabamento discreto; texto e borda distinguem a janela ativa da inativa.
+A beta.9.7 implementa a **etapa 3.1 — monitor de CPU/RAM inspirado no iStat**: porcentagens em destaque, cartões lado a lado quando há espaço, histórico visível por padrão e resumos de média/pico das últimas 60 amostras. Na janela estreita, os cartões ficam empilhados com rolagem.
 
-Arraste, redimensionamento, menu de sistema e botões continuam nativos. No alto contraste, as cores explícitas da moldura são removidas; no Windows 10, o acabamento segue os recursos disponíveis do sistema. A matriz completa de Snap, DPI e alto contraste permanece na homologação. As 44 operações continuam disponíveis. [Notas desta entrega](docs/RELEASE-beta9.6.md).
+As estatísticas usam apenas leituras válidas: zero real conta; ausência fica como lacuna. Pausar preserva os dados e iniciar abre uma nova sessão. A **3.2**, refinamento do velocímetro e dos estados de medição, será uma entrega separada. [Notas e validação desta prévia](docs/RELEASE-beta9.7.md).
+
+As capturas atuais do README mostram a estrutura da beta.9.6. Serão renovadas após o aceite visual da 3.1. As 44 operações e a moldura nativa permanecem disponíveis.
 
 ## Começar
 
@@ -49,7 +53,7 @@ Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou
 
 Em **Rede → Conectividade → Velocidade da internet**, acompanhe latência HTTPS, download e upload. São quatro transferências paralelas por direção, por até dez segundos ou **512 MiB por direção (até 1 GiB total)**. O painel mostra a fase, Mbps, tempo e dados; cancelamento, cópia e **Salvar log…** permanecem disponíveis. O resultado estima a vazão útil até a Cloudflare e pode variar com Wi-Fi, VPN, proxy e tráfego concorrente.
 
-O monitor mantém amostras reais de CPU e memória a cada segundo, com barras horizontais e histórico opcional. Pausar conserva a leitura; iniciar novamente limpa as 60 amostras anteriores. Trocar de ferramenta pausa o monitor. As transições respeitam a preferência de animações do Windows; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
+O monitor mantém amostras reais de CPU e memória a cada segundo, com barras horizontais, histórico de até 60 amostras aberto por padrão e média/pico das leituras válidas dessa janela. Mostrar histórico permite recolher somente as curvas. Em área de cartões com pelo menos 720 pixels efetivos, CPU e RAM ficam lado a lado; abaixo disso, ficam empilhados. Pausar conserva a leitura; iniciar novamente limpa as 60 amostras anteriores. Trocar de ferramenta pausa o monitor. As transições respeitam a preferência de animações do Windows; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
 
 ![Beta.9.6 com navegação recolhida e cabeçalho contextual](docs/imagens/moldura-compacta-beta96.png)
 
@@ -87,7 +91,7 @@ dotnet run --project '.\Suporte TI Grafico\Testes\SuporteTI.Grafico.Testes.cspro
 & '.\Suporte TI Grafico\Construcao\Publicar.ps1'
 ```
 
-O publicador gera ZIP e SHA-256 em `Suporte TI Grafico/outputs`; uma versão existente não é sobrescrita. A suíte verifica contrato, catálogo, permissões, falhas, cancelamento, logs, medições e consultas reais. A etapa local registrou **159 testes automatizados e 13 simulações de intervenção aprovados**. Os testes da janela e suas pendências estão em [Resultados](Suporte%20TI%20Grafico/Testes/RESULTADO.md); simulações não substituem manutenção real em laboratório.
+O publicador gera ZIP e SHA-256 em `Suporte TI Grafico/outputs`; uma versão existente não é sobrescrita. A suíte verifica contrato, catálogo, permissões, falhas, cancelamento, logs, medições e consultas reais. A etapa local registrou **163 testes automatizados e 13 simulações de intervenção aprovados**; o aceite visual da nova composição está pendente. Os testes da janela e suas pendências estão em [Resultados](Suporte%20TI%20Grafico/Testes/RESULTADO.md); simulações não substituem manutenção real em laboratório.
 
 ## Documentação e código
 

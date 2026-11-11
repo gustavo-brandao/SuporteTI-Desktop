@@ -1,6 +1,12 @@
 # Escopo das prévias
 
 
+## Prévia 1.0.0-beta.9.7 · etapa 3.1, monitor CPU/RAM
+
+Subdividir a etapa 3 em **3.1 CPU/RAM** e **3.2 velocímetro/estados**. Nesta entrega: números principais destacados, detalhes de RAM separados, barras mais discretas, histórico aberto por padrão, cartões adaptáveis lado a lado/empilhados e média/pico das leituras válidas das últimas 60 posições. As lacunas ocupam posições temporais, mas não entram nos resumos. Pausa conserva os dados; nova sessão zera série e estatísticas. Não acrescentar coletores, sensores, temperaturas ou métricas simuladas por associação com o iStat. Não antecipar novas transições da etapa 5.
+
+Aceite: leitura real, média/pico coerentes, pausa/reinício e troca de ferramenta, ocultar/exibir histórico sem interromper, janela ampla/compacta e temas. DPI/alto contraste e ambientes adicionais permanecem no laboratório. A referência é a direção visual já aprovada; a implementação continua WinForms.
+
 ## Prévia 1.0.0-beta.9.6 · etapa 2.2, título e moldura
 
 Integrar título, cor do texto e borda à paleta por atributos públicos do DWM no Windows 11, preservando área não cliente, estilo redimensionável e controles nativos. Diferenciar janela ativa/inativa, reaplicar em criação do handle, tema, ativação e DPI; devolver cores ao sistema em alto contraste e manter alternativa nativa onde o atributo não existe. Não criar botões de janela desenhados pelo app nem interceptar hit testing, Snap ou limites de maximização. A etapa 2.1 acompanha esta prévia cumulativa; a beta.9.5 ficou em rascunho, sem release pública.

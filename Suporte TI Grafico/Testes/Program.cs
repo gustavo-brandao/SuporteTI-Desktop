@@ -23,6 +23,15 @@ var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    var serie = new SerieMonitor();
+    Igual(true, serie.Atual is null && serie.Resumo == (0, null, null), "Monitor vazio não inventa estatísticas");
+    serie.Adicionar(0); serie.Adicionar(null); serie.Adicionar(100); serie.Adicionar(double.NaN);
+    Igual(true, serie.Quantidade == 4 && serie.Resumo == (2, 50d, 100d) && serie.Atual is null,
+        "Estatísticas incluem zero real e ignoram lacunas sem apagá-las do histórico");
+    for (var indiceSerie = 0; indiceSerie < 60; indiceSerie++) serie.Adicionar(20);
+    Igual(true, serie.Quantidade == 60 && serie.Resumo == (60, 20d, 20d), "Janela de 60 amostras descarta picos antigos");
+    serie.Limpar();
+    Igual(true, serie.Quantidade == 0 && serie.Resumo == (0, null, null), "Nova sessão limpa histórico e estatísticas");
     Igual(true, new double?[] { null, -1, 101, double.NaN, double.PositiveInfinity }.All(n => MedidasVisuais.Percentual(n) is null),
         "Barras não apresentam ausência, valores inválidos ou não finitos como zero");
     Igual(true, MedidasVisuais.Percentual(0) == 0 && MedidasVisuais.Percentual(100) == 100,
