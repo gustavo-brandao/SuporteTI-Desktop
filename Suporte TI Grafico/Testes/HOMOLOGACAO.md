@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9.3 · Windows x64**
+**Versão em testes 1.0.0-beta.9.4 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 

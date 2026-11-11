@@ -1,5 +1,21 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.4 · legibilidade e identidade Desktop
+
+- ZIP final: **50.100.177 bytes**, SHA-256 `ac6755e01b4c8d225eb60c7ee75b307ccbacbb59fecef7bab42c4eee79ca523d`. Os 24 arquivos de programa são idênticos por SHA-256 ao pacote inspecionado. Estrutura e coletor extraídos passaram; sistema concluído e discos parciais dentro do contrato. Manual da beta.9.4 e 45 links locais da documentação revisada conferidos.
+- **159 testes automatizados com CIM real e 13 simulações de intervenção aprovados.** Catálogo, contratos, logs, cancelamento, monitor e cenários do motor de velocidade permanecem cobertos pela suíte existente. Não foram acrescentados testes que apenas espelhem a mudança de rótulo ou fonte.
+- O executável do ZIP extraído abriu com a versão correta e mostrou **VERSÃO DESKTOP** na navegação. Windows → Integridade e reparos ficou completamente legível tanto fora da seleção como selecionada. As capturas desta revisão mostram o resultado em Claro e Sistema resolvido como Escuro, sem iniciar a consulta administrativa.
+- A mudança usa a fonte medida pelo TabControl no desenho de todos os estados, evitando aumentar a largura do texto ao selecionar. A margem interna do texto foi reduzida, preservando o fundo, o indicador e a borda de foco. A preferência original Sistema foi restaurada e a janela fechada ao fim da inspeção.
+- As duas capturas são do pacote desta versão, com o rodapé de identificação recortado. A direção Linear + iStat + Raycast está aprovada e documentada; a nova composição visual e as animações ainda não fazem parte desta entrega.
+- O publicador concluiu, mas emitiu NU1900 ao consultar a auditoria NuGet; o aviso não foi ocultado. Os resultados de CI devem ser conferidos antes da publicação.
+- Inspeção em janela padrão nesta estação Windows 11 x64. A matriz DPI/alto contraste, janela estreita, navegação completa por teclado, Windows 10, conta distinta, UNC assinado e intervenções reais continuam pendentes; esta inspeção não equivale à regressão interativa completa das 44 operações.
+
+## Revisão documental de acabamento · 11 de novembro de 2026
+
+O feedback seguinte ampliou a pesquisa além do padrão Windows: Linear, Raycast, Warp, iStat Menus e CleanMyMac foram consultados em fontes oficiais. As três variantes iniciais não são consideradas aprovadas. O novo estudo distingue quatro composições e registra que não houve instalação, medição ou homologação dos aplicativos de referência.
+
+Os sete grupos de ajustes solicitados após a beta.9.3 foram registrados no planejamento e no escopo, com referências oficiais, capturas recebidas e critérios de aceite. O README aponta para a revisão planejada. Os links locais foram conferidos e a prévia ilustrativa contém três variantes com JavaScript sintaticamente válido. Não houve alteração de código do aplicativo nem novo teste funcional; o recorte da guia permanece pendente de reprodução dirigida e correção. A prévia de movimento não foi inspecionada em navegador nesta rodada e não comprova desempenho ou viabilidade no WinForms.
+
 ## Prévia 1.0.0-beta.9.3 · componentes de monitoramento · 11 de novembro de 2026
 
 - ZIP final: **50.099.988 bytes**, SHA-256 `093bfae2b9f1677d52c61b5f93fcb567c2dc61bfdd356871b29172587868ddfe`. Os 24 arquivos de programa conferem por SHA-256 com o pacote inspecionado. Manual e versão da documentação do ZIP conferidos; 48 links locais da documentação revisada válidos.

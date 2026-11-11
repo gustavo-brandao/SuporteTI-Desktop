@@ -149,9 +149,10 @@ internal sealed class AbasModernas : TabControl
         var area=Rectangle.Inflate(e.Bounds,-3,-3);
         using var forma=FormaModerna.Caminho(area,7*DeviceDpi/96);
         using var tinta=new SolidBrush(ativo?(Estilo.AltoContraste?p.Destaque:p.NavegacaoAtiva):e.Index==hover?p.Alternada:p.Fundo); e.Graphics.FillPath(tinta,forma);
-        using var fonte = new Font(Font, ativo ? FontStyle.Bold : FontStyle.Regular);
-        TextRenderer.DrawText(e.Graphics,TabPages[e.Index].Text,fonte,Rectangle.Inflate(area,-7,-4),ativo&&Estilo.AltoContraste?p.NoDestaque:ativo?p.Texto:p.Secundario,
-            TextFormatFlags.VerticalCenter|TextFormatFlags.HorizontalCenter|TextFormatFlags.NoPrefix);
+        // O TabControl mede as guias com Font. A seleção mantém a mesma fonte e
+        // largura; o fundo e o indicador identificam a guia ativa sem cortar o texto.
+        TextRenderer.DrawText(e.Graphics,TabPages[e.Index].Text,Font,Rectangle.Inflate(area,-2,-4),ativo&&Estilo.AltoContraste?p.NoDestaque:ativo?p.Texto:p.Secundario,
+            TextFormatFlags.VerticalCenter|TextFormatFlags.HorizontalCenter|TextFormatFlags.SingleLine|TextFormatFlags.NoPrefix);
         if(Focused&&ShowFocusCues&&ativo) ControlPaint.DrawFocusRectangle(e.Graphics,Rectangle.Inflate(area,-4,-4),p.Texto,p.Superficie);
     }
     protected override void Dispose(bool disposing) { if (disposing) movimento.Dispose(); base.Dispose(disposing); }
