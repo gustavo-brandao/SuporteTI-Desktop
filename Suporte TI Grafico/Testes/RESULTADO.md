@@ -1,5 +1,18 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.3 · componentes de monitoramento · 11 de novembro de 2026
+
+- ZIP final: **50.099.988 bytes**, SHA-256 `093bfae2b9f1677d52c61b5f93fcb567c2dc61bfdd356871b29172587868ddfe`. Os 24 arquivos de programa conferem por SHA-256 com o pacote inspecionado. Manual e versão da documentação do ZIP conferidos; 48 links locais da documentação revisada válidos.
+- **159 testes automatizados aprovados**, incluindo CIM real e os 23 cenários isolados de velocidade. Os seis novos casos verificam extremos e ausência nas barras, valores não finitos, distinção entre zero e indisponibilidade, escala crescente sem encolhimento, taxas acima de 10 Gbps e interpretação da taxa final conforme a cultura local.
+- **13 simulações de intervenção aprovadas**, sem alterações reais de rede, serviços, perfis ou login. O catálogo/contrato continua cobrindo as 44 rotas. A regressão interativa completa das 44 operações não foi repetida nesta etapa visual.
+- O ZIP extraído passou na verificação de SHA-256, estrutura de três itens na raiz e consultas reais de sistema e discos. Sistema concluiu; discos retornaram leitura parcial válida. As primeiras tentativas da suíte na sandbox foram bloqueadas pela execução dos scripts temporários; a execução fora dela concluiu os 159 casos.
+- A janela do pacote foi conferida em tamanho normal, maximizado e estreito. Barras exibiram CPU/RAM reais com memória usada/disponível/total; o histórico expandiu/recolheu sem interromper a coleta. A troca para outra ferramenta pausou o monitor e conservou as leituras. A revisão encontrou sobreposição ao expandir os gráficos, corrigida pela reserva da altura mínima; na janela estreita, a rolagem mostrou os dois cartões e o estado pausado sem sobreposição.
+- O velocímetro acompanhou uma medição real até concluir download e upload. A escala cresceu de 100 para 250 Mbps e conservou esse limite no resultado final. Uma segunda medição foi cancelada: taxa e agulha foram removidas e o estado indicou interrupção. Os cenários de falha parcial e ausência permanecem cobertos pelo motor simulado, sem declarar nova falha de rede real.
+- Os componentes foram inspecionados em Claro e Sistema resolvido como Escuro. A preferência original Sistema foi restaurada ao final. As capturas desta versão vêm do pacote real, com recorte do rodapé que identifica a estação; os mockups não foram usados como evidência funcional.
+- A compilação inicial sem restauração passou com zero avisos/erros. O publicador concluiu, mas registrou **NU1900** ao consultar a auditoria NuGet, inclusive fora da sandbox. O aviso não foi suprimido; a revisão de CI deve conferir a compilação com rede disponível.
+- A validação local não substitui Windows 10, VM limpa/offline, pendrive físico, conta administrativa distinta, UNC assinado, manutenção real, DPI/alto contraste e repetição completa do clipboard. A janela mínima exata de 780 × 560 e a navegação completa só por teclado ainda exigem verificação dirigida nesta etapa. O pacote permanece beta e sem Authenticode.
+
+
 ## Prévia 1.0.0-beta.9.2 · estrutura adaptável
 
 - **153 testes automatizados aprovados**, incluindo CIM real e os 23 cenários isolados de velocidade. Os dois novos cenários verificam contraste de texto, indicador da navegação ativa e abas nas paletas Escuro/Claro. As 44 rotas e os formulários por contexto continuam cobertos pela suíte de catálogo/contrato.

@@ -17,14 +17,29 @@ internal sealed partial class JanelaPrincipal
         var iniciar = new BotaoModerno { Text = "&Iniciar monitor", AutoSize = true };
         AplicarCorBotao(iniciar, true);
         acoes.Controls.Add(iniciar);
-        acoes.Controls.Add(CriarRotulo("Amostra por segundo · até 60 pontos por gráfico", 10, false));
+        var historico = new CheckBox { Text = "Mostrar &histórico de 60 amostras", AutoSize = true, Margin = new Padding(12, 8, 3, 3) };
+        acoes.Controls.Add(historico);
         pagina.Controls.Add(acoes, 0, 1);
         var cpu = new GraficoUso("CPU");
         var ram = new GraficoUso("Memória RAM");
         pagina.Controls.Add(cpu, 0, 2);
         pagina.Controls.Add(ram, 0, 3);
+        historico.CheckedChanged += (_, _) =>
+        {
+            cpu.ExibirHistorico(historico.Checked);
+            ram.ExibirHistorico(historico.Checked);
+            pagina.PerformLayout();
+            conteudoResultados.Parent?.PerformLayout();
+        };
         var status = CriarRotulo("Monitor pronto. Inicie para medir o uso.", 10, false);
         pagina.Controls.Add(status, 0, 4);
+        pagina.Layout += (_, _) =>
+        {
+            var minimo = pagina.Padding.Vertical + pagina.Controls[0].Height + pagina.Controls[0].Margin.Vertical +
+                acoes.Height + acoes.Margin.Vertical + cpu.MinimumSize.Height + cpu.Margin.Vertical +
+                ram.MinimumSize.Height + ram.Margin.Vertical + status.Height + status.Margin.Vertical;
+            if (pagina.MinimumSize.Height != minimo) pagina.MinimumSize = new Size(0, minimo);
+        };
 
         var timer = new System.Windows.Forms.Timer { Interval = 1000 };
         var leitor = new MonitorRecursos();
@@ -54,7 +69,7 @@ internal sealed partial class JanelaPrincipal
         {
             var (usoCpu, usoRam, total, usada) = leitor.Ler();
             cpu.Adicionar(usoCpu, usoCpu is double cpuAtual ? $"{cpuAtual:N0}%" : "Indisponível");
-            ram.Adicionar(usoRam, usoRam is double ramAtual ? $"{ramAtual:N0}% · {EmGiB(usada)} de {EmGiB(total)}" : "Indisponível");
+            ram.Adicionar(usoRam, usoRam is double ramAtual ? $"{ramAtual:N0}% · {EmGiB(usada)} usada · {EmGiB(total - usada)} disponível · {EmGiB(total)} total" : "Indisponível");
         };
         pagina.VisibleChanged += (_, _) => { if (!pagina.Visible && timer.Enabled) Parar(); };
         pagina.Disposed += (_, _) => timer.Dispose();
@@ -73,6 +88,14 @@ internal sealed partial class JanelaPrincipal
         private readonly System.Windows.Forms.Timer animacao = new() { Interval = 16 };
         private readonly System.Diagnostics.Stopwatch relogio = new();
         private double? anteriorValor;
+        private bool mostrarHistorico;
+
+        public void ExibirHistorico(bool exibir)
+        {
+            mostrarHistorico = exibir;
+            MinimumSize = new Size(0, (exibir ? 220 : 128) * DeviceDpi / 96);
+            trama.Invalidate();
+        }
 
         public GraficoUso(string nome)
         {
@@ -83,11 +106,12 @@ internal sealed partial class JanelaPrincipal
             Margin = new Padding(3, 6, 3, 3);
             Padding = new Padding(12, 4, 12, 6);
             BackColor = AltoContraste ? SystemColors.Window : Superficie;
-            var cabecalho = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top };
+            var cabecalho = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top, FlowDirection = FlowDirection.TopDown, WrapContents = false };
             cabecalho.Controls.Add(CriarRotulo(nome, 13, true));
             leitura = CriarRotulo("Aguardando amostra", 11, false);
             leitura.AccessibleName = nome + ": aguardando amostra";
             cabecalho.Controls.Add(leitura);
+            SizeChanged += (_, _) => leitura.MaximumSize = new Size(Math.Max(100, ClientSize.Width - Padding.Horizontal - 8), 0);
             trama = new AreaDesenho { Dock = DockStyle.Fill };
             trama.Paint += (_, evento) => Desenhar(evento.Graphics);
             trama.Resize += (_, _) => trama.Invalidate();
@@ -114,6 +138,8 @@ internal sealed partial class JanelaPrincipal
 
         public void Adicionar(double? valor, string resumo)
         {
+            valor = MedidasVisuais.Percentual(valor);
+            if (valor is null) resumo = "Indisponível";
             anteriorValor = pontos.LastOrDefault();
             if (pontos.Count == 60)
                 pontos.Dequeue();
@@ -126,8 +152,27 @@ internal sealed partial class JanelaPrincipal
 
         private void Desenhar(Graphics desenho)
         {
+            var px = DeviceDpi / 96f;
+            var barra = new RectangleF(6 * px, 8 * px, Math.Max(1, trama.Width - 12 * px), 18 * px);
+            using (var fundo = new SolidBrush(Estilo.Paleta.Borda)) desenho.FillRectangle(fundo, barra);
+            var atual = pontos.LastOrDefault();
+            if (atual is double valorBarra)
+            {
+                var fBarra = animacao.Enabled ? Movimento.Suavizar(relogio.Elapsed.TotalMilliseconds / 240) : 1;
+                var visual = anteriorValor is double de ? de + (valorBarra - de) * fBarra : valorBarra;
+                using var preenchimento = new SolidBrush(AltoContraste ? SystemColors.Highlight : cor);
+                desenho.FillRectangle(preenchimento, barra.X, barra.Y, barra.Width * (float)(visual / 100), barra.Height);
+            }
+            foreach (var percentual in new[] { 0, 50, 100 })
+            {
+                var texto = percentual + "%";
+                var largura = TextRenderer.MeasureText(texto, Font).Width;
+                var x = barra.Left + barra.Width * percentual / 100 - largura * percentual / 100;
+                TextRenderer.DrawText(desenho, texto, Font, new Point((int)x, (int)barra.Bottom + 3), ForeColor);
+            }
+            if (!mostrarHistorico) return;
             var margemVertical = Font.Height / 2 + 2;
-            var area = Rectangle.FromLTRB(TextRenderer.MeasureText("100%", Font).Width + 8, margemVertical,
+            var area = Rectangle.FromLTRB(TextRenderer.MeasureText("100%", Font).Width + 8, (int)(barra.Bottom + Font.Height + 14 * px) + margemVertical,
                 trama.Width - 8, trama.Height - margemVertical);
             if (area.Width <= 0 || area.Height <= 0)
                 return;

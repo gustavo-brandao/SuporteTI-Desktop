@@ -23,6 +23,19 @@ var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    Igual(true, new double?[] { null, -1, 101, double.NaN, double.PositiveInfinity }.All(n => MedidasVisuais.Percentual(n) is null),
+        "Barras não apresentam ausência, valores inválidos ou não finitos como zero");
+    Igual(true, MedidasVisuais.Percentual(0) == 0 && MedidasVisuais.Percentual(100) == 100,
+        "Barras preservam extremos reais de 0 e 100 por cento");
+    Igual(true, new double?[] { null, -1, double.NaN, double.PositiveInfinity }.All(n => MedidasVisuais.Taxa(n) is null) && MedidasVisuais.Taxa(0) == 0,
+        "Velocímetro distingue taxa zero de leitura indisponível");
+    Igual(true, MedidasVisuais.Escala(100, 101) == 250 && MedidasVisuais.Escala(250, 900) == 1000 &&
+        MedidasVisuais.Escala(1000, 40) == 1000 && MedidasVisuais.Escala(1000, null) == 1000,
+        "Escala cobre a taxa observada e não encolhe nas quedas ou leituras parciais");
+    Igual(true, MedidasVisuais.Escala(100, 12500) >= 12500 && double.IsFinite(MedidasVisuais.Escala(100, double.PositiveInfinity)),
+        "Escala cobre conexões acima de 10 Gbps e recusa infinito");
+    Igual(true, MedidasVisuais.LerTaxa($"{1234.5:N1} Mbps") == 1234.5 && MedidasVisuais.LerTaxa("indisponível") is null,
+        "Resultado final do velocímetro respeita a cultura e a indisponibilidade");
     await TesteVelocidadeCenarios.Executar((condicao, nome) => Igual(true, condicao, nome));
     if (args.Contains("--testar-velocidade"))
     {

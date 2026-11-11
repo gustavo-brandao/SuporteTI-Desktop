@@ -430,7 +430,7 @@ internal sealed partial class JanelaPrincipal : Form
         {
             // Reservar espaço para os resultados, inclusive na altura mínima da janela.
             var escala = DeviceDpi / 96f;
-            var altura = (int)Math.Clamp(conteudoResultados.Height - 100 * escala, 132 * escala, 192 * escala);
+            var altura = (int)Math.Clamp(conteudoResultados.Height - 100 * escala, 250 * escala, 280 * escala);
             painelVelocidade.MinimumSize = new Size(0, altura);
             painelVelocidade.Height = altura;
         };
@@ -452,6 +452,10 @@ internal sealed partial class JanelaPrincipal : Form
             {
                 // Reservar uma área legível; a janela baixa rola em vez de esmagar a tabela.
                 var minimoResultados = (ferramentaAtual?.Id is "monitor" or "mapaocupacao" or "velocidade" ? 360 : 180) * pagina.DeviceDpi / 96;
+                if (ferramentaAtual?.Id == "monitor" && telaMonitor is not null)
+                    minimoResultados = Math.Max(minimoResultados, telaMonitor.MinimumSize.Height);
+                if (ferramentaAtual?.Id == "velocidade")
+                    minimoResultados = Math.Max(minimoResultados, painelVelocidade.MinimumSize.Height + 140 * pagina.DeviceDpi / 96);
                 var minimo = pagina.Padding.Vertical + cabecalho.Height + cabecalho.Margin.Vertical +
                     comandos.Height + comandos.Margin.Vertical + rodape.Height + rodape.Margin.Vertical +
                     conteudoResultados.Margin.Vertical + minimoResultados;

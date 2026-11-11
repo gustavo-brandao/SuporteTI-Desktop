@@ -8,15 +8,13 @@ internal sealed class PainelVelocidade : Cartao
     private readonly Label vazao = new() { AutoSize = true, Text = "— Mbps", Font = new Font("Segoe UI", 24, FontStyle.Bold), AccessibleName = "Vazão medida" };
     private readonly Label detalhe = new() { AutoSize = true, Text = "Download e upload · amostras reais em paralelo" };
     private readonly Area trama = new() { Dock = DockStyle.Fill };
-    private readonly Queue<double?> pontos = new();
-    private readonly System.Windows.Forms.Timer timer = new() { Interval = 33 };
     private bool ativo;
-    private double fracao, angulo;
-    private string direcao = "";
+    private double fracao, escala = 100;
+    private double? taxaAtual;
 
     public PainelVelocidade()
     {
-        Dock = DockStyle.Fill; Height = 192; MinimumSize = new Size(0, 192); Margin = new Padding(0, 0, 0, 10);
+        Dock = DockStyle.Fill; Height = 280; MinimumSize = new Size(0, 250); Margin = new Padding(0, 0, 0, 10);
         Estilo.Marcar(this, PapelVisual.Superficie);
         var texto = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
         texto.Controls.Add(etapa); texto.Controls.Add(vazao); texto.Controls.Add(detalhe);
@@ -27,13 +25,13 @@ internal sealed class PainelVelocidade : Cartao
             etapa.MaximumSize = detalhe.MaximumSize = new Size(largura, 0);
         };
         trama.Paint += (_, e) => Desenhar(e.Graphics);
-        timer.Tick += (_, _) => { if (!Movimento.Permitido || !Visible) { timer.Stop(); trama.Invalidate(); return; } angulo = (angulo + 9) % 360; trama.Invalidate(); };
-        VisibleChanged += (_, _) => { if (!Visible) timer.Stop(); else if (ativo && Movimento.Permitido) timer.Start(); };
+        trama.Resize += (_, _) => trama.Invalidate();
+        trama.AccessibleName = "Velocímetro em Mbps; escala adaptável indicada no arco";
     }
 
     public void Limpar()
     {
-        ativo = false; timer.Stop(); fracao = 0; pontos.Clear(); direcao = "";
+        ativo = false; fracao = 0; escala = 100; taxaAtual = null;
         etapa.Text = "Pronto para testar"; vazao.Text = "— Mbps";
         vazao.AccessibleName = "Vazão medida";
         detalhe.Text = "Até 10 s por direção · até 1 GiB no total"; trama.Invalidate();
@@ -41,26 +39,27 @@ internal sealed class PainelVelocidade : Cartao
     public void Iniciar()
     {
         Limpar(); ativo = true; etapa.Text = "Conectando ao servidor…";
-        if (Movimento.Permitido && Visible) timer.Start();
     }
     public void Atualizar(ProgressoVelocidade progresso)
     {
         if (!ativo) return;
-        if (direcao != progresso.Etapa) { pontos.Clear(); direcao = progresso.Etapa; }
+        taxaAtual = MedidasVisuais.Taxa(progresso.Mbps);
+        escala = MedidasVisuais.Escala(escala, taxaAtual);
         etapa.Text = progresso.Etapa + (progresso.Etapa == "Upload" ? " · medindo blocos confirmados" : " · medindo");
-        vazao.Text = progresso.Mbps is double taxa ? $"{taxa:N1} Mbps" : "— Mbps";
+        vazao.Text = taxaAtual is double taxa ? $"{taxa:N1} Mbps" : "— Mbps";
         vazao.AccessibleName = "Vazão medida: " + vazao.Text;
         detalhe.Text = $"{progresso.Segundos:N0} s decorridos · {progresso.Bytes / 1048576.0:N1} MiB transferidos";
-        fracao = progresso.Fracao;
-        if (pontos.Count == 80) pontos.Dequeue();
-        pontos.Enqueue(progresso.Mbps); trama.Invalidate();
+        fracao = Math.Clamp(double.IsFinite(progresso.Fracao) ? progresso.Fracao : 0, 0, 1);
+        trama.Invalidate();
     }
     public void Concluir(string mensagem, Resposta? resultado = null)
     {
-        ativo = false; timer.Stop(); etapa.Text = mensagem;
+        ativo = false; etapa.Text = mensagem;
         var download = TesteVelocidade.ObterTaxa(resultado, "Download");
         var upload = TesteVelocidade.ObterTaxa(resultado, "Upload");
         vazao.Text = upload is not null ? "↑ " + upload : download is not null ? "↓ " + download : "— Mbps";
+        taxaAtual = MedidasVisuais.LerTaxa(upload ?? download);
+        escala = MedidasVisuais.Escala(escala, taxaAtual);
         detalhe.Text = resultado is null ? "Medição interrompida. Inicie um novo teste para obter um resultado completo." :
             $"↓ Download: {download ?? "indisponível"}    ↑ Upload: {upload ?? "indisponível"}";
         if (resultado is not null) fracao = 1;
@@ -77,23 +76,33 @@ internal sealed class PainelVelocidade : Cartao
         using var indicador = new Pen(p.Destaque, 3);
         g.DrawLine(baseLinha, 2, h - 6, w - 2, h - 6);
         if (fracao > 0) g.DrawLine(indicador, 2, h - 6, 2 + (w - 4) * (float)fracao, h - 6);
-        if (ativo)
+        var px = DeviceDpi / 96f;
+        var raio = Math.Min((w - 110 * px) / 2, h - 42 * px);
+        if (raio < 12) return;
+        var centro = new PointF(w / 2f, raio + 8 * px);
+        var arco = new RectangleF(centro.X - raio, centro.Y - raio, raio * 2, raio * 2);
+        using var trilho = new Pen(p.Borda, 9 * px) { StartCap = LineCap.Round, EndCap = LineCap.Round };
+        using var preenchido = new Pen(p.Destaque, 9 * px) { StartCap = LineCap.Round, EndCap = LineCap.Round };
+        g.DrawArc(trilho, arco, 180, 180);
+        if (taxaAtual is double taxa)
         {
-            if (Movimento.Permitido) g.DrawArc(indicador, w - 22, 3, 16, 16, (float)angulo, 250);
-            else { using var tinta = new SolidBrush(p.Destaque); g.FillEllipse(tinta, w - 17, 7, 6, 6); }
+            var fracaoTaxa = (float)Math.Clamp(taxa / escala, 0, 1);
+            if (fracaoTaxa > 0) g.DrawArc(preenchido, arco, 180, 180 * fracaoTaxa);
+            var radianos = Math.PI * (1 + fracaoTaxa);
+            using var agulha = new Pen(p.Texto, 2 * px);
+            g.DrawLine(agulha, centro, new PointF(centro.X + (float)Math.Cos(radianos) * raio * .78f,
+                centro.Y + (float)Math.Sin(radianos) * raio * .78f));
+            using var eixo = new SolidBrush(p.Texto);
+            g.FillEllipse(eixo, centro.X - 4 * px, centro.Y - 4 * px, 8 * px, 8 * px);
         }
-        var valores = pontos.ToArray();
-        var max = Math.Max(1, valores.Max() ?? 1);
-        PointF? anterior = null;
-        using var linha = new Pen(p.Cpu, 2);
-        for (var i = 0; i < valores.Length; i++)
+        void Legenda(string texto, float x, float y)
         {
-            if (valores[i] is not double valor) { anterior = null; continue; }
-            var ponto = new PointF(3 + (w - 34) * i / 79f, h - 16 - (float)(Math.Max(1, h - 24) * valor / max));
-            if (anterior is PointF a) g.DrawLine(linha, a, ponto);
-            anterior = ponto;
+            var tamanho = TextRenderer.MeasureText(texto, Font);
+            TextRenderer.DrawText(g, texto, Font, new Point((int)(x - tamanho.Width / 2f), (int)y), p.Texto);
         }
+        Legenda("0", centro.X - raio - 14 * px, centro.Y - Font.Height / 2f);
+        Legenda($"{escala:N0}", centro.X + raio + 30 * px, centro.Y - Font.Height / 2f);
+        Legenda($"Escala 0–{escala:N0} Mbps", centro.X, centro.Y + 7 * px);
     }
-    protected override void Dispose(bool disposing) { if (disposing) timer.Dispose(); base.Dispose(disposing); }
     private sealed class Area : Panel { public Area() => DoubleBuffered = true; }
 }

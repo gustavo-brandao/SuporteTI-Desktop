@@ -42,13 +42,13 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 | Entrega | Estado | Próximo aceite |
 | --- | --- | --- |
 | **1.0.0-beta.9.2 · estrutura adaptável** | Implementada; testes e evidências em Testes/RESULTADO.md | Navegação 240/80 epx, janela mínima, abas em uma linha, três temas, documentação e capturas reais |
-| **Componentes de monitoramento** | Próxima etapa visual aprovada; numeração a registrar na entrega | Barras horizontais reais de CPU/RAM por segundo, velocímetro, estados parciais e cancelamento |
+| **1.0.0-beta.9.3 · Componentes de monitoramento** | Implementada e validada localmente; evidências em Testes/RESULTADO.md | Barras horizontais reais de CPU/RAM por segundo, velocímetro, estados parciais e cancelamento |
 | **Organização dos menus** | Aprovada como etapa; seguir a galeria e revisar os textos ao implementar | Cinco telas e padrões equivalentes nos sete grupos; 44 operações, resumos e avisos preservados |
 | **Homologação visual e funcional** | Pendente | Regressão completa, teclado, DPI/alto contraste, logs/clipboard, desempenho e pacote portátil |
 | **1.0.0-beta.10 · PowerShell 7** | Avaliação e protótipo pendentes | Motor incluído sem instalação prévia, funcionamento offline, compatibilidade dos módulos, UAC e custo do pacote |
 | **1.0.0 estável** | Sem data; condicionada à matriz de homologação | Aceite em laboratório, assinatura, ambientes declarados e ausência de regressões essenciais |
 
-As etapas visuais seguintes ainda não recebem um número executável neste documento. Cada uma deve terminar em prévia testável, ZIP, evidências e atualização das capturas. A beta.9.2 incorpora as melhorias locais da beta.9.1, que não teve release pública independente. A beta.10 mantém o tema principal de PowerShell 7.
+A etapa de componentes recebe a versão beta.9.3. A organização dos menus será a próxima entrega, sem número executável definido neste documento. Cada uma deve terminar em prévia testável, ZIP, evidências e atualização das capturas. A beta.9.2 incorpora as melhorias locais da beta.9.1, que não teve release pública independente. A beta.10 mantém o tema principal de PowerShell 7.
 
 A [avaliação do dashboard de monitoramento](propostas-visuais/2026-11-10/conjunto-monitoramento/README.md) consolida os cinco menus solicitados, estados amplos/compactos, ajuda contextual e cobertura das 44 operações. A direção aprovada usa barras horizontais de CPU/RAM em tempo real e velocímetro. A organização serve como referência aprovada para as etapas seguintes, com ajustes de textos e controles conforme a implementação. A sequência passa por estrutura adaptável, componentes, aplicação aos menus e homologação, com prévias testáveis; a galeria é conceitual e não muda o escopo da avaliação de PowerShell 7.
 
