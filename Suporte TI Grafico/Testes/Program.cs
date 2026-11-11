@@ -23,6 +23,12 @@ var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    await TesteVelocidadeCenarios.Executar((condicao, nome) => Igual(true, condicao, nome));
+    if (args.Contains("--testar-velocidade"))
+    {
+        Console.WriteLine($"Resultado: {passou} testes de velocidade aprovados, sem tráfego externo.");
+        return;
+    }
     var idsAnteriores = ("sistema desempenho discos bateria dispositivos servicos programas autologon chromecache " +
         "rede dominio ping velocidade netdhcp netstatic falhas codigofalha update filaimpressao spooler spoolerclear cache " +
         "gpusuario gphtml gpupdateuser gpupdatecomputer ultimo eventos evtx diskhealth gpcomputador gpcomputerhtml " +
@@ -128,6 +134,9 @@ try
         Igual(true, Contraste(paleta.Texto,paleta.Superficie)>=4.5 && Contraste(paleta.Secundario,paleta.Superficie)>=4.5 &&
             Contraste(paleta.Link,paleta.Superficie)>=4.5 && Contraste(paleta.NoDestaque,paleta.Destaque)>=4.5,
             "Contraste mínimo de texto, descrição, links e seleção na paleta " + (paleta==PaletaTema.Escuro?"Escuro":"Claro"));
+        Igual(true, Contraste(paleta.Texto,paleta.NavegacaoAtiva)>=4.5 && Contraste(paleta.Destaque,paleta.NavegacaoAtiva)>=3 &&
+            Contraste(paleta.Secundario,paleta.Fundo)>=4.5,
+            "Navegação ativa e abas preservam contraste na paleta " + (paleta==PaletaTema.Escuro?"Escuro":"Claro"));
     }
     await Falha<ArgumentException>(() => ElevacaoConsulta.ConsultarAsync("diskhealth", "", default, tema:"Valor inválido"),
         "Tema administrativo fora da lista é recusado antes do UAC");

@@ -8,6 +8,7 @@
     [switch]$ExigirAssinatura,
     [switch]$Uac,
     [string]$Catalogo,
+    [switch]$SemClipboard,
     [ValidateSet('Escuro','Claro','Sistema')][string]$Tema = 'Escuro'
 )
 
@@ -55,7 +56,7 @@ public static class TesteClipboard {
     [DllImport("user32.dll", EntryPoint="SendMessageW")] public static extern IntPtr Tecla(IntPtr controle,uint mensagem,IntPtr tecla,IntPtr dados);
 }
 '@
-    $clipboardAnterior = [Windows.Forms.Clipboard]::GetDataObject()
+    $clipboardAnterior = if (-not $SemClipboard) { [Windows.Forms.Clipboard]::GetDataObject() } else { $null }
     $inicio = [Diagnostics.ProcessStartInfo]::new($Executavel)
     $inicio.UseShellExecute = $false
     $inicio.WorkingDirectory = Split-Path -Parent $Executavel
@@ -273,7 +274,8 @@ public static class TesteClipboard {
             $log = Find-Controle $janela 'Salvar log…'
             if ($log -and $log.Current.IsEnabled) { $log }
         } 'opcao de salvar log')
-        Test-Copia
+        if ($SemClipboard) { 'Clipboard não testado nesta execução: verificação isolada do restante da interface.' }
+        else { Test-Copia }
         (Find-Controle $janela 'Rede').GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
         [void](Wait-Interface { Find-Controle $janela 'Consulte a configuração ou teste a conectividade.' } 'tela Rede')
         Abrir-Ferramenta 'Windows' 'Eventos e códigos' 'Falhas recentes'
@@ -399,8 +401,10 @@ public static class TesteClipboard {
             }
         }
         $processo.Dispose()
-        if ($clipboardAnterior) { [Windows.Forms.Clipboard]::SetDataObject($clipboardAnterior, $true) }
-        else { [Windows.Forms.Clipboard]::Clear() }
+        if (-not $SemClipboard) {
+            if ($clipboardAnterior) { [Windows.Forms.Clipboard]::SetDataObject($clipboardAnterior, $true) }
+            else { [Windows.Forms.Clipboard]::Clear() }
+        }
     }
 }
 

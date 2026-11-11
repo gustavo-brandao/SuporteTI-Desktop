@@ -77,7 +77,7 @@ internal static class Estilo
         if (controle is Form or TabPage) fundo = p.Fundo;
         if (controle is TextBoxBase or ComboBox or ListBox or DataGridView) fundo=p.Superficie;
         if (controle is ToolStrip) fundo=p.Navegacao;
-        if (controle is Button) fundo=papel is PapelVisual.Primario or PapelVisual.Ativo?p.Destaque:
+        if (controle is Button) fundo=papel == PapelVisual.Primario?p.Destaque:papel == PapelVisual.Ativo ? (AltoContraste?p.Destaque:p.NavegacaoAtiva):
             papel==PapelVisual.Navegacao?p.Navegacao:p.Superficie;
         controle.BackColor = fundo;
         controle.ForeColor = papel == PapelVisual.Secundario ? p.Secundario : p.Texto;
@@ -88,9 +88,9 @@ internal static class Estilo
                 botao.FlatStyle = FlatStyle.Flat;
                 botao.FlatAppearance.BorderSize = 0;
                 botao.FlatAppearance.BorderColor = p.Borda;
-                botao.BackColor = papel == PapelVisual.Primario || papel == PapelVisual.Ativo ? p.Destaque :
+                botao.BackColor = papel == PapelVisual.Primario ? p.Destaque : papel == PapelVisual.Ativo ? (AltoContraste?p.Destaque:p.NavegacaoAtiva) :
                     papel == PapelVisual.Navegacao ? p.Navegacao : p.Superficie;
-                botao.ForeColor = papel is PapelVisual.Primario or PapelVisual.Ativo ? p.NoDestaque : p.Texto;
+                botao.ForeColor = papel == PapelVisual.Primario || (papel == PapelVisual.Ativo && AltoContraste) ? p.NoDestaque : p.Texto;
                 break;
             case TextBoxBase or ComboBox or ListBox:
                 controle.BackColor = p.Superficie; controle.ForeColor = p.Texto;

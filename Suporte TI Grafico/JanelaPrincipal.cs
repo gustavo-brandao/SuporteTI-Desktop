@@ -22,7 +22,7 @@ internal sealed partial class JanelaPrincipal : Form
     private readonly TextBox filtro = new() { PlaceholderText = "Filtrar resultados…", Width = 175, AccessibleName = "Filtrar resultados" };
     private readonly TextBox entrada = new() { Width = 240, MaxLength = 512 };
     private readonly ComboBox volumesAdmin = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 75, AccessibleName = "Volume local para CHKDSK" };
-    private readonly Label titulo = CriarRotulo("Informações do computador", 20, true);
+    private readonly Label titulo = CriarRotulo("Informações do computador", 22, true);
     private readonly Label descricao = CriarRotulo("", 10, false);
     private readonly Label instrucoes = CriarRotulo("", 10, false);
     private Resposta? resultado;
@@ -32,7 +32,9 @@ internal sealed partial class JanelaPrincipal : Form
     private string grupo = "";
     private readonly TabControl abas = new AbasModernas() { Dock = DockStyle.Fill, AccessibleName = "Áreas de ferramentas" };
     private readonly Panel conteudoResultados = new() { Dock = DockStyle.Fill };
-    private readonly TableLayoutPanel painelTabela = new() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
+    private readonly TableLayoutPanel painelTabela = new() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 3 };
+    private readonly PainelVelocidade painelVelocidade = new() { Visible = false };
+    private readonly TransicaoEntrada transicao = new();
     private readonly Label resumoDiscos = CriarRotulo("", 10, true);
     private Control? telaMonitor, telaMapa;
     private readonly Label estado = new() { AutoSize = true, Text = "Pronto para consultar." };
@@ -69,42 +71,25 @@ internal sealed partial class JanelaPrincipal : Form
         ForeColor = AltoContraste ? SystemColors.WindowText : Texto;
 
         var layout = new TableLayoutPanel { ColumnCount = 2, RowCount = 2, Dock = DockStyle.Fill };
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 226));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 240));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        var menu = new FlowLayoutPanel
+        var menu = new NavegacaoLateral(versao, IconeMenu);
+        var busca = menu.Busca; var encontrados = menu.Encontrados; var avisoBusca = menu.AvisoBusca;
+        var botoes = menu.Botoes; var sobre = menu.Sobre; var configuracoes = menu.Configuracoes;
+        menu.LarguraAlterada += (_, _) => layout.ColumnStyles[0].Width = menu.LarguraPreferida;
+        SizeChanged += (_, _) => menu.Adaptar(ClientSize.Width * 96 / DeviceDpi);
+        DpiChanged += (_, _) => menu.Adaptar(ClientSize.Width * 96 / DeviceDpi);
+        KeyPreview = true;
+        KeyDown += (_, evento) =>
         {
-            Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoScroll = true,
-            Padding = new Padding(16, 20, 16, 16),
-            BackColor = AltoContraste ? SystemColors.Control : Navegacao
+            if (evento.Control && evento.KeyCode == Keys.K && !NavegacaoBloqueada)
+            { menu.FocarBusca(); evento.SuppressKeyPress = true; }
         };
-        menu.Controls.Add(CriarRotulo("Suporte TI", 16, true));
-        menu.Controls.Add(CriarRotulo("EDIÇÃO GRÁFICA", 9, false));
-        var busca = new TextBox { Width = 186, PlaceholderText = "Buscar ferramenta…", AccessibleName = "Buscar ferramenta" };
-        var encontrados = new ListBox { Width = 186, Height = 140, HorizontalScrollbar = true, Visible = false, AccessibleName = "Ferramentas encontradas" };
-        var avisoBusca = CriarRotulo("Nenhuma ferramenta encontrada.", 9, false);
-        avisoBusca.MaximumSize = new Size(186, 0);
-        avisoBusca.Visible = false;
-        menu.Controls.Add(busca);
-        menu.Controls.Add(encontrados);
-        menu.Controls.Add(avisoBusca);
-        var botoes = new Dictionary<string, Button>();
-        foreach (var nome in CatalogoFerramentas.Grupos)
-        {
-            var botao = new BotaoModerno { Text = nome, Simbolo = IconeMenu(nome), Width = 186, Height = 42, TextAlign = ContentAlignment.MiddleLeft };
-            botoes.Add(nome, botao);
-            menu.Controls.Add(botao);
-        }
-        var sobre = new BotaoModerno { Text = "&Sobre", Simbolo = "\uE946", Width = 186, Height = 40, TextAlign = ContentAlignment.MiddleLeft };
-        menu.Controls.Add(sobre);
-        var configuracoes = new BotaoModerno { Text = "Configurações", Simbolo = "\uE713", Width = 186, Height = 40, TextAlign = ContentAlignment.MiddleLeft };
-        menu.Controls.Add(configuracoes);
-        Estilo.Marcar(menu, PapelVisual.Navegacao);
-        menu.Controls.Add(CriarRotulo(versao, 9, false));
         layout.Controls.Add(menu, 0, 0);
 
-        var painel = new Panel { Dock = DockStyle.Fill };
+        var painel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12,12,16,12) };
         var telaComputador = CriarTelaComputador();
         telaMonitor = CriarTelaMonitor();
         telaMapa = CriarTelaMapa();
@@ -120,6 +105,7 @@ internal sealed partial class JanelaPrincipal : Form
             abas.Visible = telaSobre.Visible = false; telaAparencia.Visible = true; telaAparencia.BringToFront();
             foreach (var item in botoes.Values) MarcarPagina(item, false);
             MarcarPagina(sobre, false); MarcarPagina(configuracoes, true);
+            transicao.Iniciar(telaAparencia);
         };
         painel.Controls.Add(abas);
         painel.Controls.Add(telaSobre);
@@ -137,6 +123,7 @@ internal sealed partial class JanelaPrincipal : Form
                 return;
             aba.Controls.Add(telaComputador);
             MostrarArea(aba.Text);
+            transicao.Iniciar(telaComputador);
         };
         sobre.Click += (_, _) =>
         {
@@ -150,6 +137,7 @@ internal sealed partial class JanelaPrincipal : Form
             MarcarPagina(sobre, true);
             foreach (var botao in botoes.Values)
                 MarcarPagina(botao, false);
+            transicao.Iniciar(telaSobre);
         };
         void MostrarPagina(string nome)
         {
@@ -173,13 +161,14 @@ internal sealed partial class JanelaPrincipal : Form
                 anterior.Dispose();
             }
             foreach (var area in CatalogoFerramentas.Itens.Where(item => item.Grupo == nome).Select(item => item.Area).Distinct())
-                abas.TabPages.Add(new TabPage(area) { BackColor = AltoContraste ? SystemColors.Window : Fundo });
+                abas.TabPages.Add(new TabPage(area) { BackColor = AltoContraste ? SystemColors.Window : Fundo, ToolTipText = area });
             abas.SelectedIndex = 0;
             organizandoAbas = false;
             if (abas.SelectedTab is { } aba)
             {
                 aba.Controls.Add(telaComputador);
                 MostrarArea(aba.Text);
+                transicao.Iniciar(telaComputador);
             }
         }
         abrirFerramenta = id =>
@@ -234,6 +223,7 @@ internal sealed partial class JanelaPrincipal : Form
             }
         };
         MostrarPagina("Visão geral");
+        Disposed += (_, _) => transicao.Dispose();
         layout.Controls.Add(painel, 1, 0);
 
         using var identidade = WindowsIdentity.GetCurrent();
@@ -249,6 +239,7 @@ internal sealed partial class JanelaPrincipal : Form
         layout.Controls.Add(rodape, 0, 1);
         layout.SetColumnSpan(rodape, 2);
         Controls.Add(layout);
+        menu.Adaptar(ClientSize.Width * 96 / DeviceDpi);
         IniciarAparencia();
         consultar.Click += async (_, _) => await ExecutarConsultaAsync();
         entrada.KeyDown += async (_, evento) =>
@@ -286,7 +277,7 @@ internal sealed partial class JanelaPrincipal : Form
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        var cabecalho = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, Dock = DockStyle.Fill };
+        var cabecalho = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Dock = DockStyle.Fill };
         cabecalho.Controls.Add(titulo);
         cabecalho.Controls.Add(descricao);
         pagina.Controls.Add(cabecalho, 0, 0);
@@ -306,8 +297,11 @@ internal sealed partial class JanelaPrincipal : Form
             filtro.Clear();
             AtualizarGrade();
             var id = ferramentaAtual?.Id;
+            pagina.AutoScroll = true;
             var especial = id is "monitor" or "mapaocupacao";
             painelTabela.Visible = !especial;
+            painelVelocidade.Visible = id == "velocidade";
+            if (id == "velocidade") painelVelocidade.Limpar();
             if (telaMonitor is not null) telaMonitor.Visible = id == "monitor";
             if (telaMapa is not null) telaMapa.Visible = id == "mapaocupacao";
             consultar.Visible = !especial;
@@ -341,7 +335,7 @@ internal sealed partial class JanelaPrincipal : Form
             instrucoes.Text = id switch
             {
                 "ping" => "Informe um host, endereço IP ou URL. Serão feitas quatro tentativas ICMP.",
-                "velocidade" => "O teste usa até 12 MiB de dados com a Cloudflare para estimar a velocidade.",
+                "velocidade" => "Cloudflare · cerca de 20–35 s · até 1 GiB de dados. Mede a vazão útil; Wi-Fi, VPN e outros acessos podem limitar o resultado.",
                 "codigofalha" => "Informe o código decimal ou hexadecimal com prefixo 0x. A pesquisa identifica os significados possíveis.",
                 "falhas" => "Clique em um código destacado para ver a explicação. No teclado, selecione a linha e pressione Enter.",
                 "gphtml" => "Gera um relatório HTML das políticas do usuário desta sessão.",
@@ -422,14 +416,24 @@ internal sealed partial class JanelaPrincipal : Form
         ConfigurarCopia();
         painelTabela.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         painelTabela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        painelTabela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         painelTabela.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         resumoDiscos.AccessibleName = "Resumo dos discos";
         resumoDiscos.Padding = new Padding(8);
         Estilo.Marcar(resumoDiscos, PapelVisual.Superficie);
         resumoDiscos.Visible = false;
-        painelTabela.Controls.Add(resumoDiscos, 0, 0);
-        painelTabela.Controls.Add(grade, 0, 1);
+        painelTabela.Controls.Add(painelVelocidade, 0, 0);
+        painelTabela.Controls.Add(resumoDiscos, 0, 1);
+        painelTabela.Controls.Add(grade, 0, 2);
         conteudoResultados.Controls.Add(painelTabela);
+        conteudoResultados.SizeChanged += (_, _) =>
+        {
+            // Reservar espaço para os resultados, inclusive na altura mínima da janela.
+            var escala = DeviceDpi / 96f;
+            var altura = (int)Math.Clamp(conteudoResultados.Height - 100 * escala, 132 * escala, 192 * escala);
+            painelVelocidade.MinimumSize = new Size(0, altura);
+            painelVelocidade.Height = altura;
+        };
         pagina.Controls.Add(conteudoResultados, 0, 2);
         estado.Margin = new Padding(3, 8, 3, 0);
         AplicarCorBotao(salvar, false);
@@ -439,13 +443,30 @@ internal sealed partial class JanelaPrincipal : Form
         rodape.Controls.Add(estado);
         rodape.Controls.Add(feedbackCopia);
         pagina.Controls.Add(rodape, 0, 3);
+        var ajustandoAltura = false;
+        pagina.Layout += (_, _) =>
+        {
+            if (ajustandoAltura) return;
+            ajustandoAltura = true;
+            try
+            {
+                // Reservar uma área legível; a janela baixa rola em vez de esmagar a tabela.
+                var minimoResultados = (ferramentaAtual?.Id is "monitor" or "mapaocupacao" or "velocidade" ? 360 : 180) * pagina.DeviceDpi / 96;
+                var minimo = pagina.Padding.Vertical + cabecalho.Height + cabecalho.Margin.Vertical +
+                    comandos.Height + comandos.Margin.Vertical + rodape.Height + rodape.Margin.Vertical +
+                    conteudoResultados.Margin.Vertical + minimoResultados;
+                if (pagina.AutoScrollMinSize.Height != minimo) pagina.AutoScrollMinSize = new Size(0, minimo);
+            }
+            finally { ajustandoAltura = false; }
+        };
+        pagina.AutoScroll = true;
         return pagina;
     }
 
     private void MostrarArea(string area)
     {
         ativa?.Cancel();
-        titulo.Text = grupo == "Visão geral" ? "Informações do computador" : grupo + " · " + area;
+        titulo.Text = grupo == "Visão geral" ? "Informações do computador" : area;
         descricao.Text = grupo switch
         {
             "Hardware" => "Consulte os componentes e os discos. Ações com UAC pedem autorização ao executar.",
@@ -511,7 +532,12 @@ internal sealed partial class JanelaPrincipal : Form
         Estilo.Marcar(rotulo,destaque?PapelVisual.Normal:PapelVisual.Secundario);
         return rotulo;
     }
-    private static void MarcarPagina(Button botao, bool ativo) => Estilo.Marcar(botao, ativo ? PapelVisual.Ativo : PapelVisual.Navegacao);
+    private static void MarcarPagina(Button botao, bool ativo)
+    {
+        var anterior = botao.BackColor;
+        Estilo.Marcar(botao, ativo ? PapelVisual.Ativo : PapelVisual.Navegacao);
+        if (botao is BotaoModerno moderno) moderno.AnimarSelecao(anterior);
+    }
     private static void AplicarCorBotao(Button botao, bool destaque) => Estilo.Marcar(botao, destaque ? PapelVisual.Primario : PapelVisual.Normal);
     private static string IconeMenu(string nome) => nome switch
     {
@@ -580,10 +606,22 @@ internal sealed partial class JanelaPrincipal : Form
         volumesAdmin.Enabled = false;
         cancelar.Enabled = !administrativaEmAndamento && !intervencaoEmAndamento;
         estado.Text = administrativaEmAndamento ? "Aguardando autorização ou resultado do Windows…" : "Consultando o Windows…";
+        if (escolhido.Id == "velocidade") painelVelocidade.Iniciar();
         try
         {
             Resposta resposta;
-            if (administrativaEmAndamento)
+            if (escolhido.Id == "velocidade")
+            {
+                var progresso = new Progress<ProgressoVelocidade>(p =>
+                {
+                    if (IsDisposed || cancelamento.IsCancellationRequested || ativa != cancelamento || resultado is not null) return;
+                    painelVelocidade.Atualizar(p);
+                    estado.Text = $"{p.Etapa} · {p.Segundos:N0} s · medindo a conexão…";
+                });
+                resposta = await TesteVelocidade.ExecutarAsync(cancelamento.Token, progresso);
+                painelVelocidade.Concluir(resposta.Estado == "concluido" ? "Teste concluído" : "Teste concluído com avisos", resposta);
+            }
+            else if (administrativaEmAndamento)
             {
                 var retorno = await ElevacaoConsulta.ConsultarAsync(escolhido.Id, volume, cancelamento.Token, dados, Estilo.Escuro ? "Escuro" : "Claro");
                 resposta = retorno.Resultado;
@@ -615,6 +653,7 @@ internal sealed partial class JanelaPrincipal : Form
             if (!IsDisposed && grupo == grupoInicial && !cancelamento.IsCancellationRequested)
             {
                 resultado = new Resposta(1, escolhido.Id, "indisponivel", [new Secao("Consulta", [], erro.Message)]);
+                if (escolhido.Id == "velocidade") painelVelocidade.Concluir("Não foi possível concluir o teste", resultado);
                 nomeResultado = escolhido.Nome;
                 inicioResultado = inicio;
                 fimResultado = DateTimeOffset.Now;
@@ -625,6 +664,8 @@ internal sealed partial class JanelaPrincipal : Form
         }
         finally
         {
+            if (escolhido.Id == "velocidade" && !IsDisposed && (resultado is null || cancelamento.IsCancellationRequested))
+                painelVelocidade.Concluir(cancelamento.IsCancellationRequested ? "Teste cancelado" : "Não foi possível concluir o teste");
             ativa = null;
             administrativaEmAndamento = false;
             intervencaoEmAndamento = false;

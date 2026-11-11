@@ -37,7 +37,22 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 ## Matriz de testes e rotina de atualização
 
-O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A beta.6 entrega melhorias de legibilidade e apresentação dos discos. A beta.7 simplifica os formulários e acrescenta diagnóstico contextual, mantendo as 44 operações em 35 entradas no seletor. A beta.8 otimiza tabelas, filtro e encerramento de consultas, com medições comparativas e homologação local. Os aceites de laboratório sem ambiente autorizado permanecem pendentes. A beta.9 entrega o visual inspirado no Windows 11, com temas Escuro, Claro e Sistema e Escuro como padrão. A próxima atualização é a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. As pendências de laboratório das etapas anteriores permanecem registradas até o aceite.
+### Dashboard: sequência aprovada após a beta.9.1
+
+| Entrega | Estado | Próximo aceite |
+| --- | --- | --- |
+| **1.0.0-beta.9.2 · estrutura adaptável** | Implementada; testes e evidências em Testes/RESULTADO.md | Navegação 240/80 epx, janela mínima, abas em uma linha, três temas, documentação e capturas reais |
+| **Componentes de monitoramento** | Próxima etapa visual aprovada; numeração a registrar na entrega | Barras horizontais reais de CPU/RAM por segundo, velocímetro, estados parciais e cancelamento |
+| **Organização dos menus** | Aprovada como etapa; seguir a galeria e revisar os textos ao implementar | Cinco telas e padrões equivalentes nos sete grupos; 44 operações, resumos e avisos preservados |
+| **Homologação visual e funcional** | Pendente | Regressão completa, teclado, DPI/alto contraste, logs/clipboard, desempenho e pacote portátil |
+| **1.0.0-beta.10 · PowerShell 7** | Avaliação e protótipo pendentes | Motor incluído sem instalação prévia, funcionamento offline, compatibilidade dos módulos, UAC e custo do pacote |
+| **1.0.0 estável** | Sem data; condicionada à matriz de homologação | Aceite em laboratório, assinatura, ambientes declarados e ausência de regressões essenciais |
+
+As etapas visuais seguintes ainda não recebem um número executável neste documento. Cada uma deve terminar em prévia testável, ZIP, evidências e atualização das capturas. A beta.9.2 incorpora as melhorias locais da beta.9.1, que não teve release pública independente. A beta.10 mantém o tema principal de PowerShell 7.
+
+A [avaliação do dashboard de monitoramento](propostas-visuais/2026-11-10/conjunto-monitoramento/README.md) consolida os cinco menus solicitados, estados amplos/compactos, ajuda contextual e cobertura das 44 operações. A direção aprovada usa barras horizontais de CPU/RAM em tempo real e velocímetro. A organização serve como referência aprovada para as etapas seguintes, com ajustes de textos e controles conforme a implementação. A sequência passa por estrutura adaptável, componentes, aplicação aos menus e homologação, com prévias testáveis; a galeria é conceitual e não muda o escopo da avaliação de PowerShell 7.
+
+O [plano de revisão por etapas](REVISAO-UX-2026-11-09.md) detalha a sequência atual das betas. A beta.6 entrega melhorias de legibilidade e apresentação dos discos. A beta.7 simplifica os formulários e acrescenta diagnóstico contextual, mantendo as 44 operações em 35 entradas no seletor. A beta.8 otimiza tabelas, filtro e encerramento de consultas, com medições comparativas e homologação local. Os aceites de laboratório sem ambiente autorizado permanecem pendentes. A beta.9 entrega o visual inspirado no Windows 11, com temas Escuro, Claro e Sistema e Escuro como padrão. A beta.9.1 refina abas, transições e gráficos e amplia a coleta do teste de internet, com limite de dados e progresso real. A próxima atualização principal é a beta.10, com avaliação e protótipo do PowerShell 7 incluído no pacote portátil. As pendências de laboratório das etapas anteriores permanecem registradas até o aceite.
 
 | Camada | Cobertura e evidência |
 | --- | --- |

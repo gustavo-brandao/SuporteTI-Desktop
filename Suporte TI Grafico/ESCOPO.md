@@ -1,5 +1,27 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9.2 · estrutura adaptável
+
+Entregar a primeira etapa do dashboard aprovado no WinForms atual: paleta azul escura, seleção lateral discreta, navegação de 240/80 pixels efetivos, recolhimento automático abaixo de 1.000 pixels efetivos da largura cliente e alternância manual preservada na faixa atual. Ctrl+K expande e foca a busca. Manter os nomes dos controles para acessibilidade e os sete grupos; Sobre/Configurações ficam na base, separados da lista rolável.
+
+Manter as abas nativas em uma linha, com rolagem quando excederem a largura, teclado, indicador e foco. Remover a repetição do nome do grupo nos títulos da área. Calcular uma altura mínima do conteúdo para que janelas baixas usem rolagem em vez de comprimir os resultados. Não alterar o catálogo, coletores, permissões, intervenções, pesquisa automática de códigos, formatos de log ou cópia.
+
+Os gráficos atuais de monitoramento e velocidade permanecem nesta etapa. As barras horizontais, o velocímetro e a aplicação completa dos layouts da galeria entram nas próximas prévias. Não incluir PowerShell 7 nem migrar framework nesta entrega. Publicar a beta com capturas reais, notas, ZIP e SHA-256 após a validação; preservar as pendências da matriz de homologação.
+
+## Avaliação visual · dashboard de monitoramento
+
+O tema dashboard de monitoramento, as barras horizontais de CPU/RAM com atualização real e o velocímetro de internet são a direção aprovada. A [galeria consolidada](../docs/propostas-visuais/2026-11-10/conjunto-monitoramento/README.md) reúne cinco menus amplos/compactos e a análise de ajuda das 44 operações para avaliar sua disposição. Esta etapa documenta a proposta e os critérios de aceite; não promove versão nem declara os layouts implementados. Preservar temas Escuro/Claro/Sistema, edição genérica, logs, cópia, pesquisa de códigos e UAC por operação. As imagens são mockups e não substituem capturas reais do README.
+
+## Prévia 1.0.0-beta.9.1
+
+Refinar as abas superiores, com contorno, seleção explícita, estado de apontamento, foco e quebra em linhas quando a janela é estreita. Preservar o TabControl nativo para teclado e automação. Acrescentar realce gradual na navegação e entrada curta de conteúdo, sem bloquear ações ou sobrepor capturas às telas. Respeitar SPI_GETCLIENTAREAANIMATION (somente leitura), alto contraste e sessão remota. Descartar timers ao fechar e interromper animações de gráficos ocultos.
+
+O monitor usa os mesmos dados nativos a cada segundo e conserva até 60 amostras. Interpolar somente a apresentação, com valores numéricos imediatos e lacunas preservadas. Não simular utilização de hardware nem executar testes de carga.
+
+Substituir a pequena amostra do teste gráfico de internet por um motor C# isolado e cancelável: latência HTTPS, quatro requisições HTTP/1.1 simultâneas, até dez segundos e 512 MiB por direção. Limitar buffers, não seguir redirecionamentos e usar endpoints fixos da Cloudflare. Mostrar progresso da coleta, dados e taxa; admitir encerramento antecipado pelo limite. Calcular upload pelos blocos confirmados, conservando download quando upload falha. Manter resultados no contrato versão 1, logs completos e cópia. Não alterar os módulos da edição CLI nem incluir PS7 nesta revisão.
+
+As referências, o método e os limites estão em [Revisão visual e medição](../docs/REVISAO-VISUAL-beta9.1.md). A beta.10 permanece destinada ao protótipo do PowerShell 7. Homologação de Windows 10, DPI, alto contraste real e laboratório administrativo continua pendente.
+
 ## Prévia 1.0.0-beta.9
 
 Modernização no WinForms/.NET 10 atual, com superfícies neutras, azul de destaque, botões e cartões arredondados, ícones na navegação e abas desenhadas com indicador de seleção e foco. Manter controles acessíveis, navegação por teclado, as 44 operações, logs e o fluxo de UAC.

@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory)][string]$Zip,[string]$Capturas)
+﻿param([Parameter(Mandatory)][string]$Zip,[string]$Capturas,[string]$Identificador='beta92',[switch]$TestarVelocidadeInternet)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName UIAutomationClient,UIAutomationTypes,System.Drawing,System.Windows.Forms,System.IO.Compression.FileSystem
 Add-Type @'
@@ -99,6 +99,7 @@ function ConferirTitulo {
 }
 function Salvar($Nome,[switch]$Inativa) {
     if(-not $Capturas){return}
+    $Nome=$Nome.Replace('beta9',$Identificador)
     $sonda=$null
     if($Inativa){$sonda=[Windows.Forms.Form]::new();$sonda.Text='Verificação de janela inativa';$sonda.Show();$sonda.Activate()}
     else{[void][CapturaTema]::SetForegroundWindow($app.MainWindowHandle);$janela.SetFocus()}
@@ -185,6 +186,64 @@ try {
     }
     'Aparência permaneceu acessível na janela compacta. Configuração real do usuário não foi alterada.'
     $transformar.Resize(1180,800)
+    foreach($modo in 'Escuro','Claro','Sistema') {
+        Tema $modo
+        Acionar 'Hardware'
+        $aba=Esperar {Controle 'Desempenho' ([Windows.Automation.ControlType]::TabItem)}
+        $aba.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+        Combo 'Escolher diagnóstico' 'Monitor ao vivo'
+        Acionar 'Iniciar monitor'
+        [void](Esperar {
+            $itens=$janela.FindAll([Windows.Automation.TreeScope]::Descendants,[Windows.Automation.Condition]::TrueCondition)
+            foreach($item in $itens){if($item.Current.Name -match '^CPU: \d+%$'){return $true}}
+        })
+        Start-Sleep -Seconds 4
+        Salvar ('monitor-'+$modo.ToLowerInvariant()+'-beta9.png')
+        $aba=Esperar {Controle 'Discos' ([Windows.Automation.ControlType]::TabItem)}
+        $aba.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+        $aba=Esperar {Controle 'Desempenho' ([Windows.Automation.ControlType]::TabItem)}
+        $aba.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+        Combo 'Escolher diagnóstico' 'Monitor ao vivo'
+        [void](Esperar {Controle 'Iniciar monitor'})
+        $transformar.Resize(780,600)
+        foreach($nomeAba in 'Desempenho','Discos','Bateria','Dispositivos','Serviços','Programas'){
+            $item=Esperar {Controle $nomeAba ([Windows.Automation.ControlType]::TabItem)}
+            if($item.Current.IsOffscreen){throw ('Aba fora da janela compacta: '+$nomeAba)}
+        }
+        Salvar ('abas-compactas-'+$modo.ToLowerInvariant()+'-beta9.png')
+        $transformar.Resize(1180,800)
+        Acionar 'Rede'
+        $aba=Esperar {Controle 'Conectividade' ([Windows.Automation.ControlType]::TabItem)}
+        $aba.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+        Combo 'Escolher diagnóstico' 'Velocidade da internet'
+        Salvar ('velocidade-'+$modo.ToLowerInvariant()+'-beta9.png')
+        $transformar.Resize(780,600)
+        [void](Esperar {$c=Controle 'Testar velocidade';-not $c.Current.IsOffscreen})
+        Salvar ('velocidade-compacta-'+$modo.ToLowerInvariant()+'-beta9.png')
+        $transformar.Resize(1180,800)
+        if($modo -eq 'Escuro') {
+            Acionar 'Testar velocidade'
+            [void](Esperar {Controle 'Cancelar'})
+            Acionar 'Cancelar'
+            [void](Esperar {Controle 'Teste cancelado'})
+            [void](Esperar {$c=Controle 'Testar velocidade';$c.Current.IsEnabled})
+            'Cancelamento do teste de velocidade devolveu o controle à interface.'
+            if($TestarVelocidadeInternet) {
+                Acionar 'Testar velocidade'
+                $medicao=[Diagnostics.Stopwatch]::StartNew()
+                do {
+                    Start-Sleep -Milliseconds 250
+                    $c=Controle 'Testar velocidade'
+                } while(-not $c.Current.IsEnabled -and $medicao.Elapsed.TotalSeconds -lt 45)
+                if(-not $c.Current.IsEnabled){throw 'Teste de velocidade excedeu 45 segundos.'}
+                $grade=(Controle 'Resultados da consulta').GetCurrentPattern([Windows.Automation.GridPattern]::Pattern)
+                if($grade.Current.RowCount -lt 1 -or -not (Controle 'Salvar log…')){throw 'Medição sem resultado e opção de log.'}
+                Salvar 'velocidade-resultado-beta9.png'
+                ('Teste HTTPS real finalizou em '+$medicao.Elapsed.TotalSeconds.ToString('N1')+' s, com '+$grade.Current.RowCount+' linhas e log disponível.')
+            }
+        }
+        ('Monitor, troca de abas, seis abas visíveis na janela compacta e painel de velocidade: '+$modo+'.')
+    }
     foreach($modo in 'Escuro','Claro','Sistema') {
         Tema $modo
         Acionar 'Contas e políticas'

@@ -11,6 +11,7 @@
     <Compile Include="../FluxoFerramentas.cs" Link="FluxoFerramentas.cs" />
     <Compile Include="../ResumoDiscos.cs" Link="ResumoDiscos.cs" />
     <Compile Include="../ConsultaPowerShell.cs" Link="ConsultaPowerShell.cs" />
+    <Compile Include="../TesteVelocidade.cs" Link="TesteVelocidade.cs" />
     <Compile Include="../ArvoreConsulta.cs" Link="ArvoreConsulta.cs" />
     <Compile Include="../LinhasResultado.cs" Link="LinhasResultado.cs" />
     <Compile Include="../PreferenciasAparencia.cs" Link="PreferenciasAparencia.cs" />
