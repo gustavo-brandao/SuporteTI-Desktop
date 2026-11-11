@@ -74,7 +74,8 @@ internal static class Estilo
         var papel = PapelDe(controle);
         var fundo = papel is PapelVisual.Navegacao or PapelVisual.Ativo ? p.Navegacao :
             papel == PapelVisual.Superficie || controle is Cartao ? p.Superficie : controle.Parent?.BackColor ?? p.Fundo;
-        if (controle is Form or TabPage) fundo = p.Fundo;
+        if (controle is Form) fundo = p.Fundo;
+        if (controle is TabPage) fundo = p.Superficie;
         if (controle is TextBoxBase or ComboBox or ListBox or DataGridView) fundo=p.Superficie;
         if (controle is ToolStrip) fundo=p.Navegacao;
         if (controle is Button) fundo=papel == PapelVisual.Primario?p.Destaque:papel == PapelVisual.Ativo ? (AltoContraste?p.Destaque:p.NavegacaoAtiva):

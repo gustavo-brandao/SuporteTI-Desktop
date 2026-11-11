@@ -22,7 +22,8 @@ internal sealed partial class JanelaPrincipal : Form
     private readonly TextBox filtro = new() { PlaceholderText = "Filtrar resultados…", Width = 175, AccessibleName = "Filtrar resultados" };
     private readonly TextBox entrada = new() { Width = 240, MaxLength = 512 };
     private readonly ComboBox volumesAdmin = new SeletorModerno() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 75, AccessibleName = "Volume local para CHKDSK" };
-    private readonly Label titulo = CriarRotulo("Informações do computador", 22, true);
+    private readonly Label titulo = CriarRotulo("Informações do computador", 18, true);
+    private readonly CabecalhoTrabalho cabecalhoTrabalho = new();
     private readonly Label descricao = CriarRotulo("", 10, false);
     private readonly Label instrucoes = CriarRotulo("", 10, false);
     private Resposta? resultado;
@@ -89,7 +90,14 @@ internal sealed partial class JanelaPrincipal : Form
         };
         layout.Controls.Add(menu, 0, 0);
 
-        var painel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12,12,16,12) };
+        var areaTrabalho = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2,
+            Padding = new Padding(16, 0, 20, 16), Margin = Padding.Empty };
+        areaTrabalho.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        areaTrabalho.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        areaTrabalho.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        areaTrabalho.Controls.Add(cabecalhoTrabalho, 0, 0);
+        var painel = new Cartao { Dock = DockStyle.Fill, Padding = new Padding(8), Margin = new Padding(0, 12, 0, 0) };
+        areaTrabalho.Controls.Add(painel, 0, 1);
         var telaComputador = CriarTelaComputador();
         telaMonitor = CriarTelaMonitor();
         telaMapa = CriarTelaMapa();
@@ -103,6 +111,7 @@ internal sealed partial class JanelaPrincipal : Form
         {
             if (NavegacaoBloqueada) return;
             abas.Visible = telaSobre.Visible = false; telaAparencia.Visible = true; telaAparencia.BringToFront();
+            cabecalhoTrabalho.Definir("Configurações", "Aparência e preferências");
             foreach (var item in botoes.Values) MarcarPagina(item, false);
             MarcarPagina(sobre, false); MarcarPagina(configuracoes, true);
             transicao.Iniciar(telaAparencia);
@@ -134,6 +143,7 @@ internal sealed partial class JanelaPrincipal : Form
             abas.Visible = false;
             telaSobre.Visible = true;
             telaSobre.BringToFront();
+            cabecalhoTrabalho.Definir("Sobre", "Versão e créditos");
             MarcarPagina(sobre, true);
             foreach (var botao in botoes.Values)
                 MarcarPagina(botao, false);
@@ -150,7 +160,10 @@ internal sealed partial class JanelaPrincipal : Form
             foreach (var (chave, botao) in botoes)
                 MarcarPagina(botao, chave == nome);
             if (grupo == nome)
+            {
+                cabecalhoTrabalho.Definir(nome, abas.SelectedTab?.Text ?? "");
                 return;
+            }
             ativa?.Cancel();
             grupo = nome;
             organizandoAbas = true;
@@ -161,7 +174,7 @@ internal sealed partial class JanelaPrincipal : Form
                 anterior.Dispose();
             }
             foreach (var area in CatalogoFerramentas.Itens.Where(item => item.Grupo == nome).Select(item => item.Area).Distinct())
-                abas.TabPages.Add(new TabPage(area) { BackColor = AltoContraste ? SystemColors.Window : Fundo, ToolTipText = area });
+                abas.TabPages.Add(new TabPage(area) { BackColor = AltoContraste ? SystemColors.Window : Superficie, ToolTipText = area });
             abas.SelectedIndex = 0;
             organizandoAbas = false;
             if (abas.SelectedTab is { } aba)
@@ -224,7 +237,7 @@ internal sealed partial class JanelaPrincipal : Form
         };
         MostrarPagina("Visão geral");
         Disposed += (_, _) => transicao.Dispose();
-        layout.Controls.Add(painel, 1, 0);
+        layout.Controls.Add(areaTrabalho, 1, 0);
 
         using var identidade = WindowsIdentity.GetCurrent();
         var sessao = new WindowsPrincipal(identidade).IsInRole(WindowsBuiltInRole.Administrator)
@@ -470,6 +483,7 @@ internal sealed partial class JanelaPrincipal : Form
     private void MostrarArea(string area)
     {
         ativa?.Cancel();
+        cabecalhoTrabalho.Definir(grupo, area);
         titulo.Text = grupo == "Visão geral" ? "Informações do computador" : area;
         descricao.Text = grupo switch
         {
@@ -506,7 +520,7 @@ internal sealed partial class JanelaPrincipal : Form
         grade.BorderStyle = BorderStyle.None;
         grade.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
         grade.DefaultCellStyle.Padding = new Padding(6, 5, 6, 5);
-        grade.RowTemplate.MinimumHeight = 44;
+        grade.RowTemplate.MinimumHeight = 38;
         grade.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         Estilo.Aplicar(grade);
     }
@@ -524,7 +538,7 @@ internal sealed partial class JanelaPrincipal : Form
 
     private static TableLayoutPanel CriarPagina()
     {
-        var pagina = new TableLayoutPanel { ColumnCount = 1, Dock = DockStyle.Fill, Padding = new Padding(18) };
+        var pagina = new TableLayoutPanel { ColumnCount = 1, Dock = DockStyle.Fill, Padding = new Padding(16) };
         pagina.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         return pagina;
     }

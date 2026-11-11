@@ -1,5 +1,11 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9.5 · etapa 2.1, estrutura da área de trabalho
+
+Primeira subdivisão da etapa 2: cabeçalho contextual com grupo e área, separação Ferramentas/Aplicativo na navegação, superfície própria para conteúdo, guias contínuas, títulos e linhas de resultados mais compactos e paletas neutras com destaque azul. O cabeçalho acompanha guias, busca e telas auxiliares, inclusive ao retornar ao mesmo grupo. A contagem de ferramentas se oculta quando a largura é insuficiente. Preservar as 44 rotas, os parâmetros, o contexto de identidade, logs, cópia e UAC por operação.
+
+A etapa 2.2 será dedicada à barra de título e moldura, com verificação de Snap, arraste, redimensionamento e DPI. Nesta entrega a moldura permanece nativa. Não antecipar o redesenho iStat do monitor, a busca Raycast ou as novas animações; cada parte tem sua própria etapa.
+
 ## Prévia 1.0.0-beta.9.4 · legibilidade e identidade
 
 As guias usam a mesma fonte na medição nativa e no desenho, inclusive quando selecionadas. O fundo e o indicador continuam identificando a seleção. A área interna de texto evita o recorte observado em Windows → Integridade e reparos. A identificação lateral passa a VERSÃO DESKTOP. Esta é a primeira implantação pequena da direção aprovada: estrutura Linear, monitoramento iStat e busca em camadas Raycast. A nova composição e as animações serão entregas posteriores, uma de cada vez.

@@ -4,7 +4,7 @@ namespace SuporteTI.Grafico;
 internal sealed class NavegacaoLateral : TableLayoutPanel
 {
     private readonly Panel cabecalho = new() { Dock = DockStyle.Fill };
-    private readonly Label marca = new() { Text = "Suporte TI", AutoSize = true, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
+    private readonly Label marca = new() { Text = "Suporte TI", AutoSize = true, Font = new Font("Segoe UI", 14, FontStyle.Bold) };
     private readonly Label edicao = new() { Text = "VERSÃO DESKTOP", AutoSize = true, Font = new Font("Segoe UI", 8) };
     private readonly BotaoModerno alternar = new() { Text = "Alternar navegação", AccessibleName = "Alternar navegação", Simbolo = "\uE700", SomenteIcone = true };
     private readonly BotaoModerno abrirBusca = new() { Text = "Buscar ferramenta", AccessibleName = "Abrir busca de ferramentas", Simbolo = "\uE721", SomenteIcone = true };
@@ -12,6 +12,8 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
     private readonly FlowLayoutPanel destinos = new() { Dock = DockStyle.Fill, AutoScroll = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
     private readonly FlowLayoutPanel utilidades = new() { AutoSize = true, Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false };
     private readonly Label versao;
+    private readonly Label secaoFerramentas = new() { Text = "FERRAMENTAS", AutoSize = true, Font = new Font("Segoe UI", 8), Margin = new Padding(10, 8, 0, 10) };
+    private readonly Label secaoPreferencias = new() { Text = "APLICATIVO", AutoSize = true, Font = new Font("Segoe UI", 8), Margin = new Padding(10, 8, 0, 10) };
     private readonly ToolTip dicas = new();
     private bool? faixaCompacta;
     private bool compacta;
@@ -40,12 +42,13 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
         cabecalho.Margin = pesquisa.Margin = destinos.Margin = utilidades.Margin = Padding.Empty;
         cabecalho.Controls.Add(marca); cabecalho.Controls.Add(edicao); cabecalho.Controls.Add(alternar);
         pesquisa.Controls.Add(Busca); pesquisa.Controls.Add(Encontrados); pesquisa.Controls.Add(AvisoBusca); pesquisa.Controls.Add(abrirBusca);
+        destinos.Controls.Add(secaoFerramentas);
         foreach (var nome in CatalogoFerramentas.Grupos)
         {
             var botao = new BotaoModerno { Text = nome, AccessibleName = nome, Simbolo = icone(nome), TextAlign = ContentAlignment.MiddleLeft };
             Botoes.Add(nome, botao); destinos.Controls.Add(botao); Estilo.Marcar(botao, PapelVisual.Navegacao);
         }
-        utilidades.Controls.Add(Sobre); utilidades.Controls.Add(Configuracoes);
+        utilidades.Controls.Add(secaoPreferencias); utilidades.Controls.Add(Sobre); utilidades.Controls.Add(Configuracoes);
         versao = new Label { Text = numeroVersao, AutoSize = true };
         utilidades.Controls.Add(versao);
         foreach (var botao in Botoes.Values.Concat<Button>([Sobre, Configuracoes]))
@@ -58,6 +61,7 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
         DpiChangedAfterParent += (_, _) => { Organizar(); LarguraAlterada?.Invoke(this, EventArgs.Empty); };
         Estilo.Marcar(this, PapelVisual.Navegacao);
         Estilo.Marcar(edicao, PapelVisual.Secundario); Estilo.Marcar(versao, PapelVisual.Secundario);
+        Estilo.Marcar(secaoFerramentas, PapelVisual.Secundario); Estilo.Marcar(secaoPreferencias, PapelVisual.Secundario);
         Estilo.Marcar(AvisoBusca, PapelVisual.Secundario);
         foreach (var botao in new[] { alternar, abrirBusca, Sobre, Configuracoes }) Estilo.Marcar(botao, PapelVisual.Navegacao);
         Organizar();
@@ -93,6 +97,7 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
         {
             var largura = Math.Max(Px(44), Width - Px(24));
             marca.Visible = edicao.Visible = versao.Visible = !compacta;
+            secaoFerramentas.Visible = secaoPreferencias.Visible = !compacta;
             Busca.Visible = !compacta; Encontrados.Visible = !compacta && Encontrados.Items.Count > 0;
             AvisoBusca.Visible = !compacta && Busca.Text.Trim().Length > 0 && Encontrados.Items.Count == 0;
             abrirBusca.Visible = compacta;
@@ -111,7 +116,7 @@ internal sealed class NavegacaoLateral : TableLayoutPanel
             {
                 botao.SomenteIcone = compacta;
                 var larguraBotao = Botoes.Values.Contains(botao) ? Math.Max(Px(44), Width-destinos.Padding.Horizontal-SystemInformation.VerticalScrollBarWidth) : largura;
-                botao.Size = new Size(larguraBotao, Px(44)); botao.Margin = new Padding(0, 0, 0, Px(4));
+                botao.Size = new Size(larguraBotao, Px(40)); botao.Margin = new Padding(0, 0, 0, Px(2));
             }
             versao.Margin = new Padding(Px(10), Px(8), 0, 0);
         }
