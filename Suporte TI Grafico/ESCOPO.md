@@ -1,5 +1,13 @@
 # Escopo das prévias
 
+
+## Prévia 1.0.0-beta.9.6 · etapa 2.2, título e moldura
+
+Integrar título, cor do texto e borda à paleta por atributos públicos do DWM no Windows 11, preservando área não cliente, estilo redimensionável e controles nativos. Diferenciar janela ativa/inativa, reaplicar em criação do handle, tema, ativação e DPI; devolver cores ao sistema em alto contraste e manter alternativa nativa onde o atributo não existe. Não criar botões de janela desenhados pelo app nem interceptar hit testing, Snap ou limites de maximização. A etapa 2.1 acompanha esta prévia cumulativa; a beta.9.5 ficou em rascunho, sem release pública.
+
+O aceite local cobre abertura, título/ícone, maximizar/restaurar, duplo clique, arraste, menu de sistema, redução da largura, temas e reabertura. A matriz multimonitor/Snap, mudanças reais de DPI, alto contraste e Windows 10 permanece no laboratório da etapa 6. Referência: [atributos oficiais do DWM](https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute).
+
+
 ## Prévia 1.0.0-beta.9.5 · etapa 2.1, estrutura da área de trabalho
 
 Primeira subdivisão da etapa 2: cabeçalho contextual com grupo e área, separação Ferramentas/Aplicativo na navegação, superfície própria para conteúdo, guias contínuas, títulos e linhas de resultados mais compactos e paletas neutras com destaque azul. O cabeçalho acompanha guias, busca e telas auxiliares, inclusive ao retornar ao mesmo grupo. A contagem de ferramentas se oculta quando a largura é insuficiente. Preservar as 44 rotas, os parâmetros, o contexto de identidade, logs, cópia e UAC por operação.
