@@ -39,11 +39,15 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 ### Dashboard: sequência aprovada após a beta.9.1
 
+**Rotina acordada:** concluir uma etapa por vez. Etapas complexas podem ser subdivididas em entregas menores, cada uma com resultado revisável, verificação e registro próprios. A próxima etapa começa depois do fechamento da anterior.
+
+**Etapa 1 concluída · beta.9.4 publicada:** [PR #4 integrado](https://github.com/gustavo-brandao/SuporteTI-Desktop/pull/4), [CI completo da revisão aprovado](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43093939216) no commit `3da048b2bbd5ab581f3be0dbec512424ff1a9d1e` e [release pública com ZIP e SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4). A árvore da integração `75e66bc5c13a5a5cf3fd9997cc60534c1e76d7f9` confere com a revisão validada. README e imagem no GitHub conferidos com os arquivos locais; o ZIP remoto confere com o SHA-256 `ac6755e01b4c8d225eb60c7ee75b307ccbacbb59fecef7bab42c4eee79ca523d`. No momento da publicação, a execução automática adicional da main já havia aprovado testes, simulações, compilação e verificação do pacote; seu envio ao armazenamento de artefatos do Actions ainda estava em andamento, conforme [registro do fechamento](RELEASE-beta9.4.md).
+
 | Entrega | Estado | Próximo aceite |
 | --- | --- | --- |
 | **1.0.0-beta.9.2 · estrutura adaptável** | Implementada; testes e evidências em Testes/RESULTADO.md | Navegação 240/80 epx, janela mínima, abas em uma linha, três temas, documentação e capturas reais |
 | **1.0.0-beta.9.3 · Componentes de monitoramento** | Implementada e validada localmente; evidências em Testes/RESULTADO.md | Barras horizontais reais de CPU/RAM por segundo, velocímetro, estados parciais e cancelamento |
-| **1.0.0-beta.9.4 · Legibilidade e identidade Desktop** | Primeira implantação da revisão visual | Guia Integridade e reparos sem letras cortadas; EDIÇÃO GRÁFICA passa a VERSÃO DESKTOP; evidências e limites em Testes/RESULTADO.md |
+| **1.0.0-beta.9.4 · Legibilidade e identidade Desktop** | Publicada; etapa 1 concluída | Guia Integridade e reparos sem letras cortadas; VERSÃO DESKTOP; CI completo da revisão aprovado; ZIP e SHA-256 disponíveis; limites de laboratório preservados |
 | **Acabamento e movimento** | Direção aprovada: Linear + iStat + Raycast | Estrutura profissional, monitoramento refinado e busca em camadas; implantar e validar um componente por entrega |
 | **Organização dos menus** | Aprovada como etapa; seguir a galeria e revisar os textos ao implementar | Cinco telas e padrões equivalentes nos sete grupos; 44 operações, resumos e avisos preservados |
 | **Homologação visual e funcional** | Pendente | Regressão completa, teclado, DPI/alto contraste, logs/clipboard, desempenho e pacote portátil |

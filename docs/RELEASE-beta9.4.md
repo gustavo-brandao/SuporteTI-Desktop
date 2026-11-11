@@ -17,3 +17,11 @@ Validação local: 159 testes automatizados com CIM real e 13 simulações de in
 A prévia continua sem assinatura Authenticode. Janela estreita, navegação completa por teclado, matriz DPI, alto contraste, Windows 10 e laboratório administrativo seguem pendentes de homologação dirigida. O publicador local registrou NU1900 ao consultar a auditoria NuGet; o aviso não foi suprimido.
 
 Baixe o ZIP e o SHA-256 da mesma release, confira a integridade e extraia o conteúdo completo em uma pasta nova. A beta.9.3 permanece disponível para comparação e retorno.
+
+## Fechamento da publicação · 11 de novembro de 2026
+
+[Release publicada](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4) após integrar o [PR #4](https://github.com/gustavo-brandao/SuporteTI-Desktop/pull/4). A tentativa inicial do CI permaneceu na fila sem criar jobs; foram solicitados cancelamento comum e forçado, sem conclusão imediata. Uma [execução manual completa](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43093939216) aprovou testes, simulações, geração, verificação do pacote e envio do artefato no commit exato da entrega. A árvore de arquivos integrada na main é idêntica à revisão validada.
+
+O README e a imagem de Integridade e reparos no GitHub conferiram com os arquivos locais por hash Git. O ZIP remoto tem 50.100.177 bytes e digest SHA-256 `ac6755e01b4c8d225eb60c7ee75b307ccbacbb59fecef7bab42c4eee79ca523d`, igual ao pacote local inspecionado.
+
+No momento da publicação, o [CI automático adicional da main](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43094778781) havia aprovado testes, simulações, compilação e verificação do pacote extraído, mas continuava no envio ao armazenamento de artefatos do Actions. Esse envio adicional foi registrado separadamente da validação completa já aprovada e do ZIP da release já disponível. Não foi declarado sucesso final dessa execução adicional.
