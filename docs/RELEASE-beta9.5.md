@@ -23,6 +23,8 @@ O pacote permanece beta e sem Authenticode. O publicador local registrou NU1900 
 
 ## Estado da publicação · 11 de novembro de 2026
 
+**Atualização de fechamento:** a beta.9.5 permaneceu em rascunho. A estrutura 2.1 foi integrada e publicada junto da moldura 2.2 na [beta.9.6](RELEASE-beta9.6.md), com CI completo aprovado. O registro abaixo preserva o estado observado durante a entrega intermediária.
+
 Implementação enviada no [PR #5](https://github.com/gustavo-brandao/SuporteTI-Desktop/pull/5), revisão `27e5aa757a045c1a89c785dc338071eef4266d5f`. README e três imagens na branch do GitHub conferidos por hash Git com os arquivos locais. O ZIP do rascunho de release tem **50.101.053 bytes** e digest remoto `d024e1d2c083dd1391708f500fa94986074effe69e588a176cca47cda9069b00`, igual ao pacote local validado.
 
 O [CI do PR](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43097760696) permaneceu na fila sem jobs. A [execução manual da mesma revisão](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43097961461) terminou a primeira tentativa com `startup_failure`, sem jobs ou logs; uma segunda tentativa foi iniciada e estava na fila no último acompanhamento. Não se declara aprovação do CI. A integração na main e a publicação da release aguardam esse aceite; o ZIP local já está disponível para avaliação.
