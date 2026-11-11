@@ -1,5 +1,14 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9.3 · componentes de monitoramento
+
+Entregar a segunda etapa visual em WinForms: barras horizontais reais de CPU/RAM a cada segundo, escala fixa 0–100%, memória usada/disponível/total e histórico opcional das últimas 60 amostras. Pausar e trocar de ferramenta conservam a leitura; iniciar novamente reinicia o histórico. A interpolação é apenas visual, respeita animações do Windows e não preenche amostras ausentes.
+
+Substituir a curva de velocidade pelo velocímetro, mantendo o motor HTTPS, limites de dados, progresso, cancelamento e resultados parciais da beta.9.2. Usar escala crescente explicitamente identificada em Mbps, sem converter falta de dados em taxa zero. Ao concluir, exibir as duas direções e orientar a agulha pela taxa final disponível. Redesenhar somente ao receber progresso ou invalidar a área, sem timer decorativo contínuo no velocímetro.
+
+Publicar ZIP e SHA-256, README e capturas reais após validar a etapa. Preservar o histórico e as pendências de laboratório. A redistribuição completa dos menus fica para a próxima prévia; PowerShell 7 permanece na avaliação da beta.10.
+
+
 ## Prévia 1.0.0-beta.9.2 · estrutura adaptável
 
 Entregar a primeira etapa do dashboard aprovado no WinForms atual: paleta azul escura, seleção lateral discreta, navegação de 240/80 pixels efetivos, recolhimento automático abaixo de 1.000 pixels efetivos da largura cliente e alternância manual preservada na faixa atual. Ctrl+K expande e foca a busca. Manter os nomes dos controles para acessibilidade e os sete grupos; Sobre/Configurações ficam na base, separados da lista rolável.

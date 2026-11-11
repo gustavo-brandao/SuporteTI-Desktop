@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9.2 · Windows x64**
+**Versão em testes 1.0.0-beta.9.3 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -17,7 +17,7 @@ Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fo
 ## Navegação, gráficos e conexão
 
 1. Em Escuro, Claro e Sistema, navegar pelas áreas e abas com mouse e teclado; conferir seleção, foco e títulos. Redimensionar para 780 × 560 e confirmar menu recolhido, acesso aos sete grupos por rolagem e Sobre/Configurações na base. Expandir manualmente, usar Ctrl+K e mudar entre as faixas de largura; a consulta e seus parâmetros não devem mudar ao recolher. Conferir as seis abas de Hardware e, quando houver excedentes, o acesso pela rolagem nativa e Ctrl+Tab. Rolar a página até resultados, Salvar log e Copiar resultado. Na tela de velocidade, conferir também o painel e o cancelamento.
-2. Iniciar o monitor, observar amostras reais de CPU/RAM e pausar. Trocar de aba deve pausar o monitor e conservar os valores; nenhum movimento decorativo deve continuar nas telas ocultas.
+2. Iniciar o monitor, conferir barras 0–100% e memória usada/disponível/total. Alternar Mostrar histórico de 60 amostras durante a coleta, conferir curvas e lacunas, pausar e iniciar novamente. No velocímetro, conferir unidade e escala crescente, zero real versus indisponibilidade, download/upload, falha parcial e cancelamento. Testar janela ampla/compacta nos três temas, teclado e DPI. Iniciar o monitor, observar amostras reais de CPU/RAM e pausar. Trocar de aba deve pausar o monitor e conservar os valores; nenhum movimento decorativo deve continuar nas telas ocultas.
 3. Com a preferência de animações do Windows desativada, repetir a navegação e o monitor: as leituras continuam sendo atualizadas, sem transições. Repetir em alto contraste e escalas de 100%, 125%, 150% e 200% no laboratório; não considerar a implementação como substituta desse aceite real.
 4. Executar o teste de internet manualmente, observando fase, tempo, bytes e taxa. Ele pode consumir até **1 GiB**. Conferir resultado de ambas as direções, cancelamento, falta de internet e falha em somente uma direção. Salvar/copiar resultado e confirmar avisos e método. Não comparar a estimativa diretamente com a velocidade contratada como critério único de aceite.
 5. `Verificar-Aparencia.ps1` cobre temas, abas compactas, monitor e cancelamento; o roteiro de navegação adaptável acima complementa o verificador da beta.9.1. `-TestarVelocidadeInternet` habilita uma coleta real opcional, com o consumo acima. O teste automático do motor pode ser executado sem tráfego externo com `dotnet run --project Testes/SuporteTI.Grafico.Testes.csproj -c Release -- --testar-velocidade` a partir da pasta do projeto gráfico.

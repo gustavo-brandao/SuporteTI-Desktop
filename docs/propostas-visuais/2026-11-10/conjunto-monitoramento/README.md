@@ -2,6 +2,10 @@
 
 **10 de novembro de 2026 · edição pública genérica.**
 
+## Entrega dos componentes · beta.9.3
+
+As barras de CPU/RAM com histórico opcional e o velocímetro foram implementados na beta.9.3. As [capturas reais e os limites da validação](../../../RELEASE-beta9.3.md) registram esta etapa. Os cinco layouts abaixo continuam sendo referências conceituais para a reorganização seguinte dos menus.
+
 ## O que já foi aprovado e o que está em avaliação
 
 - **Aprovado:** estilo Dashboard de monitoramento, com superfícies sóbrias, azul e verde-água.
