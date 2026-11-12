@@ -56,9 +56,9 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 | **2.2 · Barra de título e moldura · beta.9.6** | Publicada; etapa 2 concluída nas subdivisões 2.1 e 2.2 | CI completo aprovado, ZIP e SHA-256 disponíveis; DWM integrado, controles nativos e temas; matriz Snap/DPI/alto contraste na homologação |
 | **3.1 · Monitor CPU/RAM · beta.9.8 integrada** | Publicada junto da 3.2; etapa 3 concluída | Coleta, histórico, resumos, pausa/reinício, troca de ferramenta, janela estreita e temas conferidos |
 | **3.2 · Velocímetro e estados · beta.9.8 integrada** | Publicada; PR #6 integrado e CI completo aprovado | Medição e cancelamento reais, escala, cartões finais, modo compacto, quatro imagens, ZIP e SHA-256 conferidos |
-| **4.1 · Busca em camadas · beta.9.9** | Validada localmente; publicação em preparação | Grupo, prévia, teclado, estados vazio/sem resultados, acesso às 44 operações sem executar |
-| **4.2 · Fidelidade visual · beta.9.9** | Validada localmente; publicação em preparação | Comparação dirigida com a galeria; título único, monitor direto, ícones e cartões empilhados; capturas reais |
-| **4.3 · Parada do SFC · beta.9.9** | Validada localmente; publicação em preparação | Verificação cancelável, reparo com aviso Microsoft e Encerrar mesmo assim; saída parcial, confirmação de término e limpeza |
+| **4.1 · Busca em camadas · beta.9.9** | Publicada; etapa 4 encerrada nas três subdivisões | Grupo, prévia, teclado, estados vazio/sem resultados; catálogo completo preservado; regressão interativa completa na matriz |
+| **4.2 · Fidelidade visual · beta.9.9** | Publicada; centralização corrigida e conferida | Comparação dirigida com a galeria; título único, monitor direto, ícones e cartões empilhados; quatro capturas reais |
+| **4.3 · Parada do SFC · beta.9.9** | Publicada; CI completo aprovado e limites registrados | Verificação cancelável, reparo com aviso Microsoft e Encerrar mesmo assim; cinco testes com processos inofensivos; reparo real/conta distinta na homologação |
 | **Acabamento e movimento** | Direção aprovada: Linear + iStat + Raycast | Estrutura profissional, monitoramento refinado e busca em camadas; implantar e validar um componente por entrega |
 | **Organização dos menus** | Aprovada como etapa; seguir a galeria e revisar os textos ao implementar | Cinco telas e padrões equivalentes nos sete grupos; 44 operações, resumos e avisos preservados |
 | **Homologação visual e funcional** | Pendente | Regressão completa, teclado, DPI/alto contraste, logs/clipboard, desempenho e pacote portátil |
