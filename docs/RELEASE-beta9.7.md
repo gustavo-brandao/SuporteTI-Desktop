@@ -1,5 +1,7 @@
 # Suporte TI Gráfico 1.0.0-beta.9.7
 
+**Fechamento:** esta revisão intermediária não teve release pública. A 3.1 foi revisada junto da 3.2 e entregue na [beta.9.8](RELEASE-beta9.8.md), com CI aprovado e ZIP público. O registro abaixo preserva o estado observado durante o desenvolvimento.
+
 Prévia da **etapa 3.1 — monitor CPU/RAM**. Aceite visual e publicação pendentes.
 
 - Porcentagens em destaque, detalhes de memória separados e cartões adaptáveis lado a lado ou empilhados.
