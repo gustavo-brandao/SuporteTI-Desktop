@@ -12,7 +12,7 @@ internal sealed partial class JanelaPrincipal
         ["chromecache"] = "Limpa o cache HTTP dos perfis padrão do Chrome nesta sessão. Feche o navegador antes de continuar.",
         ["netdhcp"] = "Ativa IPv4 e DNS automáticos no adaptador selecionado. Pode interromper a conexão e o atendimento remoto.",
         ["netstatic"] = "Substitui IPv4, gateway e DNS no adaptador selecionado. Pode interromper a conexão e o atendimento remoto.",
-        ["sfcrepair"] = "Verifica e pode substituir arquivos protegidos do Windows. Mantenha a janela aberta durante o reparo.",
+        ["sfcrepair"] = "Verifica e pode substituir arquivos protegidos do Windows. A Microsoft recomenda aguardar a verificação chegar a 100%. Parar SFC oferece Encerrar mesmo assim após nova confirmação; o reparo ficará incompleto e alterações já feitas não serão desfeitas.",
         ["dismrestore"] = "Repara a imagem do Windows e pode baixar componentes. Mantenha a janela aberta durante o reparo.",
         ["chkdskfull"] = "Corrige o sistema de arquivos e procura setores defeituosos. Responda na janela do CHKDSK se o Windows oferecer agendamento. O reinício é manual.",
         ["perfillocal"] = "Examina possíveis perfis locais duplicados ou temporários. Revise a conta, as pastas e as entradas de Registro na janela administrativa antes de confirmar qualquer exclusão.",
@@ -21,6 +21,26 @@ internal sealed partial class JanelaPrincipal
     };
     private bool preparandoIntervencao;
     private bool intervencaoEmAndamento;
+
+    private bool ConfirmarParadaReparo()
+    {
+        using var janela = new Form { Text = "Interromper reparo SFC?", ClientSize = new Size(620, 300),
+            Font = Font, Icon = Icon, AutoScaleMode = AutoScaleMode.Dpi, StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false, MinimizeBox = false, ShowInTaskbar = false };
+        var layout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2, ColumnCount = 1, Padding = new Padding(20) };
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        layout.Controls.Add(new TextBox { Multiline = true, ReadOnly = true, BorderStyle = BorderStyle.None, Dock = DockStyle.Fill,
+            ScrollBars = ScrollBars.Vertical, AccessibleName = "Aviso de interrupção do SFC",
+            Text = "A Microsoft recomenda aguardar o SFC chegar a 100%.\r\n\r\nEncerrar agora força o término do processo SFC iniciado pelo aplicativo. O reparo ficará incompleto; alterações já efetuadas não serão desfeitas. Não há garantia de integridade do Windows.\r\n\r\nApós interromper, revise o CBS.log e execute uma nova verificação." }, 0, 0);
+        var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
+        var aguardar = new BotaoModerno { Text = "Continuar aguardando", AutoSize = true, DialogResult = DialogResult.Cancel };
+        var encerrar = new BotaoModerno { Text = "Encerrar mesmo assim", AutoSize = true, DialogResult = DialogResult.OK };
+        acoes.Controls.Add(aguardar); acoes.Controls.Add(encerrar); layout.Controls.Add(acoes, 0, 1); janela.Controls.Add(layout);
+        janela.AcceptButton = aguardar; janela.CancelButton = aguardar;
+        janela.Shown += (_, _) => aguardar.Focus();
+        Estilo.Aplicar(janela); janela.HandleCreated += (_, _) => Estilo.Aplicar(janela);
+        return janela.ShowDialog(this) == DialogResult.OK;
+    }
 
     private async Task<(bool Confirmada, ParametrosIntervencao? Dados)> PrepararIntervencaoAsync(Ferramenta escolhido, string volume)
     {

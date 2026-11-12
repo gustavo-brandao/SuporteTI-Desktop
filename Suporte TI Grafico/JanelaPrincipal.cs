@@ -77,7 +77,6 @@ internal sealed partial class JanelaPrincipal : Form
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         var menu = new NavegacaoLateral(versao, IconeMenu);
-        var busca = menu.Busca; var encontrados = menu.Encontrados; var avisoBusca = menu.AvisoBusca;
         var botoes = menu.Botoes; var sobre = menu.Sobre; var configuracoes = menu.Configuracoes;
         menu.LarguraAlterada += (_, _) => layout.ColumnStyles[0].Width = menu.LarguraPreferida;
         SizeChanged += (_, _) => menu.Adaptar(ClientSize.Width * 96 / DeviceDpi);
@@ -162,6 +161,7 @@ internal sealed partial class JanelaPrincipal : Form
             if (grupo == nome)
             {
                 cabecalhoTrabalho.Definir(nome, abas.SelectedTab?.Text ?? "");
+                cabecalhoTrabalho.DefinirConteudo(titulo.Text, descricao.Text);
                 return;
             }
             ativa?.Cancel();
@@ -194,46 +194,17 @@ internal sealed partial class JanelaPrincipal : Form
             diagnosticos.SelectedItem = diagnosticos.Items.Cast<Ferramenta>().Single(item => item.Id == FluxoFerramentas.Principal(id));
             ConfigurarFluxo(id);
         };
-        void AbrirBusca()
+        menu.BuscaSolicitada += (_, _) =>
         {
-            if (encontrados.SelectedItem is not Ferramenta ferramenta || NavegacaoBloqueada)
-                return;
-            abrirFerramenta(ferramenta.Id);
-            busca.Clear();
-            diagnosticos.Focus();
-        }
-        busca.TextChanged += (_, _) =>
-        {
-            encontrados.Items.Clear();
-            var procurando = !string.IsNullOrWhiteSpace(busca.Text);
-            if (procurando)
-                encontrados.Items.AddRange(CatalogoFerramentas.Buscar(busca.Text));
-            encontrados.Visible = encontrados.Items.Count > 0;
-            avisoBusca.Visible = procurando && encontrados.Items.Count == 0;
-        };
-        encontrados.DoubleClick += (_, _) => AbrirBusca();
-        encontrados.KeyDown += (_, evento) =>
-        {
-            if (evento.KeyCode == Keys.Enter)
+            if (NavegacaoBloqueada) return;
+            var focoAnterior = ActiveControl;
+            using var dialogo = new DialogoBusca(id => Impactos.GetValueOrDefault(id), IconeMenu) { Icon = Icon };
+            if (dialogo.ShowDialog(this) == DialogResult.OK && dialogo.Selecionada is { } ferramenta)
             {
-                evento.SuppressKeyPress = true;
-                AbrirBusca();
+                abrirFerramenta(ferramenta.Id);
+                diagnosticos.Focus();
             }
-        };
-        busca.KeyDown += (_, evento) =>
-        {
-            if (evento.KeyCode == Keys.Down && encontrados.Items.Count > 0)
-            {
-                encontrados.SelectedIndex = 0;
-                encontrados.Focus();
-                evento.SuppressKeyPress = true;
-            }
-            if (evento.KeyCode == Keys.Enter && encontrados.Items.Count == 1)
-            {
-                encontrados.SelectedIndex = 0;
-                AbrirBusca();
-                evento.SuppressKeyPress = true;
-            }
+            else if (focoAnterior is { IsDisposed: false, Visible: true, Enabled: true }) focoAnterior.Focus();
         };
         MostrarPagina("Visão geral");
         Disposed += (_, _) => transicao.Dispose();
@@ -263,7 +234,17 @@ internal sealed partial class JanelaPrincipal : Form
                 await ExecutarConsultaAsync();
             }
         };
-        cancelar.Click += (_, _) => ativa?.Cancel();
+        cancelar.Click += (_, _) =>
+        {
+            if (administrativaEmAndamento && ferramentaAtual is { } f && ElevacaoConsulta.PermiteParar(f.Id))
+            {
+                if (f.Id == "sfcrepair" && !ConfirmarParadaReparo()) return;
+                if (ativa is null) return; // A operação pode ter concluído durante a confirmação.
+                cancelar.Enabled = false;
+                estado.Text = "Parada solicitada · aguardando encerramento do SFC e limpeza…";
+            }
+            ativa?.Cancel();
+        };
         salvar.Click += (_, _) => SalvarResultado();
         FormClosing += (_, evento) =>
         {
@@ -290,12 +271,14 @@ internal sealed partial class JanelaPrincipal : Form
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        var cabecalho = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Dock = DockStyle.Fill };
+        var cabecalho = new FlowLayoutPanel { AutoSize = true, Visible = false, FlowDirection = FlowDirection.TopDown, WrapContents = false, Dock = DockStyle.Fill };
         cabecalho.Controls.Add(titulo);
         cabecalho.Controls.Add(descricao);
         pagina.Controls.Add(cabecalho, 0, 0);
         var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 8, 0, 8) };
         var parametros = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 0, 0, 8) };
+        var comandos = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, Dock = DockStyle.Fill };
+        var rodape = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
         var campoFerramenta = CampoRotulado("Ferramenta", diagnosticos);
         var campoEntrada = CampoRotulado("Destino ou código", entrada);
         var campoVolume = CampoRotulado("Volume", volumesAdmin);
@@ -310,9 +293,15 @@ internal sealed partial class JanelaPrincipal : Form
             filtro.Clear();
             AtualizarGrade();
             var id = ferramentaAtual?.Id;
-            titulo.Text = id == "monitor" ? "Monitor ao vivo" : grupo == "Visão geral" ? "Informações do computador" : abas.SelectedTab?.Text ?? grupo;
+            titulo.Text = id == "monitor" ? "Desempenho" : grupo == "Visão geral" ? "Informações do computador" : abas.SelectedTab?.Text ?? grupo;
+            if (id == "monitor") descricao.Text = "Uso de CPU e memória atualizado a cada segundo.";
+            else if (id == "velocidade") descricao.Text = "Download, upload e latência HTTPS até o servidor de teste.";
+            else descricao.Text = grupo == "Hardware" ? "Consulte os componentes e os discos. Ações com UAC pedem autorização ao executar." : grupo == "Rede" ? "Consulte a configuração ou teste a conectividade." : descricao.Text;
+            cabecalhoTrabalho.DefinirConteudo(titulo.Text, descricao.Text);
+            comandos.Visible = id != "monitor";
             pagina.AutoScroll = true;
             var especial = id is "monitor" or "mapaocupacao";
+            rodape.Visible = !especial;
             painelTabela.Visible = !especial;
             painelVelocidade.Visible = id == "velocidade";
             if (id == "velocidade") painelVelocidade.Limpar();
@@ -390,7 +379,6 @@ internal sealed partial class JanelaPrincipal : Form
         acoes.Controls.Add(consultar);
         acoes.Controls.Add(cancelar);
         cancelar.EnabledChanged += (_, _) => cancelar.Visible = cancelar.Enabled;
-        var comandos = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, Dock = DockStyle.Fill };
         CriarCamposFluxo(parametros, comandos);
         parametros.Controls.Add(campoEntrada);
         parametros.Controls.Add(campoVolume);
@@ -450,7 +438,6 @@ internal sealed partial class JanelaPrincipal : Form
         pagina.Controls.Add(conteudoResultados, 0, 2);
         estado.Margin = new Padding(3, 8, 3, 0);
         AplicarCorBotao(salvar, false);
-        var rodape = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
         rodape.Controls.Add(salvar);
         rodape.Controls.Add(copiarResultado);
         rodape.Controls.Add(estado);
@@ -469,8 +456,8 @@ internal sealed partial class JanelaPrincipal : Form
                     minimoResultados = Math.Max(minimoResultados, telaMonitor.MinimumSize.Height);
                 if (ferramentaAtual?.Id == "velocidade")
                     minimoResultados = Math.Max(minimoResultados, painelVelocidade.MinimumSize.Height + 140 * pagina.DeviceDpi / 96);
-                var minimo = pagina.Padding.Vertical + cabecalho.Height + cabecalho.Margin.Vertical +
-                    comandos.Height + comandos.Margin.Vertical + rodape.Height + rodape.Margin.Vertical +
+                var minimo = pagina.Padding.Vertical + (cabecalho.Visible ? cabecalho.Height + cabecalho.Margin.Vertical : 0) +
+                    (comandos.Visible ? comandos.Height + comandos.Margin.Vertical : 0) + (rodape.Visible ? rodape.Height + rodape.Margin.Vertical : 0) +
                     conteudoResultados.Margin.Vertical + minimoResultados;
                 if (pagina.AutoScrollMinSize.Height != minimo) pagina.AutoScrollMinSize = new Size(0, minimo);
             }
@@ -497,7 +484,7 @@ internal sealed partial class JanelaPrincipal : Form
         };
         diagnosticos.Items.Clear();
         diagnosticos.Items.AddRange(FluxoFerramentas.Listar(grupo, area));
-        diagnosticos.SelectedIndex = 0;
+        diagnosticos.SelectedItem = diagnosticos.Items.Cast<Ferramenta>().FirstOrDefault(f => f.Id == "monitor") ?? diagnosticos.Items[0];
     }
 
     private bool NavegacaoBloqueada => administrativaEmAndamento || preparandoIntervencao || intervencaoEmAndamento;
@@ -622,8 +609,13 @@ internal sealed partial class JanelaPrincipal : Form
         entrada.Enabled = false;
         consultar.Enabled = false;
         volumesAdmin.Enabled = false;
-        cancelar.Enabled = !administrativaEmAndamento && !intervencaoEmAndamento;
-        estado.Text = administrativaEmAndamento ? "Aguardando autorização ou resultado do Windows…" : "Consultando o Windows…";
+        cancelar.Text = escolhido.Id == "sfcrepair" ? "Parar SFC…" : ElevacaoConsulta.PermiteParar(escolhido.Id) ? "Parar verificação" : "Cancelar";
+        cancelar.Enabled = ElevacaoConsulta.PermiteParar(escolhido.Id) || (!administrativaEmAndamento && !intervencaoEmAndamento);
+        estado.Text = administrativaEmAndamento ? ElevacaoConsulta.PermiteParar(escolhido.Id)
+            ? escolhido.Id == "sfcrepair" ? "Reparo SFC · aguarde o resultado; parar exige confirmação e deixa o reparo incompleto."
+                : "Aguardando autorização ou resultado · parar encerra apenas esta verificação, sem reparo."
+            : "Aguardando autorização ou resultado · esta operação não permite parada pelo aplicativo."
+            : "Consultando o Windows…";
         if (escolhido.Id == "velocidade") painelVelocidade.Iniciar();
         try
         {
@@ -651,7 +643,7 @@ internal sealed partial class JanelaPrincipal : Form
             }
             else
                 resposta = await consulta.ConsultarAsync(escolhido.Id, cancelamento.Token, parametro, familia);
-            cancelamento.Token.ThrowIfCancellationRequested();
+            if (!ElevacaoConsulta.PermiteParar(escolhido.Id)) cancelamento.Token.ThrowIfCancellationRequested();
             if (IsDisposed)
                 return;
             resultado = resposta;

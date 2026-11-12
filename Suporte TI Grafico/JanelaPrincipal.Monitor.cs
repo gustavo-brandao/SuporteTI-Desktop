@@ -14,8 +14,11 @@ internal sealed partial class JanelaPrincipal
         var iniciar = new BotaoModerno { Text = "&Iniciar monitor", AutoSize = true };
         AplicarCorBotao(iniciar, true);
         acoes.Controls.Add(iniciar);
-        var historico = new CheckBox { Text = "Mostrar &histórico de 60 amostras", Checked = true, AutoSize = true, Margin = new Padding(12, 8, 3, 3) };
+        var historico = new CheckBox { Text = "Ver &histórico", AccessibleName = "Mostrar histórico de 60 amostras", AutoSize = true, Margin = new Padding(12, 8, 3, 3) };
         acoes.Controls.Add(historico);
+        var processos = new BotaoModerno { Text = "CPU e processos", AccessibleName = "Abrir consulta de CPU e processos", AutoSize = true };
+        processos.Click += (_, _) => abrirFerramenta?.Invoke("desempenho");
+        acoes.Controls.Add(processos);
         pagina.Controls.Add(acoes, 0, 0);
         var cpu = new GraficoUso("CPU");
         var ram = new GraficoUso("Memória RAM");
@@ -28,20 +31,19 @@ internal sealed partial class JanelaPrincipal
         pagina.Controls.Add(cartoes, 0, 1);
         void OrganizarCartoes()
         {
-            var ladoALado = cartoes.ClientSize.Width >= 720 * pagina.DeviceDpi / 96;
-            var altura = (historico.Checked ? 284 : 220) * pagina.DeviceDpi / 96;
+            var altura = (historico.Checked ? 284 : 192) * pagina.DeviceDpi / 96;
             cartoes.SuspendLayout();
-            cartoes.SetCellPosition(ram, new TableLayoutPanelCellPosition(ladoALado ? 1 : 0, ladoALado ? 0 : 1));
-            cartoes.SetColumnSpan(cpu, ladoALado ? 1 : 2);
-            cartoes.SetColumnSpan(ram, ladoALado ? 1 : 2);
+            cartoes.SetCellPosition(ram, new TableLayoutPanelCellPosition(0, 1));
+            cartoes.SetColumnSpan(cpu, 2);
+            cartoes.SetColumnSpan(ram, 2);
             cartoes.RowStyles[0].SizeType = SizeType.Absolute; cartoes.RowStyles[0].Height = altura;
-            cartoes.RowStyles[1].Height = ladoALado ? 0 : altura;
-            cartoes.Height = altura * (ladoALado ? 1 : 2);
+            cartoes.RowStyles[1].Height = altura;
+            cartoes.Height = altura * 2;
             cartoes.ResumeLayout();
         }
         cartoes.SizeChanged += (_, _) => OrganizarCartoes();
         pagina.DpiChangedAfterParent += (_, _) => OrganizarCartoes();
-        cpu.ExibirHistorico(true); ram.ExibirHistorico(true);
+        cpu.ExibirHistorico(false); ram.ExibirHistorico(false);
         historico.CheckedChanged += (_, _) =>
         {
             cpu.ExibirHistorico(historico.Checked);
@@ -87,8 +89,8 @@ internal sealed partial class JanelaPrincipal
         timer.Tick += (_, _) =>
         {
             var (usoCpu, usoRam, total, usada) = leitor.Ler();
-            cpu.Adicionar(usoCpu, "Uso total do processador\nEscala fixa de 0–100%");
-            ram.Adicionar(usoRam, usoRam is not null ? $"{EmGiB(usada)} usada · {EmGiB(total - usada)} disponível\n{EmGiB(total)} total" : "Memória física indisponível");
+            cpu.Adicionar(usoCpu, usoCpu is double percentual ? $"Em uso {percentual:N0}% · Ocioso {100-percentual:N0}%" : "Leitura indisponível");
+            ram.Adicionar(usoRam, usoRam is not null ? $"{EmGiB(usada)} usada · {EmGiB(total - usada)} disponível · {EmGiB(total)} total" : "Memória física indisponível");
         };
         pagina.VisibleChanged += (_, _) => { if (!pagina.Visible && timer.Enabled) Parar(); };
         pagina.Disposed += (_, _) => timer.Dispose();
@@ -114,7 +116,7 @@ internal sealed partial class JanelaPrincipal
         public void ExibirHistorico(bool exibir)
         {
             mostrarHistorico = exibir;
-            MinimumSize = new Size(0, (exibir ? 272 : 208) * DeviceDpi / 96);
+            MinimumSize = new Size(0, (exibir ? 272 : 180) * DeviceDpi / 96);
             trama.Invalidate();
         }
 
@@ -127,15 +129,24 @@ internal sealed partial class JanelaPrincipal
             Margin = new Padding(3, 6, 3, 3);
             Padding = new Padding(12, 4, 12, 6);
             BackColor = AltoContraste ? SystemColors.Window : Superficie;
-            var cabecalho = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top, FlowDirection = FlowDirection.TopDown, WrapContents = false };
-            cabecalho.Controls.Add(CriarRotulo(nome, 13, true));
+            var cabecalho = new TableLayoutPanel { AutoSize = true, Dock = DockStyle.Top, ColumnCount = 3, RowCount = 2 };
+            cabecalho.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 44));
+            cabecalho.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            cabecalho.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            cabecalho.RowStyles.Add(new RowStyle(SizeType.AutoSize)); cabecalho.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            var icone = new AreaDesenho { Size = new Size(36, 36), Anchor = AnchorStyles.Left };
+            icone.Paint += (_, e) => DesenharIcone(e.Graphics, icone.ClientRectangle);
+            cabecalho.Controls.Add(icone, 0, 0);
+            var rotulo = CriarRotulo(nome, 15, true); rotulo.Anchor = AnchorStyles.Left;
+            cabecalho.Controls.Add(rotulo, 1, 0);
             leitura = CriarRotulo("—", 27, true);
+            leitura.Anchor = AnchorStyles.Right;
             leitura.AccessibleName = nome + ": aguardando amostra";
-            cabecalho.Controls.Add(leitura);
+            cabecalho.Controls.Add(leitura, 2, 0);
             detalhe = CriarRotulo("Aguardando amostra", 9, false);
             detalhe.MinimumSize = new Size(0, detalhe.Font.Height * 2);
             Estilo.Marcar(detalhe, PapelVisual.Secundario);
-            cabecalho.Controls.Add(detalhe);
+            cabecalho.Controls.Add(detalhe, 0, 1); cabecalho.SetColumnSpan(detalhe, 3);
             estatisticas = CriarRotulo("Média —  ·  Pico —  ·  0/0 válidas", 9, false);
             estatisticas.Dock = DockStyle.Bottom;
             Estilo.Marcar(estatisticas, PapelVisual.Secundario);
@@ -189,15 +200,19 @@ internal sealed partial class JanelaPrincipal
         private void Desenhar(Graphics desenho)
         {
             var px = DeviceDpi / 96f;
-            var barra = new RectangleF(6 * px, 8 * px, Math.Max(1, trama.Width - 12 * px), 8 * px);
-            using (var fundo = new SolidBrush(Estilo.Paleta.Borda)) desenho.FillRectangle(fundo, barra);
+            var barra = new RectangleF(6 * px, 8 * px, Math.Max(1, trama.Width - 12 * px), 18 * px);
+            desenho.SmoothingMode = SmoothingMode.AntiAlias;
+            using var trilho = FormaModerna.Caminho(Rectangle.Round(barra), (int)(6*px));
+            using (var fundo = new SolidBrush(Estilo.Paleta.Borda)) desenho.FillPath(fundo, trilho);
             var atual = serie.Atual;
             if (atual is double valorBarra)
             {
                 var fBarra = animacao.Enabled ? Movimento.Suavizar(relogio.Elapsed.TotalMilliseconds / 240) : 1;
                 var visual = anteriorValor is double de ? de + (valorBarra - de) * fBarra : valorBarra;
                 using var preenchimento = new SolidBrush(AltoContraste ? SystemColors.Highlight : cor);
+                var estado = desenho.Save(); desenho.SetClip(trilho);
                 desenho.FillRectangle(preenchimento, barra.X, barra.Y, barra.Width * (float)(visual / 100), barra.Height);
+                desenho.Restore(estado);
             }
             foreach (var percentual in new[] { 0, 50, 100 })
             {
@@ -250,6 +265,35 @@ internal sealed partial class JanelaPrincipal
                 indice++;
             }
             desenho.ResetClip();
+        }
+        private void DesenharIcone(Graphics g, Rectangle bounds)
+        {
+            var px = DeviceDpi / 96f;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using var forma = FormaModerna.Caminho(Rectangle.Inflate(bounds, -1, -1), (int)(7*px));
+            using var fundo = new SolidBrush(Estilo.AltoContraste ? Estilo.Paleta.Superficie : Color.FromArgb(30, cor));
+            g.FillPath(fundo, forma);
+            using var linha = new Pen(cor, 1.5f*px);
+            var centro = new PointF(bounds.Width/2f, bounds.Height/2f);
+            if (nome == "CPU")
+            {
+                var chip = new RectangleF(centro.X-7*px, centro.Y-7*px, 14*px, 14*px);
+                g.DrawRectangle(linha, chip.X, chip.Y, chip.Width, chip.Height);
+                for (var i=-1;i<=1;i++)
+                {
+                    var d=i*4*px;
+                    g.DrawLine(linha, centro.X+d, chip.Top-4*px, centro.X+d, chip.Top);
+                    g.DrawLine(linha, centro.X+d, chip.Bottom, centro.X+d, chip.Bottom+4*px);
+                    g.DrawLine(linha, chip.Left-4*px, centro.Y+d, chip.Left, centro.Y+d);
+                    g.DrawLine(linha, chip.Right, centro.Y+d, chip.Right+4*px, centro.Y+d);
+                }
+            }
+            else
+            {
+                g.DrawRectangle(linha, centro.X-12*px, centro.Y-6*px, 24*px, 12*px);
+                for(var i=-1;i<=1;i++) g.DrawRectangle(linha, centro.X+(i*7-2)*px, centro.Y-3*px, 4*px, 6*px);
+                for(var i=-2;i<=2;i++) g.DrawLine(linha, centro.X+i*4*px, centro.Y+6*px, centro.X+i*4*px, centro.Y+9*px);
+            }
         }
         protected override void Dispose(bool disposing) { if (disposing) animacao.Dispose(); base.Dispose(disposing); }
     }

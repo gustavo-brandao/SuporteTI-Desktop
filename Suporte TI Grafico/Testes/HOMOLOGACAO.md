@@ -1,6 +1,12 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9.8 · Windows x64**
+## Busca em camadas e parada do SFC · etapa 4
+
+Conferir catálogo vazio, RAM sem confundir com Programas, combinação de palavras, acentos, grupo, ausência de resultados e Abrir desabilitado. Testar ↑/↓, Page Up/Down, Enter e Esc; Ctrl+K não expande a lateral. Prévia ampla e compacta, Alt+→/←, retorno ao contexto e abertura das operações agrupadas sem executar. Conferir Claro/Escuro/Sistema, largura mínima, DPI e alto contraste.
+
+Em VM descartável, iniciar SFC /verifyonly e parar: aguardar saída, limpeza e resultado parcial; repetir início, conclusão natural e pedido próximo da conclusão. No /scannow, testar Continuar aguardando, Esc/Enter mantendo execução e Encerrar mesmo assim; somente este último deve transmitir o pedido. Conferir saída parcial/CBS.log, ausência do filho SFC desta execução e remoção da cópia protegida; não declarar rollback. Repetir UAC cancelado, pedido durante UAC, conta distinta, perda do canal e falha ao encerrar. Não usar reparo da estação de trabalho como teste de simulação. Outros reparos devem continuar sem parada forçada, com motivo informado.
+
+**Versão em testes 1.0.0-beta.9.9 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -20,7 +26,7 @@ Conferir grupo e área no cabeçalho ao trocar guias, abrir Sobre/Configuraçõe
 
 ## Monitor CPU/RAM · etapa 3.1
 
-Conferir cartões lado a lado em largura suficiente e empilhados na janela estreita. Iniciar a coleta real; verificar número principal, memória usada/disponível/total, escala fixa, média/pico e contagem de leituras válidas. Recolher/exibir histórico durante a coleta; pausar preserva os dados, trocar de ferramenta pausa e iniciar novamente limpa série e resumos. Repetir Claro/Sistema/Escuro, teclado, DPI e alto contraste. Comparar amostras da janela com os resumos, incluindo zero real, ausência e descarte após 60 posições; casos de contrato estão na suíte automatizada. Não interpretar a média como valor desde a abertura do programa.
+Conferir cartões sempre empilhados nas larguras ampla/estreita, histórico inicialmente recolhido e CPU e processos preparando a consulta pontual. Iniciar a coleta real; verificar número principal, memória usada/disponível/total, escala fixa, média/pico e contagem de leituras válidas. Recolher/exibir histórico durante a coleta; pausar preserva os dados, trocar de ferramenta pausa e iniciar novamente limpa série e resumos. Repetir Claro/Sistema/Escuro, teclado, DPI e alto contraste. Comparar amostras da janela com os resumos, incluindo zero real, ausência e descarte após 60 posições; casos de contrato estão na suíte automatizada. Não interpretar a média como valor desde a abertura do programa.
 
 ## Velocímetro · etapa 3.2
 

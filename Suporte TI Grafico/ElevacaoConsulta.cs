@@ -46,6 +46,7 @@ internal static class ElevacaoConsulta
     private const int LimiteResposta = 16 * 1024 * 1024;
 
     internal static bool EhAdministrativa(string operacao) => Operacoes.Contains(operacao);
+    internal static bool PermiteParar(string operacao) => operacao is "sfcverify" or "sfcrepair";
 
     public static async Task<RetornoElevado> ConsultarAsync(string operacao, string volume, CancellationToken token,
         ParametrosIntervencao? parametros = null, string tema = "Escuro")
@@ -101,7 +102,7 @@ internal static class ElevacaoConsulta
         }
 
         using (processo)
-        using (var prazo = CancellationTokenSource.CreateLinkedTokenSource(token))
+        using (var prazo = PermiteParar(operacao) ? new CancellationTokenSource() : CancellationTokenSource.CreateLinkedTokenSource(token))
         {
             if (operacao is not ("sfcrepair" or "dismrestore" or "chkdskfull" or "perfillocal" or "autologonenable"))
                 prazo.CancelAfter(TimeSpan.FromMinutes(32));
@@ -122,6 +123,12 @@ internal static class ElevacaoConsulta
                 {
                     // O filho pode fechar a entrada após devolver um erro de preparação.
                 }
+                // A parada não cancela a espera da resposta nem a limpeza do processo elevado.
+                using var pedidoParada = PermiteParar(operacao) ? token.Register(() =>
+                {
+                    try { servidor.WriteByte(1); servidor.Flush(); }
+                    catch (Exception erro) when (erro is IOException or ObjectDisposedException) { }
+                }) : default;
                 var json = await leitura.ConfigureAwait(false);
                 await processo.WaitForExitAsync(prazo.Token).ConfigureAwait(false);
                 using var envelope = JsonDocument.Parse(json);

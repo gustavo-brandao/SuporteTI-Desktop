@@ -214,7 +214,10 @@ function Invoke-IntervencaoElevada {
                 if ($Id -eq 'chkdskfull') {
                     $campos.Add(@{ nome = 'Registro do Windows'; valor = 'Veja o log em Aplicativo, fontes Chkdsk e Wininit. Se aceitou agendar na janela do CHKDSK, reinicie manualmente.' })
                 }
-                if ($nativo.Codigo -ne 0) { $aviso = 'Confira o código de saída e o registro do Windows para determinar o resultado do reparo.' }
+                if ($nativo.Interrompida) {
+                    $campos.Add(@{ nome = 'Execução'; valor = 'Reparo SFC interrompido pelo usuário; processo encerrado.' })
+                    $aviso = 'Reparo interrompido e incompleto. Alterações já efetuadas não foram desfeitas. Não é possível concluir o estado de integridade do Windows; revise o CBS.log e execute uma nova verificação.'
+                } elseif ($nativo.Codigo -ne 0) { $aviso = 'Confira o código de saída e o registro do Windows para determinar o resultado do reparo.' }
             }
             default { throw 'Intervenção não autorizada.' }
         }
