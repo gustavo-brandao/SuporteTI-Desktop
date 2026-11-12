@@ -1,20 +1,22 @@
 # Suporte TI Gráfico
 
-**Versão atual · 1.0.0-beta.9.8**
+**Versão atual · 1.0.0-beta.9.9**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
-Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
+Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal, baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI).
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.8/SuporteTI-Grafico-1.0.0-beta.9.8-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.8/SuporteTI-Grafico-1.0.0-beta.9.8-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.8)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.9/SuporteTI-Grafico-1.0.0-beta.9.9-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.9/SuporteTI-Grafico-1.0.0-beta.9.9-win-x64.zip.sha256) · [Notas e validação](docs/RELEASE-beta9.9.md)
 
-![Beta.9.8: monitor real de CPU/RAM com histórico e resumos da janela](docs/imagens/monitor-escuro-beta98.png)
+![Catálogo de ferramentas na busca compacta](docs/imagens/busca-previa-beta99.png)
 
-A beta.9.8 implementa a **etapa 3.1 — monitor de CPU/RAM inspirado no iStat**: porcentagens em destaque, cartões lado a lado quando há espaço, histórico visível por padrão e resumos de média/pico das últimas 60 amostras. Na janela estreita, os cartões ficam empilhados com rolagem.
+A etapa **4.1** traz busca central com filtro por grupo, resultados contextualizados e prévia de permissões, finalidade e impactos. **4.2** aproxima o monitor da composição aprovada: título único, CPU/RAM empilhados, ícones, porcentagens alinhadas e barras mais presentes. O histórico começa recolhido; a consulta pontual continua em **CPU e processos**.
 
-As estatísticas usam apenas leituras válidas: zero real conta; ausência fica como lacuna. Pausar preserva os dados e iniciar abre uma nova sessão. A **3.2** acrescenta resultados separados de download/upload, latência HTTPS e estados claros para taxa provisória, conclusão, interrupção e indisponibilidade. As duas subdivisões foram revisadas juntas e compõem esta prévia integrada. [Notas e validação desta prévia](docs/RELEASE-beta9.8.md).
+**4.3 — parada de atividades:** SFC sem reparo oferece **Parar verificação**. No reparo SFC, **Parar SFC…** mostra a recomendação da Microsoft de aguardar 100% e oferece **Encerrar mesmo assim**, com **Continuar aguardando** como padrão. O processo iniciado pelo aplicativo é encerrado, a limpeza é aguardada e o resultado incompleto conserva a saída parcial. Alterações já feitas não são desfeitas. Não encerra serviços de manutenção do Windows nem outros processos SFC.
 
-As capturas mostram a execução real da beta.9.8, com recorte somente do rodapé que identifica a estação. As 44 operações e a moldura nativa permanecem disponíveis.
+![Prévia de CPU e memória na busca compacta em Claro](docs/imagens/busca-compacta-claro-beta99.png)
+
+As 44 operações continuam disponíveis. [Comparação com a referência e diferenças restantes](docs/REVISAO-VISUAL-beta9.9.md). Novas animações e a redistribuição dos demais menus continuam no planejamento; esta versão não declara todos os mockups integralmente reproduzidos.
 
 ## Começar
 
@@ -35,9 +37,9 @@ A beta está sem assinatura Authenticode. Os testes de laboratório com interven
 - **Contas e políticas** — GPO do usuário e computador, perfis locais e login automático.
 - **Relatórios** — exportação TXT, HTML e EVTX.
 
-Use a busca para encontrar uma ferramenta pelo nome. As abas agrupam as operações por assunto e o indicador **(UAC)** identifica as ferramentas administrativas.
+Use a busca para encontrar uma ferramenta pelo nome, assunto ou identificador. Palavras podem ser combinadas; acentos e maiúsculas não alteram a correspondência. As abas agrupam as operações por assunto e o indicador **(UAC)** identifica as ferramentas administrativas.
 
-**Ctrl+K** abre a busca mesmo com o menu recolhido. A lateral se recolhe abaixo de 1.000 pixels efetivos de largura da área cliente; o botão de menu permite alternar manualmente. A escolha manual permanece na faixa de largura atual. Abaixo desse limite, os ícones conservam seus nomes acessíveis e dicas. Sobre e Configurações ficam na base da lateral; a lista de grupos pode rolar em janelas baixas.
+**Ctrl+K** abre a busca sem expandir a lateral nem alterar a tela de origem. **↑/↓** e **Page Up/Down** selecionam; **Enter** prepara o formulário, sem executar; **Esc** volta ou fecha. Em largura reduzida, **Ver detalhes** ou **Alt+→** abre a prévia; **Alt+←** retorna aos resultados. Busca vazia lista o catálogo; sem correspondências, Abrir fica desabilitado. A lateral se recolhe abaixo de 1.000 pixels efetivos de largura da área cliente; o botão de menu permite alternar manualmente. A escolha manual permanece na faixa de largura atual. Abaixo desse limite, os ícones conservam seus nomes acessíveis e dicas. Sobre e Configurações ficam na base da lateral; a lista de grupos pode rolar em janelas baixas.
 
 As abas permanecem em uma linha. Quando não couberem, use os controles nativos de rolagem ou **Ctrl+Tab/Ctrl+Shift+Tab**. A largura e o DPI determinam quanto conteúdo fica visível. A janela mantém o mínimo de 780 × 560; resultados e comandos adicionais continuam acessíveis pela rolagem.
 
@@ -51,7 +53,7 @@ Use a coluna **Copiar** para um valor, **Ctrl+C** para as linhas selecionadas ou
 
 Em **Rede → Conectividade → Velocidade da internet**, acompanhe latência HTTPS, download e upload. O painel distingue a taxa provisória do resultado final, mostra cada direção em seu próprio cartão e conserva os avisos na tabela. Cancelar remove a taxa e a agulha, sem converter a leitura provisória em resultado. Uma direção indisponível não apaga a outra que tenha dados válidos. Em largura reduzida, os cartões passam para baixo do arco, com rolagem da página. São quatro transferências paralelas por direção, por até dez segundos ou **512 MiB por direção (até 1 GiB total)**. O painel mostra a fase, Mbps, tempo e dados; cancelamento, cópia e **Salvar log…** permanecem disponíveis. O resultado estima a vazão útil até a Cloudflare e pode variar com Wi-Fi, VPN, proxy e tráfego concorrente.
 
-O monitor mantém amostras reais de CPU e memória a cada segundo, com barras horizontais, histórico de até 60 amostras aberto por padrão e média/pico das leituras válidas dessa janela. Mostrar histórico permite recolher somente as curvas. Em área de cartões com pelo menos 720 pixels efetivos, CPU e RAM ficam lado a lado; abaixo disso, ficam empilhados. Pausar conserva a leitura; iniciar novamente limpa as 60 amostras anteriores. Trocar de ferramenta pausa o monitor. As transições respeitam a preferência de animações do Windows; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
+O monitor mantém amostras reais de CPU e memória a cada segundo, com cartões empilhados e barras horizontais em escala fixa de 0–100%. **Ver histórico** revela as curvas de até 60 amostras, sem interromper a coleta. Média e pico usam somente leituras válidas. Pausar conserva a leitura; iniciar novamente limpa a sessão; trocar de ferramenta pausa o monitor. O movimento existente respeita as preferências do Windows.
 
 ![Velocímetro da beta.9.8 com resultados finais reais por direção](docs/imagens/velocidade-resultado-beta98.png)
 
@@ -61,9 +63,9 @@ A [entrega integrada de monitoramento](docs/RELEASE-beta9.8.md) registra os esta
 
 Em **Configurações → Aparência**, escolha **Escuro**, **Claro** ou **Sistema**. A primeira abertura usa Escuro. A preferência é salva por usuário e a troca é aplicada durante o uso, preservando resultados. Alto contraste do Windows tem prioridade. O pacote continua portátil, com configuração fora da pasta do executável.
 
-![Monitor da beta.9.8 em Claro, com cartões empilhados e rolagem](docs/imagens/monitor-compacto-claro-beta98.png)
+![Monitor reorganizado da beta.9.9](docs/imagens/monitor-escuro-beta99.png)
 
-As capturas acima são da beta.9.8 executada a partir do pacote, com recorte somente do rodapé que identifica a estação. Os mockups permanecem na documentação de propostas. A inspeção desta etapa conferiu aparência escura via Sistema e tema Claro; DPI, alto contraste e a matriz completa de ambientes continuam em homologação.
+As capturas da busca e do monitor são reais da beta.9.9. A imagem do velocímetro registra a beta.9.8, cujo comportamento foi preservado. O rodapé que identifica a estação é recortado nas imagens da janela principal. Os mockups permanecem na documentação de propostas. A inspeção desta etapa conferiu aparência escura via Sistema e tema Claro; DPI, alto contraste e a matriz completa de ambientes continuam em homologação.
 
 ## Requisitos e arquitetura
 

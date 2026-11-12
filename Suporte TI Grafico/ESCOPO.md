@@ -1,5 +1,13 @@
 # Escopo das prévias
 
+## Prévia 1.0.0-beta.9.9 · etapa 4 e parada do SFC
+
+4.1: paleta central inspirada em camadas Raycast, catálogo completo, filtro por grupo, prévia, impacto/UAC e teclado; abrir somente prepara. Busca não altera a largura lateral. 4.2: comparar com a galeria aprovada e consolidar título/caminho, monitor direto, CPU/RAM empilhados, ícones e barras de maior presença; histórico recolhido e consulta pontual preservada. Novos movimentos e layouts específicos dos demais menus continuam em suas etapas.
+
+4.3: revisão solicitada de cancelamento. SFC /verifyonly permite parada; /scannow permite encerramento forçado somente após aviso e escolha explícita Encerrar mesmo assim. A recomendação Microsoft permanece visível; Continuar aguardando é padrão. Canal existente, ACLs, arquivos validados e identidade preservados. Um byte fixo solicita parada, restrito a esses dois identificadores; não há PID livre ou comando arbitrário. O processo elevado encerra apenas o próprio filho SFC e aguarda saída; não mata árvore, TrustedInstaller ou TiWorker. Retorno e limpeza precedem liberação da interface. Saída incompleta e aviso são preservados no contrato parcial existente. Não simular rollback nem integridade verificada. Não ampliar a parada forçada para outros reparos nesta revisão.
+
+Fonte: [orientação Microsoft para SFC](https://support.microsoft.com/en-us/windows/experience/backup-recovery/use-the-system-file-checker-tool-to-repair-missing-or-corrupted-system-files). A opção de encerramento forçado foi solicitada explicitamente pelo usuário após a revisão dessa recomendação.
+
 
 ## Prévia 1.0.0-beta.9.8 · etapa 3 integrada, CPU/RAM e velocímetro
 

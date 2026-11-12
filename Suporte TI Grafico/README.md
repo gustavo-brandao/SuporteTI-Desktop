@@ -1,10 +1,22 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9.8** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.8).
+**1.0.0-beta.9.9** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.9).
+
+## Busca e composição · etapa 4
+
+Ctrl+K ou Buscar abre uma paleta com as 44 ferramentas. Filtre por grupo e combine palavras de nome, assunto ou identificador, sem distinguir caixa/acentos. A prévia mostra finalidade, permissões e impactos existentes. ↑/↓ e Page Up/Down selecionam; Enter ou Abrir formulário prepara a ferramenta, sem executá-la. Esc fecha e conserva o contexto anterior. No modo compacto, Ver detalhes/Alt+→ mostra a prévia; Alt+← ou Esc volta à lista. Sem correspondências, Abrir fica desabilitado. A busca não expande a navegação recolhida.
+
+O cabeçalho consolida o título principal e o caminho grupo/área. O monitor abre diretamente em Hardware/Desempenho, com CPU/RAM empilhados, ícones e barras de 18 pixels efetivos; CPU e processos mantém a consulta pontual disponível. Histórico recolhido por padrão. A referência visual orienta a composição, sem inventar métricas ou sensores.
+
+## Parada do SFC
+
+SFC · verificar arquivos oferece Parar verificação. O reparo SFC oferece Parar SFC… com confirmação: a Microsoft recomenda aguardar 100%; Continuar aguardando recebe o foco inicial e Enter/Esc. Encerrar mesmo assim força somente o término do processo SFC iniciado por esta execução. O aplicativo aguarda sua saída, retorno e limpeza antes de liberar a navegação. A saída parcial fica disponível para cópia e log, com aviso de diagnóstico/reparo incompleto. Alterações anteriores não são desfeitas; revise `%windir%\Logs\CBS\CBS.log` e execute nova verificação.
+
+O pedido durante o UAC aguarda o consentimento/cancelamento do Windows; o app não fecha a tela segura nem declara parada antes da resposta. Se a execução concluir antes do pedido, o resultado real prevalece. DISM, CHKDSK com reparo, serviços, rede, perfis e login não recebem encerramento forçado nesta versão; o estado informa quando a operação exige aguardar. Monitor, mapa, velocidade e consultas comuns conservam suas opções existentes.
 
 ## Monitor de CPU/RAM · etapa 3.1
 
-Hardware → Desempenho → Monitor ao vivo apresenta porcentagens em destaque e resumos de média/pico das leituras válidas da janela de até 60 amostras. Histórico aberto por padrão; recolher as curvas preserva as estatísticas e a coleta. Os cartões ficam lado a lado a partir de 720 pixels efetivos disponíveis e empilhados abaixo disso, com rolagem. A RAM conserva memória usada, disponível e total.
+Hardware → Desempenho → Monitor ao vivo apresenta porcentagens em destaque e resumos de média/pico das leituras válidas da janela de até 60 amostras. Histórico recolhido por padrão; Ver histórico revela as curvas preservando estatísticas e coleta. Os cartões permanecem empilhados em todas as larguras, com rolagem quando necessária. Hardware abre diretamente o monitor; CPU e processos prepara a consulta pontual. A RAM conserva memória usada, disponível e total.
 
 Zero real entra nas estatísticas. Amostras ausentes, inválidas ou não finitas ficam como lacunas, sem entrar na média ou no pico. Pausar ou trocar de ferramenta conserva o último estado; iniciar novamente limpa série e resumos. A coleta segue a cada segundo, sem estimar valores entre amostras. O movimento existente continua apenas visual e respeita as preferências do Windows. A etapa 3.2 acompanha esta prévia integrada.
 
@@ -22,7 +34,7 @@ O cabeçalho superior mostra o grupo e a área atuais, acompanhando guias, busca
 
 A área de conteúdo fica em uma superfície própria, com guias de fundo contínuo, títulos menores, linhas de resultado mais compactas e bordas neutras. As paletas Escuro/Claro usam tons neutros com azul de destaque; Sistema continua acompanhando o Windows, e alto contraste mantém prioridade. O catálogo continua com 44 operações.
 
-A etapa 2.2 integra as cores do título e da borda à paleta no Windows 11, com texto e borda próprios para janela ativa/inativa. Arraste, tamanho, menu de sistema, Snap e botões permanecem sob controle nativo. No alto contraste, as cores explícitas são removidas; no Windows 10, usa os recursos disponíveis. O acabamento é reaplicado ao recriar o identificador da janela, ativar/desativar, mudar tema ou DPI. O refinamento do monitoramento está nesta prévia; busca Raycast e novos movimentos continuam em etapas posteriores.
+A etapa 2.2 integra as cores do título e da borda à paleta no Windows 11, com texto e borda próprios para janela ativa/inativa. Arraste, tamanho, menu de sistema, Snap e botões permanecem sob controle nativo. No alto contraste, as cores explícitas são removidas; no Windows 10, usa os recursos disponíveis. O acabamento é reaplicado ao recriar o identificador da janela, ativar/desativar, mudar tema ou DPI. O refinamento do monitoramento está nesta prévia; a busca em camadas acompanha esta prévia; novos movimentos continuam na etapa 5.
 
 ## Legibilidade e identidade Desktop
 
@@ -32,13 +44,13 @@ A direção aprovada para as próximas entregas combina estrutura inspirada no L
 
 ## Navegação, monitor e velocidade
 
-As abas ficam em uma linha, com seleção destacada e foco de teclado. Se não couberem, o TabControl oferece rolagem nativa; Ctrl+Tab/Ctrl+Shift+Tab também navegam entre as guias. A lateral alterna entre nomes e ícones abaixo de 1.000 pixels efetivos da largura cliente, com botão manual, nomes acessíveis e dicas. Ctrl+K expande o menu e leva à busca. A escolha manual dura até mudar a faixa de largura e não altera a consulta ou seus parâmetros. Sobre e Configurações ficam na base; os grupos usam rolagem quando a altura é insuficiente.
+As abas ficam em uma linha, com seleção destacada e foco de teclado. Se não couberem, o TabControl oferece rolagem nativa; Ctrl+Tab/Ctrl+Shift+Tab também navegam entre as guias. A lateral alterna entre nomes e ícones abaixo de 1.000 pixels efetivos da largura cliente, com botão manual, nomes acessíveis e dicas. Ctrl+K abre a busca central sem expandir a lateral nem alterar a tela de origem. A escolha manual dura até mudar a faixa de largura e não altera a consulta ou seus parâmetros. Sobre e Configurações ficam na base; os grupos usam rolagem quando a altura é insuficiente.
 
 Os títulos mostram a área atual sem repetir o menu principal. O tamanho mínimo continua 780 × 560. A página calcula uma altura mínima conforme o cabeçalho, os parâmetros, os comandos e uma área legível de resultados; quando necessário, rola verticalmente. Salvar log e copiar permanecem acessíveis, inclusive após rolar a página.
 
 A navegação recebe realce gradual, e a entrada do conteúdo usa um deslocamento curto de 180 ms. O monitor mantém as amostras nativas de CPU e memória a cada segundo; o movimento entre pontos é apenas apresentação, sem alterar as leituras. Trocar de ferramenta pausa o monitor e interrompe suas animações. A preferência de animações do Windows é respeitada; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
 
-Esta prévia reúne as subdivisões de monitoramento da etapa 3. O monitor apresenta barras horizontais de CPU/RAM em escala fixa de 0–100%, com memória usada, disponível e total. **Mostrar histórico de 60 amostras**, ativado por padrão, recolhe ou revela as curvas sem interromper a coleta. Pausar conserva os valores; iniciar novamente limpa o histórico. Leituras ausentes não são mostradas como zero. A redistribuição completa dos menus segue no planejamento; as imagens conceituais continuam separadas das capturas reais.
+Esta prévia incorpora as subdivisões de monitoramento da etapa 3 e o refinamento da etapa 4. O monitor apresenta barras horizontais de CPU/RAM em escala fixa de 0–100%, com memória usada, disponível e total. **Ver histórico**, desativado por padrão, revela ou recolhe as curvas sem interromper a coleta. Pausar conserva os valores; iniciar novamente limpa o histórico. Leituras ausentes não são mostradas como zero. A redistribuição completa dos menus segue no planejamento; as imagens conceituais continuam separadas das capturas reais.
 
 Em **Rede → Conectividade → Velocidade da internet**, o motor C# mede três amostras de latência HTTPS e executa quatro transferências paralelas por direção, por até dez segundos cada. O limite é **512 MiB de download e 512 MiB de upload**; ao alcançá-lo, a coleta termina antes. Em condições normais, espere cerca de 20–35 segundos. A fase, a taxa em Mbps, o tempo e os bytes são atualizados durante o teste. O velocímetro mostra a vazão média acumulada da fase. A escala começa em 100 Mbps e aumenta quando necessário, sem diminuir durante a execução; seu limite fica escrito abaixo do arco. A linha inferior indica o progresso da fase, separadamente da taxa. Ao concluir, download e upload permanecem identificados, inclusive quando uma direção estiver indisponível. Cancelar remove a agulha e a leitura em andamento sem apresentar uma medição incompleta como resultado final.
 

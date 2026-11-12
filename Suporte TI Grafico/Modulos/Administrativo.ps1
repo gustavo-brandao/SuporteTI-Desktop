@@ -6,7 +6,9 @@ param(
     [string]$Operacao,
     [string]$Volume,
     $Dados,
-    [ValidateSet('Escuro','Claro')][string]$Tema = 'Escuro'
+    [ValidateSet('Escuro','Claro')][string]$Tema = 'Escuro',
+    [System.Threading.Tasks.Task[int]]$PedidoParada,
+    [byte[]]$SinalParada
 )
 $script:TemaGrafico = $Tema
 $ErrorActionPreference = 'Stop'
@@ -37,13 +39,34 @@ function Invoke-VerificacaoNativa {
         $processo.StandardInput.Close()
         $saida = $processo.StandardOutput.ReadToEndAsync()
         $erros = $processo.StandardError.ReadToEndAsync()
-        if ($Segundos -eq 0) {
+        $interrompida = $false
+        if ($Operacao -in 'sfcverify','sfcrepair' -and $PedidoParada) {
+            $relogio = [Diagnostics.Stopwatch]::StartNew()
+            while (-not $processo.WaitForExit(200)) {
+                if ($PedidoParada.IsCompleted -and -not $PedidoParada.IsFaulted -and -not $PedidoParada.IsCanceled -and
+                    $PedidoParada.Result -eq 1 -and $SinalParada[0] -eq 1) {
+                    try { $processo.Kill(); $interrompida = $true }
+                    catch [InvalidOperationException] { if (-not $processo.HasExited) { throw } }
+                    catch [ComponentModel.Win32Exception] {
+                        # Não devolver a tela como livre enquanto o filho ainda executa.
+                        $processo.WaitForExit()
+                        throw 'O Windows recusou a parada; foi necessário aguardar o processo terminar. Confira o CBS.log.'
+                    }
+                    $processo.WaitForExit()
+                    break
+                }
+                if ($Segundos -gt 0 -and $relogio.Elapsed.TotalSeconds -ge $Segundos) {
+                    $processo.Kill(); $processo.WaitForExit()
+                    throw 'O comando nativo excedeu o tempo limite.'
+                }
+            }
+        } elseif ($Segundos -eq 0) {
             $processo.WaitForExit()
         } elseif (-not $processo.WaitForExit($Segundos * 1000)) {
             try { $processo.Kill() } catch [InvalidOperationException] { if (-not $processo.HasExited) { throw } }
             throw 'O comando nativo excedeu o tempo limite.'
         }
-        [pscustomobject]@{ Codigo = $processo.ExitCode; Texto = ($saida.Result + [Environment]::NewLine + $erros.Result).Trim() }
+        [pscustomobject]@{ Codigo = $processo.ExitCode; Texto = ($saida.Result + [Environment]::NewLine + $erros.Result).Trim(); Interrompida = $interrompida }
     } finally { $processo.Dispose() }
 }
 
@@ -77,7 +100,10 @@ if ($Operacao -in 'spooler','spoolerclear','cache','gpupdatecomputer','netdhcp',
         foreach ($linha in ($linhas | Select-Object -Last 250)) {
             $campos += @{ nome = 'Saída do Windows'; valor = $linha.Substring(0, [Math]::Min(1500, $linha.Length)) }
         }
-        if ($nativo.Codigo -ne 0) {
+        if ($nativo.Interrompida) {
+            $campos += @{ nome = 'Execução'; valor = 'Verificação interrompida pelo usuário; processo encerrado.' }
+            $aviso = 'Verificação SFC incompleta. A saída parcial não determina a integridade do Windows. Execute uma nova verificação para obter o diagnóstico completo.'
+        } elseif ($nativo.Codigo -ne 0) {
             $aviso = "O comando retornou $($nativo.Codigo). Confira a saída do Windows."
         } elseif ($Operacao -eq 'gpcomputerhtml') {
             $relatorio = Get-Item -LiteralPath (Join-Path $PSScriptRoot 'gpresult-computer.html')

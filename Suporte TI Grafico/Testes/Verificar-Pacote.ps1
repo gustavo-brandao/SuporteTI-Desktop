@@ -119,13 +119,26 @@ public static class TesteClipboard {
                 [TesteClipboard]::BuscarItem([IntPtr]$combo.Current.NativeWindowHandle,0x0147,[IntPtr]::Zero,$null).ToInt32() -eq $indice
             } ("seleção pelo teclado: "+$Nome+" / "+$Valor))
         }
+        function Abrir-CentroBusca {
+            $criterioBusca = [Windows.Automation.AndCondition]::new(
+                [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, $processo.Id),
+                [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::NameProperty, 'Buscar ferramentas'))
+            $existente = [Windows.Automation.AutomationElement]::RootElement.FindFirst([Windows.Automation.TreeScope]::Children, $criterioBusca)
+            if ($existente) { return $existente }
+            $janela.SetFocus()
+            [Windows.Forms.SendKeys]::SendWait('^k')
+            return (Wait-Interface {
+                [Windows.Automation.AutomationElement]::RootElement.FindFirst([Windows.Automation.TreeScope]::Children, $criterioBusca)
+            } 'centro de busca em camadas')
+        }
         function Abrir-Ferramenta {
             param([string]$Grupo, [string]$Area, [string]$Rotulo)
             $rota=$matrizNavegacao | Where-Object { $_.Grupo -eq $Grupo -and $_.Area -eq $Area -and $_.Rotulo -eq $Rotulo }
-            if (-not $rota) {
-                $busca=Find-Controle $janela 'Buscar ferramenta'
+            if (-not $rota -or ($Grupo -eq 'Hardware' -and $Area -eq 'Desempenho')) {
+                $centro=Abrir-CentroBusca
+                $busca=Find-Controle $centro 'Buscar ferramenta'
                 $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue(($Rotulo -replace ' \(UAC\)$',''))
-                $lista=Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'busca da ferramenta'
+                $lista=Wait-Interface { Find-Controle $centro 'Ferramentas encontradas' } 'busca da ferramenta'
                 $item=Wait-Interface { Find-Controle $lista $Rotulo } $Rotulo
                 $item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
                 $item.SetFocus()
@@ -213,11 +226,12 @@ public static class TesteClipboard {
                 try { Abrir-Ferramenta $item.Grupo $item.Area $item.Rotulo }
                 catch { throw "Falha ao abrir $($item.Id) em $($item.Grupo) / $($item.Area). $($_.Exception.Message) $($_.ScriptStackTrace)" }
             }
-            'As 44 ferramentas foram acessadas por grupo, aba e campos do formulário sem executar ações.'
+            'As 44 ferramentas foram acessadas por grupo, aba, formulário ou centro de busca, sem executar ações.'
             foreach ($rota in @($itens | Where-Object Acao)) {
-                $busca=Find-Controle $janela 'Buscar ferramenta'
+                $centro=Abrir-CentroBusca
+                $busca=Find-Controle $centro 'Buscar ferramenta'
                 $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($rota.Id)
-                $lista=Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'busca de operação agrupada'
+                $lista=Wait-Interface { Find-Controle $centro 'Ferramentas encontradas' } 'busca de operação agrupada'
                 $item=Wait-Interface { Find-Controle $lista $rota.Rotulo } $rota.Rotulo
                 $item.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
                 $item.SetFocus()
@@ -238,9 +252,10 @@ public static class TesteClipboard {
             } 'consulta contextual de GPO do usuário' 50)
             [void](Wait-Interface { Find-Controle $janela 'Selecionado: Políticas do usuário (GPO)' } 'escopo de usuário preservado na consulta')
             'GPO preservou a ação na troca de escopo e a consulta contextual usou o usuário da sessão.'
-            $busca = Find-Controle $janela 'Buscar ferramenta'
+            $centro = Abrir-CentroBusca
+            $busca = Find-Controle $centro 'Buscar ferramenta'
             $busca.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('codigofalha')
-            $lista = Wait-Interface { Find-Controle $janela 'Ferramentas encontradas' } 'resultado da busca'
+            $lista = Wait-Interface { Find-Controle $centro 'Ferramentas encontradas' } 'resultado da busca'
             $item = Wait-Interface { Find-Controle $lista 'Consultar código de erro' } 'ferramenta encontrada'
             # A seleção da busca pelo teclado também deve abrir o contexto correto.
             $busca.SetFocus()

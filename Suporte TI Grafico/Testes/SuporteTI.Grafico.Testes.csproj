@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Remove="Desempenho/**/*.cs" />
     <Compile Include="../CatalogoFerramentas.cs" Link="CatalogoFerramentas.cs" />
+    <Compile Include="../CatalogoBusca.cs" Link="CatalogoBusca.cs" />
     <Compile Include="../FluxoFerramentas.cs" Link="FluxoFerramentas.cs" />
     <Compile Include="../ResumoDiscos.cs" Link="ResumoDiscos.cs" />
     <Compile Include="../ConsultaPowerShell.cs" Link="ConsultaPowerShell.cs" />

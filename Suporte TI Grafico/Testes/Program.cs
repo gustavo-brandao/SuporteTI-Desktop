@@ -23,7 +23,23 @@ var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    Igual(true, CatalogoBusca.Buscar("").Select(f => f.Id).SequenceEqual(CatalogoFerramentas.Itens.Select(f => f.Id)),
+        "Busca vazia apresenta as 44 operações na ordem do catálogo");
+    Igual(true, CatalogoFerramentas.Itens.All(f => CatalogoBusca.Buscar(f.Id).FirstOrDefault()?.Id == f.Id),
+        "Cada ID exato tem prioridade na busca em camadas");
+    Igual(true, CatalogoBusca.Buscar("impressao").Length == 3 && CatalogoBusca.Buscar("MEMORIA").Select(f => f.Id).Contains("monitor"),
+        "Busca ignora acentos e caixa em grupos e sinônimos");
+    Igual(true, CatalogoBusca.Buscar("ram").Select(f => f.Id).Order().SequenceEqual(new[] { "desempenho", "monitor" }),
+        "RAM encontra métricas sem confundir com a palavra programas");
+    Igual(true, CatalogoBusca.Buscar("", "Rede").All(f => f.Grupo == "Rede") && CatalogoBusca.Buscar("", "grupo inexistente").Length == 0,
+        "Filtro de grupo não escolhe outro contexto por aproximação");
+    Igual(true, CatalogoBusca.Buscar("spooler fila", "Impressão").Any(f => f.Id == "filaimpressao") &&
+        CatalogoBusca.Buscar("naoexiste987").Length == 0, "Busca combina palavras e mantém ausência de resultado explícita");
+    Igual(true, CatalogoFerramentas.Itens.All(f => !string.IsNullOrWhiteSpace(CatalogoBusca.Resumo(f))),
+        "Todas as operações têm contexto de prévia");
     var apresentacaoVelocidade = new EstadoMedicaoVelocidade();
+    Igual(true, CatalogoFerramentas.Itens.Where(f => ElevacaoConsulta.PermiteParar(f.Id)).Select(f => f.Id)
+        .SequenceEqual(new[] { "sfcverify", "sfcrepair" }), "Parada elevada restrita aos dois modos SFC");
     apresentacaoVelocidade.Iniciar();
     Igual(true, apresentacaoVelocidade.Ativo && apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Escala == 100,
         "Painel de velocidade começa sem inventar uma taxa zero");

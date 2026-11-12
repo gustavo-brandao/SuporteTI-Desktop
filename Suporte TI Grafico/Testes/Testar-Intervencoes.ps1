@@ -73,12 +73,13 @@ try {
     function Get-NetIPAddress { param($InterfaceIndex,$AddressFamily); [pscustomobject]@{ IPAddress='192.0.2.10'; PrefixLength=24 } }
     function Get-NetRoute { param($InterfaceIndex,$AddressFamily,$DestinationPrefix); [pscustomobject]@{ NextHop='192.0.2.1' } }
     function Get-DnsClientServerAddress { param($InterfaceIndex,$AddressFamily); [pscustomobject]@{ ServerAddresses=@('192.0.2.53') } }
+    $script:pararSfc = $false
     function Invoke-VerificacaoNativa {
         param($Programa,$Argumentos,$Segundos)
         $script:comandos += $Argumentos
         if ($Argumentos -like '*set address*source=dhcp') { $script:dhcp='Enabled' }
         if ($script:falharDns -and $Argumentos -like '*dnsservers*') { return [pscustomobject]@{ Codigo=1; Texto='Falha DNS simulada' } }
-        [pscustomobject]@{ Codigo=0; Texto='Simulado' }
+        [pscustomobject]@{ Codigo=0; Texto='Simulado'; Interrompida=$script:pararSfc }
     }
     $dhcp = Invoke-IntervencaoElevada 'netdhcp' @{ Alvo=$script:guid }
     Confirmar ($script:comandos.Count -eq 2 -and $dhcp.campos[1].valor -match 'Disabled' -and $dhcp.campos[-1].valor -match 'Enabled') 'DHCP direcionado ao adaptador com estado antes e depois'
@@ -101,6 +102,10 @@ try {
     $volume = [IO.Path]::GetPathRoot($raiz).TrimEnd('\')
     $chkdsk = Invoke-IntervencaoElevada 'chkdskfull' $null $volume
     Confirmar ($script:comandos[2] -like "*/wait*$volume /f /r" -and $chkdsk.campos[-1].valor -match 'reinicie manualmente') 'CHKDSK usa volume fixo e preserva o agendamento interativo'
+    $script:pararSfc = $true
+    $sfcParado = Invoke-IntervencaoElevada 'sfcrepair'
+    Confirmar ($sfcParado.aviso -match 'incompleto' -and $sfcParado.campos[-1].valor -match 'processo encerrado') 'Reparo interrompido registra resultado incompleto sem anunciar sucesso'
+    $script:pararSfc = $false
 
     $env:SystemRoot = Join-Path $raiz 'WindowsSimulado'
     $download = Join-Path $env:SystemRoot 'SoftwareDistribution/Download'
@@ -136,3 +141,4 @@ try {
         [IO.Directory]::Delete($caminho, $true)
     }
 }
+& (Join-Path $PSScriptRoot 'Testar-Parada.ps1')
