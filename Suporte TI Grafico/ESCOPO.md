@@ -1,6 +1,12 @@
 # Escopo das prévias
 
 
+## Prévia 1.0.0-beta.9.8 · etapa 3 integrada, CPU/RAM e velocímetro
+
+Publicar 3.1 e 3.2 juntas somente após revisão e validação integradas, conforme solicitado pelo usuário. A beta.9.7 permanece rascunho histórico da 3.1; a versão pública anterior é a beta.9.6. A 3.2 separa taxa provisória e resultados finais por direção, latência HTTPS, espera, medição, interrupção, indisponibilidade e resultado parcial; mantém escala adaptável e valores reais. Modelo de apresentação testável sem UI impede números provisórios no resultado e atualizações tardias. Não alterar motor, servidor, limites ou conteúdo dos relatórios.
+
+Acabamento adaptável: resumos ao lado do arco em largura suficiente e abaixo dele na janela estreita; reservar altura legível e rolagem. Na 3.1, remover o título repetido, estabilizar a altura dos detalhes e preservar legibilidade das escalas com histórico recolhido. A revisão dirigida de temas, largura, pausa/reinício, medição completa e cancelamento antecede a publicação. Não antecipar animações novas da etapa 5 nem declarar o laboratório completo da etapa 6 como aprovado.
+
 ## Prévia 1.0.0-beta.9.7 · etapa 3.1, monitor CPU/RAM
 
 Subdividir a etapa 3 em **3.1 CPU/RAM** e **3.2 velocímetro/estados**. Nesta entrega: números principais destacados, detalhes de RAM separados, barras mais discretas, histórico aberto por padrão, cartões adaptáveis lado a lado/empilhados e média/pico das leituras válidas das últimas 60 posições. As lacunas ocupam posições temporais, mas não entram nos resumos. Pausa conserva os dados; nova sessão zera série e estatísticas. Não acrescentar coletores, sensores, temperaturas ou métricas simuladas por associação com o iStat. Não antecipar novas transições da etapa 5.

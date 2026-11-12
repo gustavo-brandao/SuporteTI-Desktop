@@ -1,5 +1,14 @@
 # Validação das prévias
 
+## Prévia 1.0.0-beta.9.8 · etapas 3.1 e 3.2 integradas
+
+- **173 testes automatizados com CIM real e 13 simulações de intervenção aprovados**. Dez casos novos do estado do velocímetro cobrem espera, zero real/provisório, troca de direção e escala, resultado parcial, progresso tardio, nova sessão, interrupção, números não finitos/fase desconhecida, upload final zero e ausência completa. Os quatro casos de série da 3.1 permanecem na suíte. Compilação sem avisos; nenhuma intervenção real nesta revisão.
+- Na execução integrada, o monitor coletou CPU/RAM reais até 60/60 amostras válidas; ocultar/reabrir as curvas preservou a coleta. Pausar conservou leituras e resumos; iniciar novamente limpou os contadores para 0/0. A inspeção encontrou escala cortada no modo sem histórico; a altura foi corrigida no pacote de validação final e ainda exige repetição visual.
+- Uma medição HTTPS real concluiu download e upload no pacote integrado revisado: os dois cartões finais conferiram com a tabela, e a escala cresceu para 500 Mbps e permaneceu nesse limite ao terminar. Os cenários parciais e sem dados são simulados; não se declara falha real de rede. Salvar log/Copiar resultado ficaram disponíveis. O arquivo do velocímetro não mudou após essa inspeção; a alteração posterior foi a altura do monitor recolhido.
+- A automação funcionou por parte da inspeção e voltou a falhar com `GetCursorPos: Acesso negado (0x80070005)`. Reinício do cliente e outro mecanismo de controle retornaram o mesmo erro. O usuário informou acesso direto ao computador e navegação manual normal. A causa do controlador não foi estabelecida; não foi alterada configuração de segurança da sessão.
+- **Pendências antes de publicar:** repetir o modo sem histórico corrigido; conferir monitor e velocímetro em janela estreita e tema Claro; verificar cancelamento real e pausa ao trocar de ferramenta no pacote final; renovar capturas. As duas subdivisões devem ser aprovadas antes da publicação conjunta. DPI/alto contraste, Windows 10, clipboard completo e laboratório administrativo continuam na etapa 6; a prévia permanece sem Authenticode.
+
+
 ## Prévia 1.0.0-beta.9.7 · etapa 3.1
 
 - ZIP da prévia: **50.104.204 bytes**, SHA-256 `2a7d460d10c0cdf1866cb93f06ab2535ef09d260722dc943bc9816a0f778fee7`. Estrutura e integridade aprovadas; os 24 arquivos de programa são idênticos aos do pacote de validação aberto. Manual beta.9.7 e 44 links locais conferidos. Essa equivalência não constitui aceite visual da nova tela.

@@ -10,15 +10,13 @@ internal sealed partial class JanelaPrincipal
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        pagina.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        pagina.Controls.Add(CriarRotulo("Monitor ao vivo", 20, true), 0, 0);
         var acoes = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
         var iniciar = new BotaoModerno { Text = "&Iniciar monitor", AutoSize = true };
         AplicarCorBotao(iniciar, true);
         acoes.Controls.Add(iniciar);
         var historico = new CheckBox { Text = "Mostrar &histórico de 60 amostras", Checked = true, AutoSize = true, Margin = new Padding(12, 8, 3, 3) };
         acoes.Controls.Add(historico);
-        pagina.Controls.Add(acoes, 0, 1);
+        pagina.Controls.Add(acoes, 0, 0);
         var cpu = new GraficoUso("CPU");
         var ram = new GraficoUso("Memória RAM");
         var cartoes = new TableLayoutPanel { Dock = DockStyle.Top, ColumnCount = 2, RowCount = 2, Margin = Padding.Empty };
@@ -27,11 +25,11 @@ internal sealed partial class JanelaPrincipal
         cartoes.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         cartoes.RowStyles.Add(new RowStyle(SizeType.Absolute, 0));
         cartoes.Controls.Add(cpu, 0, 0); cartoes.Controls.Add(ram, 1, 0);
-        pagina.Controls.Add(cartoes, 0, 2);
+        pagina.Controls.Add(cartoes, 0, 1);
         void OrganizarCartoes()
         {
             var ladoALado = cartoes.ClientSize.Width >= 720 * pagina.DeviceDpi / 96;
-            var altura = (historico.Checked ? 284 : 192) * pagina.DeviceDpi / 96;
+            var altura = (historico.Checked ? 284 : 220) * pagina.DeviceDpi / 96;
             cartoes.SuspendLayout();
             cartoes.SetCellPosition(ram, new TableLayoutPanelCellPosition(ladoALado ? 1 : 0, ladoALado ? 0 : 1));
             cartoes.SetColumnSpan(cpu, ladoALado ? 1 : 2);
@@ -54,11 +52,11 @@ internal sealed partial class JanelaPrincipal
         };
         var status = CriarRotulo("Pronto · coleta a cada segundo · estatísticas da janela de até 60 amostras.", 9, false);
         Estilo.Marcar(status, PapelVisual.Secundario);
-        pagina.Controls.Add(status, 0, 3);
+        pagina.Controls.Add(status, 0, 2);
         pagina.Layout += (_, _) =>
         {
-            var minimo = pagina.Padding.Vertical + pagina.Controls[0].Height + pagina.Controls[0].Margin.Vertical +
-                acoes.Height + acoes.Margin.Vertical + cartoes.Height + status.Height + status.Margin.Vertical;
+            var minimo = pagina.Padding.Vertical + acoes.Height + acoes.Margin.Vertical +
+                cartoes.Height + status.Height + status.Margin.Vertical;
             if (pagina.MinimumSize.Height != minimo) pagina.MinimumSize = new Size(0, minimo);
         };
 
@@ -116,7 +114,7 @@ internal sealed partial class JanelaPrincipal
         public void ExibirHistorico(bool exibir)
         {
             mostrarHistorico = exibir;
-            MinimumSize = new Size(0, (exibir ? 272 : 180) * DeviceDpi / 96);
+            MinimumSize = new Size(0, (exibir ? 272 : 208) * DeviceDpi / 96);
             trama.Invalidate();
         }
 
@@ -135,6 +133,7 @@ internal sealed partial class JanelaPrincipal
             leitura.AccessibleName = nome + ": aguardando amostra";
             cabecalho.Controls.Add(leitura);
             detalhe = CriarRotulo("Aguardando amostra", 9, false);
+            detalhe.MinimumSize = new Size(0, detalhe.Font.Height * 2);
             Estilo.Marcar(detalhe, PapelVisual.Secundario);
             cabecalho.Controls.Add(detalhe);
             estatisticas = CriarRotulo("Média —  ·  Pico —  ·  0/0 válidas", 9, false);
@@ -145,6 +144,7 @@ internal sealed partial class JanelaPrincipal
                 var largura = Math.Max(100, ClientSize.Width - Padding.Horizontal - 8);
                 detalhe.MaximumSize = leitura.MaximumSize = estatisticas.MaximumSize = new Size(largura, 0);
             };
+            DpiChangedAfterParent += (_, _) => detalhe.MinimumSize = new Size(0, detalhe.Font.Height * 2);
             trama = new AreaDesenho { Dock = DockStyle.Fill };
             trama.Paint += (_, evento) => Desenhar(evento.Graphics);
             trama.Resize += (_, _) => trama.Invalidate();

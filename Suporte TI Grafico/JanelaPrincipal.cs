@@ -310,6 +310,7 @@ internal sealed partial class JanelaPrincipal : Form
             filtro.Clear();
             AtualizarGrade();
             var id = ferramentaAtual?.Id;
+            titulo.Text = id == "monitor" ? "Monitor ao vivo" : grupo == "Visão geral" ? "Informações do computador" : abas.SelectedTab?.Text ?? grupo;
             pagina.AutoScroll = true;
             var especial = id is "monitor" or "mapaocupacao";
             painelTabela.Visible = !especial;
@@ -442,8 +443,7 @@ internal sealed partial class JanelaPrincipal : Form
         conteudoResultados.SizeChanged += (_, _) =>
         {
             // Reservar espaço para os resultados, inclusive na altura mínima da janela.
-            var escala = DeviceDpi / 96f;
-            var altura = (int)Math.Clamp(conteudoResultados.Height - 100 * escala, 250 * escala, 280 * escala);
+            var altura = painelVelocidade.AlturaPreferida(conteudoResultados.ClientSize.Width);
             painelVelocidade.MinimumSize = new Size(0, altura);
             painelVelocidade.Height = altura;
         };

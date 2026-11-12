@@ -1,6 +1,6 @@
 # Homologação do Suporte TI Gráfico
 
-**Versão em testes 1.0.0-beta.9.7 · Windows x64**
+**Versão em testes 1.0.0-beta.9.8 · Windows x64**
 
 Extraia a beta e a 0.7.0 em pastas separadas. Compare o SHA-256 com o arquivo fornecido ao lado do ZIP. Abra os dois executáveis, confira o título de cada versão e use dados fictícios em todos os cenários de alteração. Registre versão do Windows, arquitetura, escala, tipo de conta, hash do ZIP e resultado de cada cenário.
 
@@ -21,6 +21,10 @@ Conferir grupo e área no cabeçalho ao trocar guias, abrir Sobre/Configuraçõe
 ## Monitor CPU/RAM · etapa 3.1
 
 Conferir cartões lado a lado em largura suficiente e empilhados na janela estreita. Iniciar a coleta real; verificar número principal, memória usada/disponível/total, escala fixa, média/pico e contagem de leituras válidas. Recolher/exibir histórico durante a coleta; pausar preserva os dados, trocar de ferramenta pausa e iniciar novamente limpa série e resumos. Repetir Claro/Sistema/Escuro, teclado, DPI e alto contraste. Comparar amostras da janela com os resumos, incluindo zero real, ausência e descarte após 60 posições; casos de contrato estão na suíte automatizada. Não interpretar a média como valor desde a abertura do programa.
+
+## Velocímetro · etapa 3.2
+
+Na versão integrada, iniciar uma medição real e conferir Latência/Download/Upload, número provisório, escala que cresce sem encolher e cartões finais separados. Comparar valores finais com a tabela e relatório. Não interpretar o travessão de um cartão como taxa zero. Repetir cancelamento durante a medição: agulha e valor provisório devem desaparecer, com estado de interrupção. Nova medição limpa o resultado e volta à escala inicial. Simular falha de uma direção e de todas as leituras; conservar dados válidos e avisos, sem fabricar valores. Conferir janela ampla/estreita, Claro/Escuro/Sistema, navegação por teclado e comandos de salvar/copiar após rolar. O teste real pode consumir até 1 GiB por execução. DPI/alto contraste e ambientes adicionais continuam na matriz de laboratório.
 
 ## Navegação, gráficos e conexão
 
