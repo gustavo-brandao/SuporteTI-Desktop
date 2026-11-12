@@ -1,15 +1,23 @@
 # Suporte TI Gráfico 1.0.0-beta.9.8
 
-Prévia integrada das etapas **3.1 — CPU/RAM** e **3.2 — velocímetro e estados**. Publicar juntas após revisão visual e funcional das duas partes.
+Entrega integrada de **3.1 — monitor CPU/RAM** e **3.2 — velocímetro e estados**, revisadas antes da publicação conjunta.
 
-- Cartões adaptáveis de CPU/RAM, porcentagens em destaque, memória usada/disponível/total e histórico aberto por padrão.
-- Média/pico das leituras válidas da janela de até 60 posições; zero real conta e lacunas não são inventadas como zero. Pausa preserva; nova sessão limpa.
+- CPU/RAM em cartões adaptáveis, porcentagens em destaque, memória usada/disponível/total e histórico aberto por padrão.
+- Média/pico das leituras válidas da janela de até 60 posições; zero real conta e lacunas não são tratadas como zero. Pausa preserva; iniciar limpa a sessão.
 - Taxa provisória separada dos resultados finais de download/upload e latência HTTPS. Resumos ao lado do arco ou abaixo dele em largura reduzida.
-- Cancelamento remove a agulha e as leituras provisórias; resultado parcial conserva a direção válida. Progresso tardio é ignorado; nova execução limpa os resultados e a escala anteriores.
-- Motor de medição, limites, servidor e relatórios preservados. Novas animações ficam na etapa 5.
+- Cancelamento remove agulha e taxa provisória; resultado parcial conserva a direção válida. Atualizações tardias são ignoradas. Nova execução limpa resultados e escala anteriores.
+- Ajustes de altura e redesenho dos cartões preservam escalas e bordas ao recolher histórico ou redimensionar. Motor, limites, servidor e relatórios preservados; novas animações ficam na etapa 5.
 
-**173 testes com CIM real e 13 simulações aprovados**, compilação sem avisos. Coleta real de CPU/RAM, pausa/reinício, histórico e medição real completa de conexão conferidos na execução integrada. A revisão encontrou e corrigiu falta de altura no monitor recolhido; repetir esse aceite, janela estreita, tema Claro e cancelamento real no pacote final antes de publicar. A automação voltou a perder acesso à sessão. [Resultados e limites](../Suporte%20TI%20Grafico/Testes/RESULTADO.md).
+![Monitor real de CPU/RAM](imagens/monitor-escuro-beta98.png)
 
-As imagens serão renovadas com a revisão final. A beta.9.6 permanece pública; a beta.9.7 não teve release pública independente. Sem Authenticode; matriz de DPI/alto contraste, Windows 10 e laboratório administrativo permanece em homologação.
+![Monitor em Claro e janela estreita](imagens/monitor-compacto-claro-beta98.png)
 
-Depois do fechamento conjunto: **4** busca Raycast; **5** animações e transições; **6** homologação visual e funcional; **7** PowerShell 7; **8** versão estável. [Planejamento](PLANEJAMENTO.md).
+![Resultado completo do teste de conexão](imagens/velocidade-resultado-beta98.png)
+
+![Cancelamento em Claro e janela estreita](imagens/velocidade-cancelada-claro-beta98.png)
+
+Capturas reais da prévia integrada, com recorte somente do rodapé que identifica a estação. **173 testes com CIM real e 13 simulações aprovados**; compilação sem avisos. Inspeção local de coleta, 60 amostras, histórico, pausa/reinício, troca de ferramenta, medição e cancelamento reais, janelas ampla/estreita e temas Claro/Sistema. O último ajuste de redesenho das bordas foi compilado e repetido visualmente. [Resultados e limites](../Suporte%20TI%20Grafico/Testes/RESULTADO.md).
+
+A beta.9.7 ficou como revisão intermediária, sem release pública. A beta.9.6 permanece disponível para retorno. Extraia o ZIP completo em uma pasta nova e compare o SHA-256. A prévia segue sem Authenticode; DPI/alto contraste, Windows 10 e laboratório administrativo continuam na matriz de homologação.
+
+Próximas etapas: **4** busca em camadas Raycast; **5** animações e transições; **6** homologação visual e funcional; **7** avaliação do PowerShell 7; **8** preparação da versão estável. [Planejamento](PLANEJAMENTO.md).

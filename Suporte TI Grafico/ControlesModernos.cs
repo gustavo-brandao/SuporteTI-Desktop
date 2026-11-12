@@ -160,7 +160,12 @@ internal sealed class AbasModernas : TabControl
 
 internal class Cartao : Panel
 {
-    public Cartao() { DoubleBuffered=true; Padding=new Padding(12); }
+    public Cartao()
+    {
+        DoubleBuffered = true;
+        SetStyle(ControlStyles.ResizeRedraw, true);
+        Padding = new Padding(12);
+    }
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e); e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;

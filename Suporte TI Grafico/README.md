@@ -1,6 +1,6 @@
 # Suporte TI Gráfico
 
-**1.0.0-beta.9.8** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6).
+**1.0.0-beta.9.8** é uma prévia de homologação para Windows x64, destinada a técnicos de qualquer empresa e a uso pessoal. A interface WinForms usa superfícies neutras e azul de destaque, com temas Escuro, Claro e Sistema. O rodapé mostra a máquina e o nível da sessão atual. [Download e capturas reais](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.8).
 
 ## Monitor de CPU/RAM · etapa 3.1
 
@@ -8,7 +8,7 @@ Hardware → Desempenho → Monitor ao vivo apresenta porcentagens em destaque e
 
 Zero real entra nas estatísticas. Amostras ausentes, inválidas ou não finitas ficam como lacunas, sem entrar na média ou no pico. Pausar ou trocar de ferramenta conserva o último estado; iniciar novamente limpa série e resumos. A coleta segue a cada segundo, sem estimar valores entre amostras. O movimento existente continua apenas visual e respeita as preferências do Windows. A etapa 3.2 acompanha esta prévia integrada.
 
-Esta prévia aguarda aceite visual e publicação; o link da introdução aponta para a versão pública anterior.
+As duas subdivisões do monitoramento compõem a mesma prévia; a beta.9.7 ficou como revisão intermediária sem release pública.
 
 ## Velocímetro e estados · etapa 3.2
 
@@ -22,7 +22,7 @@ O cabeçalho superior mostra o grupo e a área atuais, acompanhando guias, busca
 
 A área de conteúdo fica em uma superfície própria, com guias de fundo contínuo, títulos menores, linhas de resultado mais compactas e bordas neutras. As paletas Escuro/Claro usam tons neutros com azul de destaque; Sistema continua acompanhando o Windows, e alto contraste mantém prioridade. O catálogo continua com 44 operações.
 
-A etapa 2.2 integra as cores do título e da borda à paleta no Windows 11, com texto e borda próprios para janela ativa/inativa. Arraste, tamanho, menu de sistema, Snap e botões permanecem sob controle nativo. No alto contraste, as cores explícitas são removidas; no Windows 10, usa os recursos disponíveis. O acabamento é reaplicado ao recriar o identificador da janela, ativar/desativar, mudar tema ou DPI. Monitoramento iStat, busca Raycast e novos movimentos continuam em etapas posteriores.
+A etapa 2.2 integra as cores do título e da borda à paleta no Windows 11, com texto e borda próprios para janela ativa/inativa. Arraste, tamanho, menu de sistema, Snap e botões permanecem sob controle nativo. No alto contraste, as cores explícitas são removidas; no Windows 10, usa os recursos disponíveis. O acabamento é reaplicado ao recriar o identificador da janela, ativar/desativar, mudar tema ou DPI. O refinamento do monitoramento está nesta prévia; busca Raycast e novos movimentos continuam em etapas posteriores.
 
 ## Legibilidade e identidade Desktop
 
@@ -38,7 +38,7 @@ Os títulos mostram a área atual sem repetir o menu principal. O tamanho mínim
 
 A navegação recebe realce gradual, e a entrada do conteúdo usa um deslocamento curto de 180 ms. O monitor mantém as amostras nativas de CPU e memória a cada segundo; o movimento entre pontos é apenas apresentação, sem alterar as leituras. Trocar de ferramenta pausa o monitor e interrompe suas animações. A preferência de animações do Windows é respeitada; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
 
-Esta é a segunda etapa do dashboard aprovado. O monitor apresenta barras horizontais de CPU/RAM em escala fixa de 0–100%, com memória usada, disponível e total. **Mostrar histórico de 60 amostras** revela as curvas sem interromper a coleta. Pausar conserva os valores; iniciar novamente limpa o histórico. Leituras ausentes não são mostradas como zero. A redistribuição completa dos menus fica para a próxima prévia; as imagens conceituais continuam separadas das capturas reais.
+Esta prévia reúne as subdivisões de monitoramento da etapa 3. O monitor apresenta barras horizontais de CPU/RAM em escala fixa de 0–100%, com memória usada, disponível e total. **Mostrar histórico de 60 amostras**, ativado por padrão, recolhe ou revela as curvas sem interromper a coleta. Pausar conserva os valores; iniciar novamente limpa o histórico. Leituras ausentes não são mostradas como zero. A redistribuição completa dos menus segue no planejamento; as imagens conceituais continuam separadas das capturas reais.
 
 Em **Rede → Conectividade → Velocidade da internet**, o motor C# mede três amostras de latência HTTPS e executa quatro transferências paralelas por direção, por até dez segundos cada. O limite é **512 MiB de download e 512 MiB de upload**; ao alcançá-lo, a coleta termina antes. Em condições normais, espere cerca de 20–35 segundos. A fase, a taxa em Mbps, o tempo e os bytes são atualizados durante o teste. O velocímetro mostra a vazão média acumulada da fase. A escala começa em 100 Mbps e aumenta quando necessário, sem diminuir durante a execução; seu limite fica escrito abaixo do arco. A linha inferior indica o progresso da fase, separadamente da taxa. Ao concluir, download e upload permanecem identificados, inclusive quando uma direção estiver indisponível. Cancelar remove a agulha e a leitura em andamento sem apresentar uma medição incompleta como resultado final.
 

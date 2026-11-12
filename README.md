@@ -1,22 +1,20 @@
 # Suporte TI Gráfico
 
-**Prévia em validação · 1.0.0-beta.9.8**
-
-Versão pública anterior: **1.0.0-beta.9.6**. Os links de download abaixo permanecem nessa versão até o aceite da nova prévia.
+**Versão atual · 1.0.0-beta.9.8**
 
 **Windows x64 · edição portátil · prévia de homologação**
 
 Ferramenta gráfica de diagnóstico e manutenção do Windows para técnicos de TI e uso pessoal. Baseada no [Suporte TI para terminal](https://github.com/gustavo-brandao/SuporteTI), com interface própria, distribuição portátil e ciclo de versões independente.
 
-**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.6/SuporteTI-Grafico-1.0.0-beta.9.6-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.6/SuporteTI-Grafico-1.0.0-beta.9.6-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.6)
+**[Baixar ZIP portátil](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.8/SuporteTI-Grafico-1.0.0-beta.9.8-win-x64.zip)** · [SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/download/v1.0.0-beta.9.8/SuporteTI-Grafico-1.0.0-beta.9.8-win-x64.zip.sha256) · [Notas da versão](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.8)
 
 ![Beta.9.8: monitor real de CPU/RAM com histórico e resumos da janela](docs/imagens/monitor-escuro-beta98.png)
 
 A beta.9.8 implementa a **etapa 3.1 — monitor de CPU/RAM inspirado no iStat**: porcentagens em destaque, cartões lado a lado quando há espaço, histórico visível por padrão e resumos de média/pico das últimas 60 amostras. Na janela estreita, os cartões ficam empilhados com rolagem.
 
-As estatísticas usam apenas leituras válidas: zero real conta; ausência fica como lacuna. Pausar preserva os dados e iniciar abre uma nova sessão. A **3.2** acrescenta resultados separados de download/upload, latência HTTPS e estados claros para taxa provisória, conclusão, interrupção e indisponibilidade. As duas subdivisões serão publicadas juntas após a revisão integrada. [Notas e validação desta prévia](docs/RELEASE-beta9.8.md).
+As estatísticas usam apenas leituras válidas: zero real conta; ausência fica como lacuna. Pausar preserva os dados e iniciar abre uma nova sessão. A **3.2** acrescenta resultados separados de download/upload, latência HTTPS e estados claros para taxa provisória, conclusão, interrupção e indisponibilidade. As duas subdivisões foram revisadas juntas e compõem esta prévia integrada. [Notas e validação desta prévia](docs/RELEASE-beta9.8.md).
 
-A primeira captura mostra o monitor real da beta.9.8. As demais ainda mostram a estrutura da beta.9.6 e serão renovadas após o aceite visual integrado. As 44 operações e a moldura nativa permanecem disponíveis.
+As capturas mostram a execução real da beta.9.8, com recorte somente do rodapé que identifica a estação. As 44 operações e a moldura nativa permanecem disponíveis.
 
 ## Começar
 
@@ -55,17 +53,17 @@ Em **Rede → Conectividade → Velocidade da internet**, acompanhe latência HT
 
 O monitor mantém amostras reais de CPU e memória a cada segundo, com barras horizontais, histórico de até 60 amostras aberto por padrão e média/pico das leituras válidas dessa janela. Mostrar histórico permite recolher somente as curvas. Em área de cartões com pelo menos 720 pixels efetivos, CPU e RAM ficam lado a lado; abaixo disso, ficam empilhados. Pausar conserva a leitura; iniciar novamente limpa as 60 amostras anteriores. Trocar de ferramenta pausa o monitor. As transições respeitam a preferência de animações do Windows; alto contraste e sessões remotas usam apresentação sem movimento decorativo.
 
-![Beta.9.6 com navegação recolhida e cabeçalho contextual](docs/imagens/moldura-compacta-beta96.png)
+![Velocímetro da beta.9.8 com resultados finais reais por direção](docs/imagens/velocidade-resultado-beta98.png)
 
-O funcionamento do monitor e do teste de internet permanece documentado nas [notas da etapa de componentes](docs/RELEASE-beta9.3.md). As imagens atuais mostram a estrutura da beta.9.6.
+A [entrega integrada de monitoramento](docs/RELEASE-beta9.8.md) registra os estados, verificações e limites desta versão. A [beta.9.3](docs/RELEASE-beta9.3.md) preserva o histórico da primeira implantação desses componentes.
 
 ## Aparência
 
 Em **Configurações → Aparência**, escolha **Escuro**, **Claro** ou **Sistema**. A primeira abertura usa Escuro. A preferência é salva por usuário e a troca é aplicada durante o uso, preservando resultados. Alto contraste do Windows tem prioridade. O pacote continua portátil, com configuração fora da pasta do executável.
 
-![Beta.9.6 no tema Claro com cabeçalho e guias integrados à área de trabalho](docs/imagens/moldura-claro-beta96.png)
+![Monitor da beta.9.8 em Claro, com cartões empilhados e rolagem](docs/imagens/monitor-compacto-claro-beta98.png)
 
-As capturas acima são da beta.9.6 executada a partir do pacote, com recorte somente do rodapé que identifica a estação. Os mockups permanecem na documentação de propostas. A inspeção desta etapa conferiu aparência escura via Sistema e tema Claro; DPI, alto contraste e a matriz completa de ambientes continuam em homologação.
+As capturas acima são da beta.9.8 executada a partir do pacote, com recorte somente do rodapé que identifica a estação. Os mockups permanecem na documentação de propostas. A inspeção desta etapa conferiu aparência escura via Sistema e tema Claro; DPI, alto contraste e a matriz completa de ambientes continuam em homologação.
 
 ## Requisitos e arquitetura
 
@@ -91,7 +89,7 @@ dotnet run --project '.\Suporte TI Grafico\Testes\SuporteTI.Grafico.Testes.cspro
 & '.\Suporte TI Grafico\Construcao\Publicar.ps1'
 ```
 
-O publicador gera ZIP e SHA-256 em `Suporte TI Grafico/outputs`; uma versão existente não é sobrescrita. A suíte verifica contrato, catálogo, permissões, falhas, cancelamento, logs, medições e consultas reais. A etapa local registrou **173 testes automatizados e 13 simulações de intervenção aprovados**; o aceite visual da nova composição está pendente. Os testes da janela e suas pendências estão em [Resultados](Suporte%20TI%20Grafico/Testes/RESULTADO.md); simulações não substituem manutenção real em laboratório.
+O publicador gera ZIP e SHA-256 em `Suporte TI Grafico/outputs`; uma versão existente não é sobrescrita. A suíte verifica contrato, catálogo, permissões, falhas, cancelamento, logs, medições e consultas reais. A etapa local registrou **173 testes automatizados e 13 simulações de intervenção aprovados**. A revisão local conferiu coleta, histórico, pausa/reinício, troca de ferramenta, medição e cancelamento reais, temas e largura reduzida. Os testes da janela e suas pendências estão em [Resultados](Suporte%20TI%20Grafico/Testes/RESULTADO.md); simulações não substituem manutenção real em laboratório.
 
 ## Documentação e código
 
