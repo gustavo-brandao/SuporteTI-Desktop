@@ -23,6 +23,54 @@ var temporaria = Directory.CreateTempSubdirectory("Suporte TI gráfico ");
 var passou = 0;
 try
 {
+    var apresentacaoVelocidade = new EstadoMedicaoVelocidade();
+    apresentacaoVelocidade.Iniciar();
+    Igual(true, apresentacaoVelocidade.Ativo && apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Escala == 100,
+        "Painel de velocidade começa sem inventar uma taxa zero");
+    apresentacaoVelocidade.Atualizar(new("Download", 1, 0, 0, .1));
+    Igual(true, apresentacaoVelocidade.Taxa == 0 && apresentacaoVelocidade.Download is null &&
+        apresentacaoVelocidade.Situacao("Download").Contains("provisória"), "Taxa zero real é progresso, sem se tornar resultado final");
+    apresentacaoVelocidade.Atualizar(new("Download", 2, 100, 900, .4));
+    apresentacaoVelocidade.Atualizar(new("Upload", 3, 0, null, .5));
+    Igual(true, apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Escala == 1000 &&
+        apresentacaoVelocidade.Download is null, "Trocar de direção limpa a agulha e preserva a escala sem fabricar o download final");
+    apresentacaoVelocidade.Concluir(new(1, "velocidade", "parcial", [
+        new("Download · Cloudflare", [new("Download", $"{125.5:N1} Mbps")], null),
+        new("Upload · Cloudflare", [], "Sem dados válidos")]));
+    Igual(true, apresentacaoVelocidade.Taxa == 125.5 && apresentacaoVelocidade.Upload is null &&
+        apresentacaoVelocidade.Situacao("Upload").Contains("Indisponível") && apresentacaoVelocidade.Fracao == 1,
+        "Resultado parcial conserva a direção válida e identifica a outra como indisponível");
+    Igual(false, apresentacaoVelocidade.Atualizar(new("Upload", 20, 1000, 999, 1)), "Painel ignora progresso tardio após concluir");
+    apresentacaoVelocidade.Iniciar();
+    Igual(true, apresentacaoVelocidade.Download is null && apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Escala == 100,
+        "Novo teste descarta o resultado e a escala da sessão anterior");
+    apresentacaoVelocidade.Atualizar(new("Upload", 2, 100, 45, .6));
+    apresentacaoVelocidade.Concluir(null);
+    Igual(true, apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Upload is null &&
+        apresentacaoVelocidade.Situacao("Upload").Contains("Interrompido") && apresentacaoVelocidade.Fracao == .6,
+        "Interrupção remove taxa e resultado provisórios, sem marcar progresso completo");
+    apresentacaoVelocidade.Iniciar();
+    apresentacaoVelocidade.Atualizar(new("Download", 1, 0, double.NaN, double.PositiveInfinity));
+    Igual(true, apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Fracao == 0 &&
+        !apresentacaoVelocidade.Atualizar(new("Fase desconhecida", 0, 0, 100, 1)), "Painel recusa números não finitos e fases desconhecidas");
+    apresentacaoVelocidade.Concluir(new(1, "velocidade", "concluido", [
+        new("Download · Cloudflare", [new("Download", "500 Mbps")], null),
+        new("Upload · Cloudflare", [new("Upload", "0 Mbps")], null)]));
+    Igual(true, apresentacaoVelocidade.Taxa == 0 && apresentacaoVelocidade.Download == "500 Mbps" &&
+        apresentacaoVelocidade.Situacao("Upload") == "Resultado final", "Upload final zero é preservado sem substituição pelo download");
+    apresentacaoVelocidade.Concluir(new(1, "velocidade", "indisponivel", []));
+    Igual(true, apresentacaoVelocidade.Taxa is null && apresentacaoVelocidade.Download is null &&
+        apresentacaoVelocidade.Upload is null && apresentacaoVelocidade.Situacao("Download").Contains("Indisponível"),
+        "Falha sem dados limpa resultados anteriores e remove a agulha");
+    var serie = new SerieMonitor();
+    Igual(true, serie.Atual is null && serie.Resumo == (0, null, null), "Monitor vazio não inventa estatísticas");
+    serie.Adicionar(0); serie.Adicionar(null); serie.Adicionar(100); serie.Adicionar(double.NaN);
+    Igual(true, serie.Quantidade == 4 && serie.Resumo == (2, 50d, 100d) && serie.Atual is null,
+        "Estatísticas incluem zero real e ignoram lacunas sem apagá-las do histórico");
+    for (var indiceSerie = 0; indiceSerie < 60; indiceSerie++) serie.Adicionar(20);
+    Igual(true, serie.Quantidade == 60 && serie.Resumo == (60, 20d, 20d), "Janela de 60 amostras descarta picos antigos");
+    serie.Limpar();
+    Igual(true, serie.Quantidade == 0 && serie.Resumo == (0, null, null), "Nova sessão limpa histórico e estatísticas");
     Igual(true, new double?[] { null, -1, 101, double.NaN, double.PositiveInfinity }.All(n => MedidasVisuais.Percentual(n) is null),
         "Barras não apresentam ausência, valores inválidos ou não finitos como zero");
     Igual(true, MedidasVisuais.Percentual(0) == 0 && MedidasVisuais.Percentual(100) == 100,

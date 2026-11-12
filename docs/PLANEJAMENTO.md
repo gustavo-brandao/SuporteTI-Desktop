@@ -43,6 +43,8 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 
 **Resposta ao encerrar cada etapa:** informar o que foi concluído, resumir a verificação e eventuais pendências, fornecer o ZIP e o SHA-256 da entrega e mostrar a lista atualizada das etapas que ainda faltam. Identificar a próxima etapa e incluir as subdivisões que tenham sido criadas, preservando a numeração para acompanhar o progresso. Conferir README, documentação e imagens afetadas junto da publicação. Atualizações exclusivamente documentais não exigem gerar outro executável ou repetir o ZIP da versão publicada.
 
+**Publicação da etapa 3:** concluir a revisão de 3.1 e 3.2 e publicar uma única prévia integrada, conforme solicitação do usuário. Não publicar a 3.1 isoladamente.
+
 **Etapa 1 concluída · beta.9.4 publicada:** [PR #4 integrado](https://github.com/gustavo-brandao/SuporteTI-Desktop/pull/4), [CI completo da revisão aprovado](https://github.com/gustavo-brandao/SuporteTI-Desktop/actions/runs/43093939216) no commit `3da048b2bbd5ab581f3be0dbec512424ff1a9d1e` e [release pública com ZIP e SHA-256](https://github.com/gustavo-brandao/SuporteTI-Desktop/releases/tag/v1.0.0-beta.9.4). A árvore da integração `75e66bc5c13a5a5cf3fd9997cc60534c1e76d7f9` confere com a revisão validada. README e imagem no GitHub conferidos com os arquivos locais; o ZIP remoto confere com o SHA-256 `ac6755e01b4c8d225eb60c7ee75b307ccbacbb59fecef7bab42c4eee79ca523d`. No momento da publicação, a execução automática adicional da main já havia aprovado testes, simulações, compilação e verificação do pacote; seu envio ao armazenamento de artefatos do Actions ainda estava em andamento, conforme [registro do fechamento](RELEASE-beta9.4.md).
 
 | Entrega | Estado | Próximo aceite |
@@ -52,6 +54,8 @@ Para cada prévia, uma correção intermediária ganha uma versão de patch, por
 | **1.0.0-beta.9.4 · Legibilidade e identidade Desktop** | Publicada; etapa 1 concluída | Guia Integridade e reparos sem letras cortadas; VERSÃO DESKTOP; CI completo da revisão aprovado; ZIP e SHA-256 disponíveis; limites de laboratório preservados |
 | **2.1 · Estrutura da área de trabalho · beta.9.5** | Implementada e validada; incluída na prévia cumulativa beta.9.6 | Cabeçalho contextual, hierarquia da navegação, superfície de conteúdo, guias e paletas; 44 operações preservadas |
 | **2.2 · Barra de título e moldura · beta.9.6** | Publicada; etapa 2 concluída nas subdivisões 2.1 e 2.2 | CI completo aprovado, ZIP e SHA-256 disponíveis; DWM integrado, controles nativos e temas; matriz Snap/DPI/alto contraste na homologação |
+| **3.1 · Monitor CPU/RAM · beta.9.8 integrada** | Implementado e validado junto da 3.2; publicação em fechamento | Coleta, histórico, resumos, pausa/reinício, troca de ferramenta, janela estreita e temas conferidos |
+| **3.2 · Velocímetro e estados · beta.9.8 integrada** | Implementado e validado; publicação conjunta em fechamento | Medição e cancelamento reais, escala, cartões finais, modo compacto e quatro imagens; aguarda CI final |
 | **Acabamento e movimento** | Direção aprovada: Linear + iStat + Raycast | Estrutura profissional, monitoramento refinado e busca em camadas; implantar e validar um componente por entrega |
 | **Organização dos menus** | Aprovada como etapa; seguir a galeria e revisar os textos ao implementar | Cinco telas e padrões equivalentes nos sete grupos; 44 operações, resumos e avisos preservados |
 | **Homologação visual e funcional** | Pendente | Regressão completa, teclado, DPI/alto contraste, logs/clipboard, desempenho e pacote portátil |
